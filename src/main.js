@@ -9,11 +9,12 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUser, faChartLine, faFileSignature,
     faCarSide, faUsersGear, faFileInvoiceDollar,
-
+    faRotate
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add( faUser, faChartLine, faFileSignature,
      faCarSide, faUsersGear, faFileInvoiceDollar,
+     faRotate
     )
 
 const app = createApp(App)

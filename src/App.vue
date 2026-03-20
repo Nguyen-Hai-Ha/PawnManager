@@ -25,7 +25,7 @@ const refreshPage = () => window.location.reload();
     <div class="app-layout">
       <Aside />
       <div class="main-content">
-        <!-- Header bar -->
+        <!-- Header -->
         <header class="admin-main">
           <div class="admin-header">
             <div class="header-left">
@@ -44,7 +44,7 @@ const refreshPage = () => window.location.reload();
             </div>
           </div>
         </header>
-        <!-- Page content -->
+        <!-- Page -->
         <router-view />
       </div>
     </div>

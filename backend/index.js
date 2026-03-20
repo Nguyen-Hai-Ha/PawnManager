@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 3344;
+const port = 3000;
 const bodyParser = require('body-parser');
 const router = require('./routes/index');
-const sequelize = require('./config/database');
+const sqlite3 = require('./config/database');
 const models = require('./models/index');
 const cookieParser = require('cookie-parser');
 
@@ -56,10 +56,10 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
     try {
-        await sequelize.authenticate();
+        await sqlite3.authenticate();
         console.log('Database connection has been established successfully.');
 
-        await sequelize.sync({ force: false });
+        await sqlite3.sync({ force: false });
         console.log('Database synchronized successfully.');
 
         app.listen(port, () => {

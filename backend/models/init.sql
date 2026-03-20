@@ -106,12 +106,12 @@ CREATE TABLE IF NOT EXISTS transactions(
     amount REAL NOT NULL,
     other_fees REAL NULL,
     id_contract INTEGER NOT NULL,
-    id_payment_schedule INTEGER NULL,
+    id_schedule INTEGER NULL,
     id_transaction_type INTEGER NOT NULL,
     id_staff INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_contract) REFERENCES contracts(id),
-    FOREIGN KEY (id_payment_schedule) REFERENCES payment_schedules(id),
+    FOREIGN KEY (id_schedule) REFERENCES payment_schedules(id),
     FOREIGN KEY (id_transaction_type) REFERENCES transactions_types(id),
     FOREIGN KEY (id_staff) REFERENCES staff(id)
 );

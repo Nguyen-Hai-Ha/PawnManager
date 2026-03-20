@@ -54,19 +54,15 @@ app.use((err, req, res, next) => {
     });
 });
 
-async function startServer() {
+function startServer() {
     try {
-        await sqlite3.authenticate();
-        console.log('Database connection has been established successfully.');
-
-        await sqlite3.sync({ force: false });
-        console.log('Database synchronized successfully.');
+        console.log('--- Database connection established successfully (better-sqlite3) ---');
 
         app.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
+            console.log(`--- Server is running on http://localhost:${port} ---`);
         });
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        console.error('Unable to start the server:', error);
     }
 }
 

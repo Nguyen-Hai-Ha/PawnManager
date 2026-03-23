@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const bcrypt = require('bcryptjs');
 
 const Staff = {
     getAll: () => {
@@ -11,10 +12,12 @@ const Staff = {
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
-    create: (data) => {
+    create: async (data) => {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(data.password, salt);
         const sql = `INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES (?, ?, ?, ?, ?, ?, ?)`
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.name, data.email, data.password, data.phone, data.address, data.cccd, data.id_role);
+        const result = stmt.run(data.name, data.email, hashedPassword, data.phone, data.address, data.cccd, data.id_role);
         return result.lastInsertRowid;
     },
     update: (id, data) => {

@@ -33,6 +33,12 @@ const Collaterals = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    deleteByContractId: (id) => {
+        const sql = `DELETE FROM collaterals WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run(id);
+        return result.changes;
     }
 }
 

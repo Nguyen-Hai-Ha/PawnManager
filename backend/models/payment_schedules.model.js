@@ -33,6 +33,12 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    deleteByContractId: (id) => {
+        const sql = `DELETE FROM payment_schedules WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run(id);
+        return result.changes;
     }
 }
 

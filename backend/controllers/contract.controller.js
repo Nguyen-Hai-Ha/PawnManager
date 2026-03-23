@@ -25,15 +25,14 @@ const ContractController = {
         try {
             const dataContract = req.body.contract;
             const dataCollateral = req.body.collateral;
-            let dataRelative = null;
-            let dataImage = null;
-            if (req.body.relative && req.body.image) {
-                dataRelative = req.body.relative;
-                dataImage = req.body.image;
-                const collateral = Collateral.create(dataCollateral);
-                const relative = Relative.create(dataRelative);
-                const image = Image.create(dataImage);
-            }
+            // let dataRelative = null;
+            // let dataImage = null;
+            // if (req.body.relative && req.body.image) {
+            //     dataRelative = req.body.relative;
+            //     dataImage = req.body.image;
+            //     const relative = Relative.create(dataRelative);
+            //     const image = Image.create(dataImage);
+            // }
 
             if (!dataContract || !dataCollateral) {
                 return res.status(400).json({ error: 'Data is required' });
@@ -146,6 +145,7 @@ const ContractController = {
                 }
             }
             const contract = Contract.create(dataContract);
+            const collateral = Collateral.create(dataCollateral);
             res.json(contract);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -154,7 +154,9 @@ const ContractController = {
     delete: (req, res) => {
         try {
             const contract = Contract.delete(req.params.id);
-            res.json(contract);
+            const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
+            const collateral = Collateral.deleteByContractId(req.params.id);
+            res.json({contract, paymentSchedules, collateral});
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

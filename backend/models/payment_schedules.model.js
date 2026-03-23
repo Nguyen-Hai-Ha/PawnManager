@@ -11,6 +11,11 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
+    getByContractId: (id) => {
+        const sql = `SELECT * FROM payment_schedules WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id);
+    },
     create: (data) => {
         const sql = `INSERT INTO payment_schedules (id_contract, period_number, expected_date, is_paid, interest_amount, principal_amount) VALUES (?, ?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);

@@ -128,12 +128,12 @@ CREATE TABLE IF NOT EXISTS audit_logs(
 
 CREATE TABLE IF NOT EXISTS permissions(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-)
+    name TEXT NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS role_permissions(
     id_role INTEGER PRIMARY KEY AUTOINCREMENT,
     id_permission INTEGER NOT NULL,
     FOREIGN KEY (id_role) REFERENCES role(id),
     FOREIGN KEY (id_permission) REFERENCES permissions(id)
-)
+);

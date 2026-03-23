@@ -9,7 +9,17 @@ if (!fs.existsSync(dbDir)) {
 }
 
 const dbPath = path.join(dbDir, 'pawn.db');
+const sqlPath = path.join(__dirname, '../models/init.sql');
 
+try {
+    const db = new Database(dbPath, { verbose: console.log });
+    const sqlContent = fs.readFileSync(sqlPath, 'utf8');
+    db.exec(sqlContent);
+    db.pragma('foreign_keys = ON');
+    console.log(`--- Database initialized successfully ---`);
+} catch (error) {
+    console.error(`--- Database initialization failed: ${error.message} ---`);
+}
 const db = new Database(dbPath, { verbose: console.log });
 db.pragma('foreign_keys = ON');
 

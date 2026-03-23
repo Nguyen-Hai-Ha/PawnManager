@@ -11,6 +11,11 @@ const Collaterals = {
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
+    getByContractId: (id) => {
+        const sql = `SELECT * FROM collaterals WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.get(id);
+    },
     create: (data) => {
         const sql = `INSERT INTO collaterals (name, metadata, status, id_collateral_type) VALUES (?, ?, ?, ?)`;
         const stmt = db.prepare(sql);

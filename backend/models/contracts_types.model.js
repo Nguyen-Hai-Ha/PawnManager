@@ -14,8 +14,9 @@ const ContractType = {
     create: (data) => {
         const sql = `INSERT INTO contracts_types (name) VALUES (?)`;
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.name);
-        return result.lastInsertRowid;
+        const resuilt = stmt.run(data.name);
+        const id = resuilt.lastInsertRowid;
+        return { id };
     },
 }
 

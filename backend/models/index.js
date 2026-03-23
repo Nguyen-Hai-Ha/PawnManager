@@ -3,10 +3,10 @@ const Contract = require('./contracts.model');
 const ContractType = require('./contracts_types.model');
 const Customer = require('./customer.model');
 const Relative = require('./relative.model');
-const Collateral = require('./collaterals.model');
+const Collaterals = require('./collaterals.model');
 const CollateralsType = require('./collaterals_type.model');
 const Image = require('./images.model');
-const PaymentSchedule = require('./payment_schedules.model');
+const PaymentSchedules = require('./payment_schedules.model');
 const Transaction = require('./transactions.model');
 const TransactionType = require('./transaction_type.model');
 const Role = require('./role.model');
@@ -21,10 +21,10 @@ module.exports = {
     ContractType,
     Customer,
     Relative,
-    Collateral,
+    Collaterals,
     CollateralsType,
     Image,
-    PaymentSchedule,
+    PaymentSchedules,
     Transaction,
     TransactionType,
     Role,

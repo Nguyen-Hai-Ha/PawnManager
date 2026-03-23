@@ -55,8 +55,10 @@ CREATE TABLE IF NOT EXISTS collaterals(
     name TEXT NOT NULL,
     metadata TEXT DEFAULT '{}',
     status TEXT DEFAULT 'Đang cầm',
+    id_contract INTEGER NOT NULL,
     id_collateral_type INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_contract) REFERENCES contracts(id),
     FOREIGN KEY (id_collateral_type) REFERENCES collaterals_type(id)
 );
 

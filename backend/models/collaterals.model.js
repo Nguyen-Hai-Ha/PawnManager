@@ -17,13 +17,14 @@ const Collaterals = {
         return stmt.get(id);
     },
     create: (data) => {
-        const sql = `INSERT INTO collaterals (name, metadata, status, id_collateral_type) VALUES (?, ?, ?, ?)`;
+        const sql = `INSERT INTO collaterals (name, metadata, status, id_contract, id_collateral_type) VALUES (?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.name, data.metadata, data.status, data.id_collateral_type);
-        return result.lastInsertRowid;
+        const result = stmt.run(data.name, data.metadata, data.status, data.id_contract, data.id_collateral_type);
+        const id = result.lastInsertRowid;
+        return { id };
     },
     update: (id, data) => {
-        const sql = `UPDATE collaterals SET name = @name, metadata = @metadata, status = @status, id_collateral_type = @id_collateral_type WHERE id = @id`;
+        const sql = `UPDATE collaterals SET name = @name, metadata = @metadata, status = @status, id_contract = @id_contract, id_collateral_type = @id_collateral_type WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;

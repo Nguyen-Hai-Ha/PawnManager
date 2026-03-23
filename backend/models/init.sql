@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS contracts (
     payment_term INTEGER,
     term_unit TEXT,
     total_periods INTEGER,
+    interest_type TEXT,
     status TEXT DEFAULT 'active',
     id_customer INTEGER NOT NULL,
     id_contract_type INTEGER NOT NULL,

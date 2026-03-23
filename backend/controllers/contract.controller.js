@@ -1,4 +1,4 @@
-const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions } = require('../models');
+const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs } = require('../models');
 
 const ContractController = {
     getAll: (req, res) => {
@@ -13,10 +13,10 @@ const ContractController = {
         try {
             const contract = Contract.getById(req.params.id);
             const collateral = Collaterals.getByContractId(req.params.id);
-            const relative = Relative.getById(req.params.id);
-            const paymentSchedules = PaymentSchedules.getById(req.params.id);
+            // const relative = Relative.getById(req.params.id);
+            const paymentSchedules = PaymentSchedules.getByContractId(req.params.id);
             const transactions = Transactions.getByContractId(req.params.id);
-            res.json({ contract, collateral, relative, paymentSchedules, transactions });
+            res.json({ contract, collateral, paymentSchedules, transactions });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -25,6 +25,7 @@ const ContractController = {
         try {
             const dataContract = req.body.contract;
             const dataCollateral = req.body.collateral;
+            const dataStaff = req.body.staff;
             // const dataImage = req.body.image;
             // let dataRelative = null;
             // let dataImage = null;
@@ -42,6 +43,22 @@ const ContractController = {
             const contract = Contract.create(dataContract);
             dataCollateral.id_contract = contract.id;
             const collateral = Collaterals.create(dataCollateral);
+
+            const transaction = Transactions.create({
+                amount: dataContract.loan_amount,
+                other_fees: 0,
+                id_contract: contract.id,
+                id_transaction_type: 1,
+                id_staff: dataStaff.id,
+                id_schedule: null
+            });
+
+            const auditLog = AuditLogs.create({
+                action: 'Tạo hợp đồng',
+                details: `Tạo hợp đồng ${contract.id} với số tiền ${dataContract.loan_amount} bởi nhân viên ${dataStaff.id}`,
+                id_staff: dataStaff.id
+            });
+
             let paymentSchedule = [];
             // Tạo hợp đồng theo ngày
             if (dataContract.term_unit == "Ngày") {
@@ -87,9 +104,9 @@ const ContractController = {
                         principal_amount: principalAmount
                     });
                     // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
-                    if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)){
+                    if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)) {
                         PaymentSchedules.create({
-                            id_contract: dataContract.id,
+                            id_contract: contract.id,
                             period_number: i + 1,
                             expected_date: formattedDate,
                             interest_amount: 0,
@@ -160,9 +177,9 @@ const ContractController = {
                     });
 
                     // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
-                    if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)){
+                    if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)) {
                         PaymentSchedules.create({
-                            id_contract: dataContract.id,
+                            id_contract: contract.id,
                             period_number: i + 1,
                             expected_date: formattedDate,
                             interest_amount: 0,
@@ -174,7 +191,7 @@ const ContractController = {
             }
 
             // const image = Image.create(dataImage);
-            res.json({ contract, collateral, paymentSchedule });
+            res.json({ contract, collateral, paymentSchedule, transaction, auditLog });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

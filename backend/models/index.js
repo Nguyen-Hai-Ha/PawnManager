@@ -7,7 +7,7 @@ const Collaterals = require('./collaterals.model');
 const CollateralsType = require('./collaterals_type.model');
 const Image = require('./images.model');
 const PaymentSchedules = require('./payment_schedules.model');
-const Transaction = require('./transactions.model');
+const Transactions = require('./transactions.model');
 const TransactionType = require('./transaction_type.model');
 const Role = require('./role.model');
 const Staff = require('./staff.model');
@@ -25,7 +25,7 @@ module.exports = {
     CollateralsType,
     Image,
     PaymentSchedules,
-    Transaction,
+    Transactions,
     TransactionType,
     Role,
     Staff,

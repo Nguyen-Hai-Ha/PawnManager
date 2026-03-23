@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const ContractController = require('../controllers/contract.controller');
 
-router.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
+router.get('/', ContractController.getAll);
+router.get('/:id', ContractController.getById);
+router.post('/', ContractController.create);
 module.exports = router;

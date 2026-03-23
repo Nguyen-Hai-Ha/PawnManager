@@ -1,4 +1,4 @@
-const { Contract, Collateral, Relative, Image, PaymentSchedules } = require('../models');
+const { Contract, Collateral, Relative, Image, PaymentSchedules, Transactions } = require('../models');
 
 const ContractController = {
     getAll: (req, res) => {
@@ -12,7 +12,11 @@ const ContractController = {
     getById: (req, res) => {
         try {
             const contract = Contract.getById(req.params.id);
-            res.json(contract);
+            const collateral = Collateral.getByContractId(req.params.id);
+            const relative = Relative.getById(req.params.id);
+            const paymentSchedules = PaymentSchedules.getById(req.params.id);
+            const transactions = Transactions.getByContractId(req.params.id);
+            res.json({ contract, collateral, relative, paymentSchedules, transactions });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -26,6 +30,9 @@ const ContractController = {
             if (req.body.relative && req.body.image) {
                 dataRelative = req.body.relative;
                 dataImage = req.body.image;
+                const collateral = Collateral.create(dataCollateral);
+                const relative = Relative.create(dataRelative);
+                const image = Image.create(dataImage);
             }
 
             if (!dataContract || !dataCollateral) {
@@ -139,17 +146,6 @@ const ContractController = {
                 }
             }
             const contract = Contract.create(dataContract);
-            const collateral = Collateral.create(dataCollateral);
-            const relative = Relative.create(dataRelative);
-            const image = Image.create(dataImage);
-            res.json(contract);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
-    update: (req, res) => {
-        try {
-            const contract = Contract.update(req.params.id, req.body);
             res.json(contract);
         } catch (error) {
             res.status(500).json({ error: error.message });

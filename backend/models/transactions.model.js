@@ -11,6 +11,15 @@ const Transactions = {
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
+    getByContractId: (id) => {
+        const sql = `SELECT * FROM transactions WHERE id_contract = ?
+        INNER JOIN transactions_types ON transactions.id_transactions_type = transactions_types.id
+        INNER JOIN schedules ON transactions.id_schedule = schedules.id
+        INNER JOIN contracts ON transactions.id_contract = contracts.id
+        INNER JOIN staffs ON transactions.id_staff = staffs.id`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id);
+    },
     create: (data) => {
         const sql = `INSERT INTO transactions (id_contract, id_transactions_type, id_schedule, id_staff, amount, other_fees) VALUES (?, ?, ?, ?, ?, ?)`
         const stmt = db.prepare(sql);

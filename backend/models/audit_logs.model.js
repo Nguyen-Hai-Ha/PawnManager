@@ -15,7 +15,7 @@ const AuditLogs = {
         const sql = `INSERT INTO audit_logs (action, details, id_staff) VALUES (?, ?, ?)`
         const stmt = db.prepare(sql);
         const result = stmt.run(data.action, data.details, data.id_staff);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
         const sql = `UPDATE audit_logs SET action = @action, details = @details, id_staff = @id_staff WHERE id = @id`;

@@ -15,7 +15,7 @@ const CollateralsType = {
         const sql = `INSERT INTO collaterals_type (name) VALUES (?)`;
         const stmt = db.prepare(sql);
         const result = stmt.run(data.name);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
         const sql = `UPDATE collaterals_type SET name = @name WHERE id = @id`;

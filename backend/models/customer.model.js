@@ -15,7 +15,7 @@ const Customer = {
         const sql = `INSERT INTO customers (name, phone, address, cccd, images_cccd) VALUES (?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);
         const result = stmt.run(data.name, data.phone, data.address, data.cccd, data.images_cccd);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
         const sql = `UPDATE customers SET name = @name, phone = @phone, address = @address, cccd = @cccd, images_cccd= @images_cccd WHERE id = @id`;

@@ -18,7 +18,7 @@ const Staff = {
         const sql = `INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES (?, ?, ?, ?, ?, ?, ?)`
         const stmt = db.prepare(sql);
         const result = stmt.run(data.name, data.email, hashedPassword, data.phone, data.address, data.cccd, data.id_role);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
         const sql = `UPDATE staff SET name = @name, email = @email, password = @password, phone = @phone, address = @address, cccd = @cccd, id_role = @id_role WHERE id = @id`;

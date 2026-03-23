@@ -24,7 +24,7 @@ const Transactions = {
         const sql = `INSERT INTO transactions (id_contract, id_transaction_type, id_schedule, id_staff, amount, other_fees) VALUES (?, ?, ?, ?, ?, ?)`
         const stmt = db.prepare(sql);
         const result = stmt.run(data.id_contract, data.id_transaction_type, data.id_schedule, data.id_staff, data.amount, data.other_fees);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     // update: (id, data) => {
     //     const sql = `UPDATE transactions SET id_contract = @id_contract, id_transactions_type = @id_transactions_type, id_schedule = @id_schedule, id_staff = @id_staff, amount = @amount, other_fees = @other_fees WHERE id = @id`;

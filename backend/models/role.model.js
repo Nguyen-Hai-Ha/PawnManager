@@ -10,7 +10,7 @@ const Role = {
         const sql = `INSERT INTO role (name) VALUES (?)`;
         const stmt = db.prepare(sql);
         const result = stmt.run(data.name);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     delete: (id) => {
         const sql = `DELETE FROM role WHERE id = ?`;

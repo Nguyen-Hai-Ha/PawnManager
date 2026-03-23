@@ -15,7 +15,7 @@ const Relative = {
         const sql = `INSERT INTO relative (name, phone, address, cccd, job, workplace, id_customer) VALUES (?, ?, ?, ?, ?, ?, ?)`
         const stmt = db.prepare(sql);
         const result = stmt.run(data.name, data.phone, data.address, data.cccd, data.job, data.workplace, data.id_customer);
-        return result.lastInsertRowid;
+        return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
         const sql = `UPDATE relative SET name = @name, phone = @phone, address = @address, cccd = @cccd, job = @job, workplace = @workplace, id_customer = @id_customer WHERE id = @id`;

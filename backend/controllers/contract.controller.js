@@ -1,4 +1,4 @@
-const { Contract, Collateral, Relative, Image, PaymentSchedules, Transactions } = require('../models');
+const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions } = require('../models');
 
 const ContractController = {
     getAll: (req, res) => {
@@ -12,7 +12,7 @@ const ContractController = {
     getById: (req, res) => {
         try {
             const contract = Contract.getById(req.params.id);
-            const collateral = Collateral.getByContractId(req.params.id);
+            const collateral = Collaterals.getByContractId(req.params.id);
             const relative = Relative.getById(req.params.id);
             const paymentSchedules = PaymentSchedules.getById(req.params.id);
             const transactions = Transactions.getByContractId(req.params.id);
@@ -39,31 +39,35 @@ const ContractController = {
                 return res.status(400).json({ error: 'Data is required' });
             }
 
+            const contract = Contract.create(dataContract);
+            dataCollateral.id_contract = contract.id;
+            const collateral = Collaterals.create(dataCollateral);
+            let paymentSchedule = [];
             // Tạo hợp đồng theo ngày
-            if(dataContract.term_unit == "Ngày") {
+            if (dataContract.term_unit == "Ngày") {
                 // tính lãi mỗi kỳ chia theo ngày
                 let interestAmount = 0;
                 // nếu là lãi theo %
                 // percent*term: lãi mỗi kỳ VD: 30tr x 5% = 1tr5 cho 1 kỳ
                 // percent/term: lãi mỗi kỳ chia cho số kỳ VD: 30tr x 5% = 1tr5 tổng lãi chia cho 3 kỳ = 500k/kỳ
                 // daily_amount: lãi mỗi ngày nhân với số ngày VD: lãi 50k/ngày nhân với số ngày 
-                if(dataContract.interest_type === "percent*term"){
+                if (dataContract.interest_type === "percent*term") {
                     interestAmount = dataContract.loan_amount * dataContract.interest_rate / 100;
-                } else if(dataContract.interest_type === "percent/term"){
-                    interestAmount = (dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.payment_term;
-                } else if(dataContract.interest_type === "daily_amount"){
+                } else if (dataContract.interest_type === "percent/term") {
+                    interestAmount = (dataContract.loan_amount * (dataContract.interest_rate / 100)) / dataContract.total_periods;
+                } else if (dataContract.interest_type === "daily_amount") {
                     interestAmount = dataContract.interest_rate * dataContract.payment_term;
                 }
-                
+
                 // tính ngày trả cho từng kỳ
                 const startDate = new Date(dataContract.start_date);
                 const paymentTerm = parseInt(dataContract.payment_term);
-                const totalPeriods = parseInt(dataContract.total_periods);
+                let totalPeriods = parseInt(dataContract.total_periods);
 
                 let principalAmount = 0;
                 // tiền gốc mỗi kỳ chỉ áp dụng cho HĐ trả góp
-                if(dataContract.id_contract_type == 3 ) {
-                    principalAmount = dataContract.loan_amount / dataContract.payment_term;
+                if (dataContract.id_contract_type == 3) {
+                    principalAmount = dataContract.loan_amount / dataContract.total_periods;
                 }
 
                 for (let i = 1; i <= totalPeriods; i++) {
@@ -74,41 +78,52 @@ const ContractController = {
                     // Định dạng lại thành YYYY-MM-DD để lưu vào SQLite
                     const formattedDate = expectedDate.toISOString().split('T')[0];
 
-                    const paymentSchedule = PaymentSchedules.create({
-                        id_contract: dataContract.id,
+                    paymentSchedule = PaymentSchedules.create({
+                        id_contract: contract.id,
                         period_number: i,
                         expected_date: formattedDate,
                         is_paid: 0,
                         interest_amount: interestAmount,
                         principal_amount: principalAmount
                     });
+                    // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
+                    if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)){
+                        PaymentSchedules.create({
+                            id_contract: dataContract.id,
+                            period_number: i + 1,
+                            expected_date: formattedDate,
+                            interest_amount: 0,
+                            principal_amount: dataContract.loan_amount,
+                            is_paid: 0
+                        });
+                    }
                 }
-            } 
+            }
             // tạo hợp đồng theo tháng
-            else if(dataContract.term_unit == "Tháng") {
+            else if (dataContract.term_unit == "Tháng") {
                 // tính ngày trả cho từng kỳ
                 const startDate = new Date(dataContract.start_date);
-                const totalPeriods = dataContract.total_periods;    
+                const totalPeriods = dataContract.total_periods;
 
                 // hàm tính số ngày giữa 2 tháng
                 const countDaysBetween = (startDate, endDate) => {
                     const start = new Date(startDate);
                     const end = new Date(endDate);
-                    
+
                     // Tính khoảng cách
                     const diffInMs = end - start;
-                    
+
                     // Đổi sang ngày (1 ngày = 24h * 60p * 60s * 1000ms)
                     return Math.round(diffInMs / (1000 * 60 * 60 * 24));
                 };
 
                 let principalAmount = 0;
                 // tiền gốc mỗi kỳ chỉ áp dụng cho HĐ trả góp
-                if(dataContract.id_contract_type == 3 ) {
-                    principalAmount = dataContract.loan_amount / dataContract.payment_term;
+                if (dataContract.id_contract_type == 3) {
+                    principalAmount = dataContract.loan_amount / dataContract.total_periods;
                 }
 
-                for( let  i = 1; i <= totalPeriods; i++){
+                for (let i = 1; i <= totalPeriods; i++) {
                     let expectedDate = new Date(startDate);
                     expectedDate.setMonth(expectedDate.getMonth() + i);
 
@@ -127,38 +142,49 @@ const ContractController = {
                     // percent*term: lãi mỗi kỳ VD: 30tr x 5% = 1tr5 cho 1 kỳ
                     // percent/term: lãi mỗi kỳ chia cho số kỳ VD: 30tr x 5% = 1tr5 tổng lãi chia cho 3 kỳ = 500k/kỳ
                     // daily_amount: lãi mỗi ngày nhân với số ngày VD: lãi 50k/ngày nhân với số ngày 
-                    if(dataContract.interest_type === "percent*term"){
+                    if (dataContract.interest_type === "percent*term") {
                         interestAmount = dataContract.loan_amount * dataContract.interest_rate / 100;
-                    } else if(dataContract.interest_type === "percent/term"){
+                    } else if (dataContract.interest_type === "percent/term") {
                         interestAmount = (dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.payment_term;
-                    } else if(dataContract.interest_type === "daily_amount"){
+                    } else if (dataContract.interest_type === "daily_amount") {
                         interestAmount = dataContract.interest_rate * daysInThisMonth;
-                    } 
-                    
-                    const paymentSchedule = PaymentSchedules.create({
-                        id_contract: dataContract.id,
+                    }
+
+                    paymentSchedule = PaymentSchedules.create({
+                        id_contract: contract.id,
                         period_number: i,
                         expected_date: formattedDate,
                         is_paid: 0,
                         interest_amount: interestAmount,
                         principal_amount: principalAmount
                     });
+
+                    // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
+                    if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)){
+                        PaymentSchedules.create({
+                            id_contract: dataContract.id,
+                            period_number: i + 1,
+                            expected_date: formattedDate,
+                            interest_amount: 0,
+                            principal_amount: dataContract.loan_amount,
+                            is_paid: 0
+                        });
+                    }
                 }
             }
-            const contract = Contract.create(dataContract);
-            const collateral = Collateral.create(dataCollateral);
+
             // const image = Image.create(dataImage);
-            res.json(contract);
+            res.json({ contract, collateral, paymentSchedule });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     },
     delete: (req, res) => {
         try {
-            const contract = Contract.delete(req.params.id);
             const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
-            const collateral = Collateral.deleteByContractId(req.params.id);
-            res.json({contract, paymentSchedules, collateral});
+            const collateral = Collaterals.deleteByContractId(req.params.id);
+            const contract = Contract.delete(req.params.id);
+            res.json({ contract, paymentSchedules, collateral });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

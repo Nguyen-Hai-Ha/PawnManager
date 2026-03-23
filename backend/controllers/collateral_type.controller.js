@@ -1,9 +1,9 @@
-const { CollateralType } = require('../models');
+const { CollateralsType } = require('../models');
 
 const CollateralTypeController = {
     getAll: (req, res) => {
         try {
-            const collateralTypes = CollateralType.getAll();
+            const collateralTypes = CollateralsType.getAll();
             res.json(collateralTypes);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const CollateralTypeController = {
     },
     getById: (req, res) => {
         try {
-            const collateralType = CollateralType.getById(req.params.id);
+            const collateralType = CollateralsType.getById(req.params.id);
             res.json(collateralType);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const CollateralTypeController = {
     },
     create: (req, res) => {
         try {
-            const collateralType = CollateralType.create(req.body);
+            const collateralType = CollateralsType.create(req.body);
             res.json(collateralType);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -27,7 +27,7 @@ const CollateralTypeController = {
     },
     update: (req, res) => {
         try {
-            const collateralType = CollateralType.update(req.params.id, req.body);
+            const collateralType = CollateralsType.update(req.params.id, req.body);
             res.json(collateralType);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -35,7 +35,7 @@ const CollateralTypeController = {
     },
     delete: (req, res) => {
         try {
-            const collateralType = CollateralType.delete(req.params.id);
+            const collateralType = CollateralsType.delete(req.params.id);
             res.json(collateralType);
         } catch (error) {
             res.status(500).json({ error: error.message });

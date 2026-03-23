@@ -25,6 +25,7 @@ const ContractController = {
         try {
             const dataContract = req.body.contract;
             const dataCollateral = req.body.collateral;
+            // const dataImage = req.body.image;
             // let dataRelative = null;
             // let dataImage = null;
             // if (req.body.relative && req.body.image) {
@@ -146,6 +147,7 @@ const ContractController = {
             }
             const contract = Contract.create(dataContract);
             const collateral = Collateral.create(dataCollateral);
+            // const image = Image.create(dataImage);
             res.json(contract);
         } catch (error) {
             res.status(500).json({ error: error.message });

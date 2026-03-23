@@ -2,29 +2,18 @@ const db = require('../config/database');
 
 const TransactionType = {
     getAll: () => {
-        const sql = `SELECT * FROM transaction_type`;
+        const sql = `SELECT * FROM transactions_types`;
         const stmt = db.prepare(sql);
         return stmt.all();
     },
-    getById: (id) => {
-        const sql = `SELECT * FROM transaction_type WHERE id = ?`;
-        const stmt = db.prepare(sql);
-        return stmt.get(id);
-    },
     create: (data) => {
-        const sql = `INSERT INTO transaction_type (name) VALUES (?)`;
+        const sql = `INSERT INTO transactions_types (name) VALUES (?)`;
         const stmt = db.prepare(sql);
         const result = stmt.run(data.name);
         return result.lastInsertRowid;
     },
-    update: (id, data) => {
-        const sql = `UPDATE transaction_type SET name = @name WHERE id = @id`;
-        const stmt = db.prepare(sql);
-        const result = stmt.run({ ...data, id: id });
-        return result.changes;
-    },
     delete: (id) => {
-        const sql = `DELETE FROM transaction_type WHERE id = ?`;
+        const sql = `DELETE FROM transactions_types WHERE id = ?`;
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;

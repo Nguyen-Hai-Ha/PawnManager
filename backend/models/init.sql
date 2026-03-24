@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS images(
 CREATE TABLE IF NOT EXISTS payment_schedules(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     period_number INTEGER NOT NULL,
+    from_date TEXT NOT NULL,
     expected_date TEXT NOT NULL,
     principal_amount REAL NOT NULL,
     interest_amount REAL NOT NULL,

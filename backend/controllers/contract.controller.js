@@ -1,4 +1,6 @@
-const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs } = require('../models');
+const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer } = require('../models');
+const generateContractDoc = require('../services/DocumentService');
+const dayjs = require('dayjs');
 
 const ContractController = {
     getAll: (req, res) => {
@@ -17,6 +19,16 @@ const ContractController = {
             const paymentSchedules = PaymentSchedules.getByContractId(req.params.id);
             const transactions = Transactions.getByContractId(req.params.id);
             res.json({ contract, collateral, paymentSchedules, transactions });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    getPaymentDetails: (req, res) => {
+        try {
+            const paymentDetails = Contract.getPaymentDetails(req.params.id);
+            const contract = Contract.getById(req.params.id);
+            const customer = Customer.getById(contract.id_customer);
+            res.json({ paymentDetails, contract, customer });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -95,9 +107,23 @@ const ContractController = {
                     // Định dạng lại thành YYYY-MM-DD để lưu vào SQLite
                     const formattedDate = expectedDate.toISOString().split('T')[0];
 
+                    // lấy ngày bắt đầu
+                    let fromDate;
+                    if (i === 1) {
+                        fromDate = startDate.toISOString().split('T')[0];
+                    } else {
+                        // Lấy ngày kết thúc kỳ trước
+                        const prevExpectedDate = PaymentSchedules.getByContractId(contract.id)
+                            .find(s => s.period_number === i - 1).expected_date;
+
+                        // Cộng thêm 1 ngày để bắt đầu kỳ mới
+                        fromDate = dayjs(prevExpectedDate).add(1, 'day').format('YYYY-MM-DD');
+                    }
+
                     paymentSchedule = PaymentSchedules.create({
                         id_contract: contract.id,
                         period_number: i,
+                        from_date: fromDate,
                         expected_date: formattedDate,
                         is_paid: 0,
                         interest_amount: interestAmount,
@@ -108,6 +134,7 @@ const ContractController = {
                         PaymentSchedules.create({
                             id_contract: contract.id,
                             period_number: i + 1,
+                            from_date: formattedDate,
                             expected_date: formattedDate,
                             interest_amount: 0,
                             principal_amount: dataContract.loan_amount,
@@ -167,9 +194,23 @@ const ContractController = {
                         interestAmount = dataContract.interest_rate * daysInThisMonth;
                     }
 
+                    // lấy ngày bắt đầu
+                    let fromDate;
+                    if (i === 1) {
+                        fromDate = startDate.toISOString().split('T')[0];
+                    } else {
+                        // Lấy ngày kết thúc kỳ trước
+                        const prevExpectedDate = PaymentSchedules.getByContractId(contract.id)
+                            .find(s => s.period_number === i - 1).expected_date;
+
+                        // Cộng thêm 1 ngày để bắt đầu kỳ mới
+                        fromDate = dayjs(prevExpectedDate).add(1, 'day').format('YYYY-MM-DD');
+                    }
+
                     paymentSchedule = PaymentSchedules.create({
                         id_contract: contract.id,
                         period_number: i,
+                        from_date: fromDate,
                         expected_date: formattedDate,
                         is_paid: 0,
                         interest_amount: interestAmount,
@@ -202,6 +243,23 @@ const ContractController = {
             const collateral = Collaterals.deleteByContractId(req.params.id);
             const contract = Contract.delete(req.params.id);
             res.json({ contract, paymentSchedules, collateral });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    print: (req, res) => {
+        try {
+            const { id } = req.params;
+            const contract = Contract.getDetailForPrint(id);
+            const filePath = generateContractDoc(contract);
+            res.download(filePath, (err) => {
+                if (err) {
+                    if (!res.headersSent) {
+                        res.status(500).json({ error: err.message });
+                    }
+                }
+
+            });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

@@ -39,7 +39,15 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    updateStatus: (data, id) => {
+        
+        const sql = `UPDATE payment_schedules SET is_paid = @is_paid WHERE id = @id`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run({ ...data, id: id });
+        return result.changes;
     }
+    
 }
 
 module.exports = PaymentSchedules;

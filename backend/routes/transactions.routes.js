@@ -5,7 +5,9 @@ const TransactionsController = require('../controllers/transactions.controller')
 router.get('/', TransactionsController.getAll);
 router.get('/:id', TransactionsController.getById);
 router.get('/contract/:id', TransactionsController.getByContractId);
+router.get('/schedule/:id', TransactionsController.getByScheduleId);
 router.post('/', TransactionsController.create);
+router.post('/reduce-principal', TransactionsController.reducePrincipal);
 router.delete('/:id', TransactionsController.delete);
 
 module.exports = router;

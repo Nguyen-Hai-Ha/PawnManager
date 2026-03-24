@@ -12,11 +12,21 @@ const Transactions = {
         return stmt.get(id);
     },
     getByContractId: (id) => {
-        const sql = `SELECT * FROM transactions WHERE id_contract = ?
+        const sql = `SELECT * FROM transactions 
         INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
-        INNER JOIN schedules ON transactions.id_schedule = schedules.id
         INNER JOIN contracts ON transactions.id_contract = contracts.id
-        INNER JOIN staffs ON transactions.id_staff = staffs.id`;
+        INNER JOIN staff ON transactions.id_staff = staff.id
+        WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id);
+    },
+    getByScheduleId: (id) => {
+        const sql = `SELECT * FROM transactions 
+        INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
+        INNER JOIN payment_schedules ON transactions.id_schedule = payment_schedules.id
+        INNER JOIN contracts ON transactions.id_contract = contracts.id
+        INNER JOIN staff ON transactions.id_staff = staff.id
+        WHERE id_schedule = ?`;
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },
@@ -26,12 +36,6 @@ const Transactions = {
         const result = stmt.run(data.id_contract, data.id_transaction_type, data.id_schedule, data.id_staff, data.amount, data.other_fees);
         return { id: result.lastInsertRowid };
     },
-    // update: (id, data) => {
-    //     const sql = `UPDATE transactions SET id_contract = @id_contract, id_transactions_type = @id_transactions_type, id_schedule = @id_schedule, id_staff = @id_staff, amount = @amount, other_fees = @other_fees WHERE id = @id`;
-    //     const stmt = db.prepare(sql);
-    //     const result = stmt.run({ ...data, id: id });
-    //     return result.changes;
-    // },
     delete: (id) => {
         const sql = `DELETE FROM transactions WHERE id = ?`;
         const stmt = db.prepare(sql);

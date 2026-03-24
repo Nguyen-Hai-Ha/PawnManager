@@ -14,8 +14,11 @@
     "better-sqlite3": "^12.8.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dayjs": "^1.11.20",
+    "docxtemplater": "^3.68.3",
     "express": "^5.2.1",
     "morgan": "^1.10.1",
+    "pizzip": "^3.2.0",
     "sqlite3": "^6.0.1"
   }
 }

@@ -40,11 +40,29 @@ const TransactionsController = {
             const transaction = Transactions.create(data);
 
             const paymentSchedule = PaymentSchedules.getById(data.id_schedule);
+
+            // lấy kỳ lãi tiếp theo
+            const nextPaymentSchedule = PaymentSchedules.getById(data.id_schedule + 1);
+            const nextInterest = nextPaymentSchedule.interest_amount;
+            const nextPrincipal = nextPaymentSchedule.principal_amount;
+
             if (paymentSchedule.interest_amount + paymentSchedule.principal_amount === data.amount) {
                 PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
-            } else if (paymentSchedule.interest_amount + paymentSchedule.principal_amount < data.amount) {
-                const remainingAmount = (paymentSchedule.interest_amount + paymentSchedule.principal_amount) - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
-                PaymentSchedules.updatePrincipalAmount(data.id_schedule, remainingAmount);
+            }
+            // nếu đóng dư lãi kỳ hiện tại
+            else if (paymentSchedule.interest_amount + paymentSchedule.principal_amount < data.amount) {
+                // lấy tiền dư - tiền lãi kỳ tiếp theo
+                const id_next_schedule = data.id_schedule + 1;
+                let remainingAmount = 0
+                if (nextInterest > 0) {
+                    // nếu còn kỳ lãi tiếp theo thì trừ tiền lãi kỳ tiếp theo
+                    remainingAmount = nextInterest - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
+                    PaymentSchedules.updatePrincipalAmount(id_next_schedule, remainingAmount);
+                } else {
+                    // nếu không còn kỳ tiếp theo không còn lãi thì trừ tiền gốc kỳ tiếp theo
+                    remainingAmount = nextPrincipal - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
+                    PaymentSchedules.updatePrincipalAmount(id_next_schedule, remainingAmount);
+                }
                 PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
             }
 

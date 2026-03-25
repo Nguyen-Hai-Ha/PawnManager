@@ -46,11 +46,6 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;
-    },
-    getTotalToFinalSettlement: (id) => {
-        const sql = `SELECT SUM(interest_amount + principal_amount) as total FROM payment_schedules WHERE id_contract = ? AND is_paid = 0`;
-        const stmt = db.prepare(sql);
-        return stmt.get(id);
     }
     
 }

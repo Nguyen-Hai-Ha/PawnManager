@@ -210,25 +210,43 @@ const TransactionsController = {
             const payment_date = data.payment_date || new Date().toISOString().split('T')[0];
             const id_staff = data.id_staff;
 
+            // Hàm tính số ngày giữa 2 ngày
+            const countDaysBetween = (start, end) => {
+                const s = new Date(start); s.setHours(0, 0, 0, 0);
+                const e = new Date(end); e.setHours(0, 0, 0, 0);
+                return Math.round((e - s) / (1000 * 60 * 60 * 24));
+            };
+
             const contract = Contract.getById(id_contract);
             if (!contract) return { error: "Hợp đồng không tồn tại" };
 
             // Lấy tất cả kỳ chưa đóng của hợp đồng này (được sắp xếp theo period_number tăng dần)
             const schedules = PaymentSchedules.getByContractId(id_contract).filter(s => s.is_paid === 0).sort((a, b) => a.period_number - b.period_number);
 
-            const total = PaymentSchedules.getTotalToFinalSettlement(id_contract);
-
-            if(total.total != amount){
-                return { error: "Số tiền không khớp" };
-            }
-
-            if (schedules.length === 0) {
-                return { error: "Hợp đồng đã hoàn tất" };
-            }
-
             // Kỳ thanh toán hiện tại
             const current_schedule = schedules[0];
 
+            // tính gốc còn lại
+            const total = schedules.reduce((acc, schedule) => acc + schedule.principal_amount, 0);
+
+            const start_date = new Date(current_schedule.from_date);
+            const end_date = new Date(current_schedule.expected_date);
+
+            const day_used = countDaysBetween(start_date, payment_date);
+
+            const totalDay = countDaysBetween(start_date, end_date)
+            // tính lãi / ngày đã qua
+            const interest_per_day = current_schedule.interest_amount / totalDay;
+            const interest_amount = Math.round(interest_per_day * day_used);
+
+            // kiểm tra số tiền có đủ để tất toán không
+            if (amount < (total + interest_amount)) {
+                return { error: "Số tiền không đủ để tất toán hợp đồng" };
+            }
+            
+            if (schedules.length === 0) {
+                return { error: "Hợp đồng đã hoàn tất" };
+            }
             // Tạo giao dịch loại 3 (tất toán)
             const transaction = Transactions.create({
                 amount: amount,

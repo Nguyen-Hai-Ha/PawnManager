@@ -52,6 +52,18 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
+    updateInterestAmount: (id, interest_amount) => {
+        const sql = `UPDATE payment_schedules SET interest_amount = @interest_amount WHERE id = @id AND is_paid = 0`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run({ interest_amount: interest_amount, id: id });
+        return result.changes;
+    },
+    updatePrincipalAmount: (id, principal_amount) => {
+        const sql = `UPDATE payment_schedules SET principal_amount = @principal_amount WHERE id = @id AND is_paid = 0`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run({ principal_amount: principal_amount, id: id });
+        return result.changes;
+    },
     
 }
 

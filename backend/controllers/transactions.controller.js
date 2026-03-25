@@ -42,6 +42,10 @@ const TransactionsController = {
             const paymentSchedule = PaymentSchedules.getById(data.id_schedule);
             if (paymentSchedule.interest_amount + paymentSchedule.principal_amount === data.amount) {
                 PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
+            } else if (paymentSchedule.interest_amount + paymentSchedule.principal_amount < data.amount) {
+                const remainingAmount = (paymentSchedule.interest_amount + paymentSchedule.principal_amount) - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
+                PaymentSchedules.updatePrincipalAmount(data.id_schedule, remainingAmount);
+                PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
             }
 
             const contract = Contract.getById(data.id_contract);

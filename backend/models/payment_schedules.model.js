@@ -46,7 +46,12 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;
-    }
+    },
+    getTotalPrincipalByContractId: (id) => {
+        const sql = `SELECT SUM(principal_amount) as total_principal FROM payment_schedules WHERE id_contract = ? and is_paid = 0`;
+        const stmt = db.prepare(sql);
+        return stmt.get(id);
+    },
     
 }
 

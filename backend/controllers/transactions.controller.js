@@ -106,8 +106,6 @@ const TransactionsController = {
                 return res.json({ transaction, message: "Hợp đồng đã được tất toán" });
             }
 
-
-
             // Xử lý chia lãi cho kỳ hiện tại
             const periodStartDate = new Date(current_schedule.from_date);
             const periodEndDate = new Date(current_schedule.expected_date);
@@ -149,7 +147,8 @@ const TransactionsController = {
 
             let principalAmount = 0;
             if(current_schedule.principal_amount > 0 && contract.id_contract_type == 3){
-                principalAmount = Math.floor(newLoanAmount / schedules.length);
+                const total_principal = schedules.reduce((acc, schedule) => acc + schedule.principal_amount, 0);
+                principalAmount = Math.floor(total_principal - newLoanAmount);
             }
 
             // Cập nhật lại số tiền của kỳ hiện tại

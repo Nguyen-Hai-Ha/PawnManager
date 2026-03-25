@@ -38,15 +38,14 @@ const ContractController = {
             const dataContract = req.body.contract;
             const dataCollateral = req.body.collateral;
             const dataStaff = req.body.staff;
-            // const dataImage = req.body.image;
-            // let dataRelative = null;
-            // let dataImage = null;
-            // if (req.body.relative && req.body.image) {
-            //     dataRelative = req.body.relative;
-            //     dataImage = req.body.image;
-            //     const relative = Relative.create(dataRelative);
-            //     const image = Image.create(dataImage);
-            // }
+            let dataRelative = null;
+            let dataImage = null;
+            if (req.body.relative && req.body.image) {
+                dataRelative = req.body.relative;
+                dataImage = req.body.image;
+                const relative = Relative.create(dataRelative);
+                const image = Image.create(dataImage);
+            }
 
             if (!dataContract || !dataCollateral) {
                 return res.status(400).json({ error: 'Data is required' });

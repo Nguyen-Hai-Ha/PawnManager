@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS customers (
     phone TEXT NOT NULL,
     address TEXT,
     cccd TEXT,
+    birth_date TEXT,
     images_cccd TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

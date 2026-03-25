@@ -40,6 +40,7 @@ const generateContractDoc = (data) => {
         phone: data.phone,
         cccd: data.cccd,
         address: data.address,
+        birth_date: data.birth_date,
         loan_amount: data.Loan_amount.toLocaleString('vi-VN'),
         interest_rate: data.Interest_rate,
         start_date: data.Start_date,

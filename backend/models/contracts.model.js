@@ -58,6 +58,7 @@ const Contract = {
                 cu.phone,
                 cu.cccd,
                 cu.address,
+                cu.birth_date,
                 c.loan_amount as Loan_amount,
                 c.interest_rate as Interest_rate,
                 c.start_date as Start_date,

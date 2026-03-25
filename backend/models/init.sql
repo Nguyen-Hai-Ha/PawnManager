@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS images(
 CREATE TABLE IF NOT EXISTS payment_schedules(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     period_number INTEGER NOT NULL,
-    from_date TEXT NOT NULL,
+    from_date TEXT NULL,
     expected_date TEXT NOT NULL,
     principal_amount REAL NOT NULL,
     interest_amount REAL NOT NULL,
@@ -136,8 +136,70 @@ CREATE TABLE IF NOT EXISTS permissions(
 );
 
 CREATE TABLE IF NOT EXISTS role_permissions(
-    id_role INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_role INTEGER,
     id_permission INTEGER NOT NULL,
+    PRIMARY KEY (id_role, id_permission),
     FOREIGN KEY (id_role) REFERENCES role(id),
     FOREIGN KEY (id_permission) REFERENCES permissions(id)
 );
+
+INSERT INTO permissions (name) VALUES
+('contract.create'),
+('contract.read'),
+('contract.detail'),
+('contract.print'),
+('contract.delete'),
+('customer.create'),
+('customer.read'),
+('customer.update'),
+('customer.delete'),
+('collateral.create'),
+('collateral.read'),
+('collateral.detail'),
+('collateral.liquidation'),
+('collateral.update'),
+('collateral.delete'),
+('image.create'),
+('image.update'),
+('image.delete'),
+('payment_schedule.read'),
+('payment_schedule.update'),
+('payment_schedule.delete'),
+('transaction.read'),
+('transaction.delete'),
+('transaction.detail'),
+('transaction.reduce'),
+('transaction.final'),
+('staff.create'),
+('staff.read'),
+('staff.update'),
+('staff.delete'),
+('audit_log.read'),
+('role_permission.create'),
+('role_permission.read'),
+('role_permission.update'),
+('role_permission.delete');
+
+
+INSERT INTO role (name) VALUES ('admin'), ('staff');
+INSERT INTO role_permissions (id_role, id_permission) VALUES
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+(1, 6), (1, 7), (1, 8), (1, 9), (1, 10),
+(1, 11), (1, 12), (1, 13), (1, 14), (1, 15),
+(1, 16), (1, 17), (1, 18), (1, 19), (1, 20),
+(1, 21), (1, 22), (1, 23), (1, 24), (1, 25),
+(1, 26), (1, 27), (1, 28), (1, 29), (1, 30),
+(1, 31), (1, 32), (1, 33), (1, 34), (1, 35);
+
+INSERT INTO transactions_types (name) VALUES 
+('Chi cho Vay'), ('Kỳ lãi'), ('Tất toán'), ('Trả bớt gốc');
+
+INSERT INTO contracts_types (name) VALUES 
+('Cầm Đồ'), ('Tín Chấp'), ('Trả Góp');
+
+INSERT INTO collaterals_type (name) VALUES 
+('Xe máy'), ('Ô tô'), ('Điện thoại'), ('Máy tính'), ('Vàng');
+
+INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES 
+('admin', 'pawnadmin@gmail.com', '$2b$10$MzZzlleAClylZEveCMNPvuMe/9ylJj0V3aEa/2lhQxEVoZZ89ZGx2', '0123456789', 'admin', 'admin', 1);
+

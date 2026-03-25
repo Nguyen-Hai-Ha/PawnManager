@@ -98,36 +98,34 @@ const ContractController = {
                     principalAmount = dataContract.loan_amount / dataContract.total_periods;
                 }
 
+                // lưu tạm thời cho kỳ đầu tiên
+
+                let prevExpectedDate = startDate;
                 for (let i = 1; i <= totalPeriods; i++) {
                     let expectedDate = new Date(startDate);
-                    // lấy ngày bắt đầu cộng với (i nhân với số ngày trả theo kỳ)
                     expectedDate.setDate(expectedDate.getDate() + (i * paymentTerm));
-
-                    // Định dạng lại thành YYYY-MM-DD để lưu vào SQLite
                     const formattedDate = expectedDate.toISOString().split('T')[0];
 
-                    // lấy ngày bắt đầu
-                    let fromDate;
+                    // from_date for the first period is startDate, for others it's previous expected_date + 1 day
+                    let currentFromDate;
                     if (i === 1) {
-                        fromDate = startDate.toISOString().split('T')[0];
+                        currentFromDate = startDate.toISOString().split('T')[0];
                     } else {
-                        // Lấy ngày kết thúc kỳ trước
-                        const prevExpectedDate = PaymentSchedules.getByContractId(contract.id)
-                            .find(s => s.period_number === i - 1).expected_date;
-
-                        // Cộng thêm 1 ngày để bắt đầu kỳ mới
-                        fromDate = dayjs(prevExpectedDate).add(1, 'day').format('YYYY-MM-DD');
+                        currentFromDate = dayjs(prevExpectedDate).add(1, 'day').format('YYYY-MM-DD');
                     }
 
-                    paymentSchedule = PaymentSchedules.create({
+                    PaymentSchedules.create({
                         id_contract: contract.id,
                         period_number: i,
-                        from_date: fromDate,
+                        from_date: currentFromDate,
                         expected_date: formattedDate,
                         is_paid: 0,
                         interest_amount: interestAmount,
                         principal_amount: principalAmount
                     });
+
+                    prevExpectedDate = dayjs(formattedDate).add(1, 'day').format('YYYY-MM-DD');
+
                     // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
                     if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)) {
                         PaymentSchedules.create({
@@ -166,6 +164,9 @@ const ContractController = {
                     principalAmount = dataContract.loan_amount / dataContract.total_periods;
                 }
 
+                // lưu tạm thời cho kỳ đầu tiên
+                let currentFromDate = dataContract.start_date;
+
                 for (let i = 1; i <= totalPeriods; i++) {
                     let expectedDate = new Date(startDate);
                     expectedDate.setMonth(expectedDate.getMonth() + i);
@@ -193,34 +194,25 @@ const ContractController = {
                         interestAmount = dataContract.interest_rate * daysInThisMonth;
                     }
 
-                    // lấy ngày bắt đầu
-                    let fromDate;
-                    if (i === 1) {
-                        fromDate = startDate.toISOString().split('T')[0];
-                    } else {
-                        // Lấy ngày kết thúc kỳ trước
-                        const prevExpectedDate = PaymentSchedules.getByContractId(contract.id)
-                            .find(s => s.period_number === i - 1).expected_date;
-
-                        // Cộng thêm 1 ngày để bắt đầu kỳ mới
-                        fromDate = dayjs(prevExpectedDate).add(1, 'day').format('YYYY-MM-DD');
-                    }
-
                     paymentSchedule = PaymentSchedules.create({
                         id_contract: contract.id,
                         period_number: i,
-                        from_date: fromDate,
+                        from_date: currentFromDate,
                         expected_date: formattedDate,
                         is_paid: 0,
                         interest_amount: interestAmount,
                         principal_amount: principalAmount
                     });
 
+                    // sang kỳ tiếp theo thì ngày bắt đầu = ngày kết thúc kỳ trước + 1 ngày
+                    currentFromDate = dayjs(formattedDate).add(1, 'day').format('YYYY-MM-DD');
+
                     // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
                     if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)) {
                         PaymentSchedules.create({
                             id_contract: contract.id,
                             period_number: i + 1,
+                            from_date: formattedDate,
                             expected_date: formattedDate,
                             interest_amount: 0,
                             principal_amount: dataContract.loan_amount,

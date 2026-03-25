@@ -17,13 +17,13 @@ const PaymentSchedules = {
         return stmt.all(id);
     },
     create: (data) => {
-        const sql = `INSERT INTO payment_schedules (id_contract, period_number, expected_date, is_paid, interest_amount, principal_amount) VALUES (?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO payment_schedules (id_contract, period_number, from_date, expected_date, is_paid, interest_amount, principal_amount) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.id_contract, data.period_number, data.expected_date, data.is_paid, data.interest_amount, data.principal_amount);
+        const result = stmt.run(data.id_contract, data.period_number, data.from_date, data.expected_date, data.is_paid, data.interest_amount, data.principal_amount);
         return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
-        const sql = `UPDATE payment_schedules SET id_contract = @id_contract, period_number = @period_number, expected_date = @expected_date, is_paid = @is_paid, interest_amount = @interest_amount, principal_amount = @principal_amount WHERE id = @id`;
+        const sql = `UPDATE payment_schedules SET id_contract = @id_contract, period_number = @period_number, from_date = @from_date, expected_date = @expected_date, is_paid = @is_paid, interest_amount = @interest_amount, principal_amount = @principal_amount WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;
@@ -41,7 +41,7 @@ const PaymentSchedules = {
         return result.changes;
     },
     updateStatus: (data, id) => {
-        
+
         const sql = `UPDATE payment_schedules SET is_paid = @is_paid WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
@@ -64,7 +64,7 @@ const PaymentSchedules = {
         const result = stmt.run({ principal_amount: principal_amount, id: id });
         return result.changes;
     },
-    
+
 }
 
 module.exports = PaymentSchedules;

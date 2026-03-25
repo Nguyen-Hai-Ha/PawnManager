@@ -16,7 +16,7 @@
                 </li>
 
                 <li>
-                    <router-link to="/admin/loans" active-class="active">
+                    <router-link to="/admin/loan-pawn" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Cầm Đồ
                     </router-link>
                 </li>

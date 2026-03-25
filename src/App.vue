@@ -8,7 +8,7 @@ const route = useRoute();
 const pageTitles = {
   'AdminDashboard': 'Dashboard',
   'AdminCustomers': 'Khách Hàng',
-  'AdminLoans': 'Cầm Đồ',
+  'AdminLoanPawn': 'Cầm Đồ',
   'AdminRepayments': 'Trả Góp',
   'AdminPledges': 'Tín Chấp',
   'AdminAssets': 'Quản Lý Tài Sản',
@@ -16,7 +16,7 @@ const pageTitles = {
   'AdminTransactions': 'Quản Lý Thu Chi',
 };
 
-const pageTitle = computed(() => pageTitles[route.name] || 'Dashboard');
+const pageTitle = computed(() => pageTitles[route.name]);
 
 const refreshPage = () => window.location.reload();
 </script>

@@ -8,15 +8,18 @@ import { permissionDirective } from './directives/permission'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUser, faChartLine, faFileSignature,
+import {
+    faUser, faChartLine, faFileSignature,
     faCarSide, faUsersGear, faFileInvoiceDollar,
-    faRotate
+    faRotate, faSort, faPenToSquare, faCircleXmark,
+    faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add( faUser, faChartLine, faFileSignature,
-     faCarSide, faUsersGear, faFileInvoiceDollar,
-     faRotate
-    )
+library.add(faUser, faChartLine, faFileSignature,
+    faCarSide, faUsersGear, faFileInvoiceDollar,
+    faRotate, faSort, faPenToSquare, faCircleXmark,
+    faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight
+)
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)

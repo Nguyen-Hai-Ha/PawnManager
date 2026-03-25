@@ -31,6 +31,11 @@ const Staff = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    getByEmail: (email) => {
+        const sql = `SELECT * FROM staff WHERE email = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.get(email);
     }
 }
 

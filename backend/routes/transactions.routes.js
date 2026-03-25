@@ -8,6 +8,8 @@ router.get('/contract/:id', TransactionsController.getByContractId);
 router.get('/schedule/:id', TransactionsController.getByScheduleId);
 router.post('/', TransactionsController.create);
 router.post('/reduce-principal', TransactionsController.reducePrincipal);
+router.post('/final-settlement', TransactionsController.finalsettlement);
+
 router.delete('/:id', TransactionsController.delete);
 
 module.exports = router;

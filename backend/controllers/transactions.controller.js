@@ -69,6 +69,7 @@ const TransactionsController = {
             const id_contract = data.id_contract;
             const amount = data.amount;
             const payment_date = data.payment_date || new Date().toISOString().split('T')[0];
+            const other_fees = data.other_fees || 0;
             const newInterestRate = data.interest_rate;
 
             const contract = Contract.getById(id_contract);
@@ -87,7 +88,7 @@ const TransactionsController = {
             // Tạo giao dịch loại 4 (trả bớt gốc)
             const transaction = Transactions.create({
                 amount: amount,
-                other_fees: 0,
+                other_fees: other_fees,
                 id_contract: id_contract,
                 id_schedule: current_schedule.id,
                 id_transaction_type: 4, // trả bớt gốc
@@ -196,6 +197,60 @@ const TransactionsController = {
 
         try {
             const result = reduce(req.body);
+            res.json(result);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    finalsettlement: (req, res) => {
+        const final = db.transaction((data) => {
+            const amount = data.amount;
+            const other_fees = data.other_fees || 0;
+            const id_contract = data.id_contract;
+            const payment_date = data.payment_date || new Date().toISOString().split('T')[0];
+            const id_staff = data.id_staff;
+
+            const contract = Contract.getById(id_contract);
+            if (!contract) return { error: "Hợp đồng không tồn tại" };
+
+            // Lấy tất cả kỳ chưa đóng của hợp đồng này (được sắp xếp theo period_number tăng dần)
+            const schedules = PaymentSchedules.getByContractId(id_contract).filter(s => s.is_paid === 0).sort((a, b) => a.period_number - b.period_number);
+
+            const total = PaymentSchedules.getTotalToFinalSettlement(id_contract);
+
+            if(total.total != amount){
+                return { error: "Số tiền không khớp" };
+            }
+
+            if (schedules.length === 0) {
+                return { error: "Hợp đồng đã hoàn tất" };
+            }
+
+            // Kỳ thanh toán hiện tại
+            const current_schedule = schedules[0];
+
+            // Tạo giao dịch loại 3 (tất toán)
+            const transaction = Transactions.create({
+                amount: amount,
+                other_fees: other_fees,
+                id_contract: id_contract,
+                id_schedule: current_schedule.id,
+                id_transaction_type: 3,
+                id_staff: id_staff
+            });
+
+            // Cập nhật trạng thái của hợp đồng
+            Contract.updateStatus({ status: 'Đã Hoàn Tất' }, id_contract);
+
+            // Cập nhật trạng thái của tất cả các kỳ
+            schedules.forEach(schedule => {
+                PaymentSchedules.updateStatus({ is_paid: 1 }, schedule.id);
+            });
+
+            return { transaction, current_schedule, msg: "Hợp đồng đã được tất toán" };
+        });
+        try {
+            const result = final(req.body);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: error.message });

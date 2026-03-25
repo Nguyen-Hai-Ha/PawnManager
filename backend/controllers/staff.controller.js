@@ -1,4 +1,4 @@
-const { Staff } = require('../models');
+const { Staff, RolePermission } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config');
@@ -55,8 +55,11 @@ const StaffController = {
             const isPasswordValid = bcrypt.compareSync(data.password, staff.password);
             if (!isPasswordValid) return res.status(401).json({ error: "Sai mật khẩu" });
 
+            const permissions = RolePermission.getPermissionByRoleId(staff.id_role);
+            const permissionNames = permissions.map(p => p.permission);
+
             const token = jwt.sign({ id: staff.id }, config.secret, { expiresIn: '1d' });
-            res.json({ staff, token });
+            res.json({ staff, token, permissions: permissionNames });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

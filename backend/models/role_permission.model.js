@@ -6,28 +6,27 @@ const RolePermission = {
         const stmt = db.prepare(sql);
         return stmt.all();
     },
-    getById: (id) => {
-        const sql = `SELECT * FROM role_permissions WHERE id = ?`;
-        const stmt = db.prepare(sql);
-        return stmt.get(id);
-    },
     create: (data) => {
         const sql = `INSERT INTO role_permissions (id_role, id_permission) VALUES (?, ?)`
         const stmt = db.prepare(sql);
         const result = stmt.run(data.id_role, data.id_permission);
         return result.lastInsertRowid;
     },
-    update: (id, data) => {
-        const sql = `UPDATE role_permissions SET id_role = @id_role, id_permission = @id_permission WHERE id = @id`;
-        const stmt = db.prepare(sql);
-        const result = stmt.run({ ...data, id: id });
-        return result.changes;
-    },
     delete: (id) => {
         const sql = `DELETE FROM role_permissions WHERE id = ?`;
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    getPermissionByRoleId: (id_role) => {
+        const sql = `
+            SELECT p.name as permission
+            FROM role_permissions rp
+            LEFT JOIN role r ON rp.id_role = r.id
+            LEFT JOIN permissions p ON rp.id_permission = p.id
+            WHERE r.id = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id_role);
     }
 }
 

@@ -1,9 +1,17 @@
 <script setup>
 import Aside from './components/Aside.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { computed } from 'vue';
+import { useAuthStore } from './stores/auth';
+
+const authStore = useAuthStore();
+
+const user = computed(() => authStore.user);
 
 const route = useRoute();
+const router = useRouter();
+
+const isLoginPage = computed(() => route.name === 'Login');
 
 const pageTitles = {
   'AdminDashboard': 'Dashboard',
@@ -16,13 +24,18 @@ const pageTitles = {
   'AdminTransactions': 'Quản Lý Thu Chi',
 };
 
-const pageTitle = computed(() => pageTitles[route.name]);
+const pageTitle = computed(() => pageTitles[route.name] || '');
 
 const refreshPage = () => window.location.reload();
+
+const logout = () => {
+  authStore.logout();
+  router.push('/login');
+};
 </script>
 <template>
   <main>
-    <div class="app-layout">
+    <div class="app-layout" v-if="!isLoginPage">
       <Aside />
       <div class="main-content">
         <!-- Header -->
@@ -36,10 +49,15 @@ const refreshPage = () => window.location.reload();
               <h1>{{ pageTitle }}</h1>
             </div>
             <div class="header-right">
+
               <div class="header-actions">
                 <button class="refresh-btn" @click="refreshPage" title="Tải lại trang">
                   <font-awesome-icon icon="fa-solid fa-rotate" />
                 </button>
+              </div>
+              <div class="header-infor">
+                <span>Hi! {{ user?.name }}</span>
+                <button class="logout-btn" @click="logout">Đăng Xuất</button>
               </div>
             </div>
           </div>
@@ -48,11 +66,25 @@ const refreshPage = () => window.location.reload();
         <router-view />
       </div>
     </div>
+    <div v-else>
+      <router-view />
+    </div>
   </main>
 </template>
+
 <style scoped>
 .app-layout {
   display: flex;
   min-height: 100vh;
+}
+
+.logout-btn {
+  background-color: #1a7a6e;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
 }
 </style>

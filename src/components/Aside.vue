@@ -65,7 +65,7 @@ aside a {
 }
 
 aside a.active {
-    box-shadow: inset 3px 0 0 #49A4E5;
+    box-shadow: inset 3px 0 0 #1A7A6E;
 }
 
 aside a:hover {

@@ -2,6 +2,8 @@ import DashboardView from "@/views/admin/DashboardView.vue";
 import CustomerView from "@/views/admin/CustomerView.vue";
 import LoanPawnView from "@/views/admin/LoanPawnView.vue";
 import RepaymentView from "@/views/admin/RepaymentView.vue";
+import PledgesView from "@/views/admin/PledgesView.vue";
+import AssetsView from "@/views/admin/AssetsView.vue";
 
 import { createRouter, createWebHistory } from 'vue-router';
 

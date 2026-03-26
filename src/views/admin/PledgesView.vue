@@ -1,0 +1,157 @@
+<template>
+    <div class="pledges">
+        <div class="group-function">
+            <div class="search">
+                <div class="search-input">
+                    <label for="search">Tìm kiếm</label>
+                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT">
+                </div>
+                <div class="filter">
+                    <label for="filter">Trạng thái</label>
+                    <select id="filter">
+                        <option value="">Tất cả</option>
+                        <option value="">Đang vay</option>
+                        <option value="">Đã thanh toán</option>
+                        <option value="">Quá hạn</option>
+                    </select>
+                </div>
+                <div class="time-range">
+                    <div class="time-range-input">
+                        <label for="">Thời gian</label>
+                        <input type="date" id="start-date">
+                        <span>-</span>
+                        <input type="date" id="end-date">
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button>Thêm khách hàng</button>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã hợp đồng</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số tiền vay</th>
+                            <th>Số tiền đã trả</th>
+                            <th>Còn phải đóng</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <span class="fw-bold">TC0001</span>
+                                <p>26/03/2026</p>
+                                <p>26/04/2026</p>
+                            </td>
+                            <td>Nguyễn Văn A</td>
+                            <td><span class="text-danger fw-bold">20.000.000</span></td>
+                            <td><span class="text-success fw-bold">500.000</span></td>
+                            <td><span class="text fw-bold">20.000.000</span></td>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
+                            </td>
+                            <td>
+                                <div class="action-cell">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
+                                            icon="circle-xmark" /></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                <span class="fw-bold">TC0002</span>
+                                <p>26/03/2026</p>
+                                <p>26/04/2026</p>
+                            </td>
+                            <td>Trần Dần</td>
+                            <td><span class="text-danger fw-bold">11.000.000</span></td>
+                            <td><span class="text-success fw-bold">250.000</span></td>
+                            <td><span class="text fw-bold">11.250.000</span></td>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
+                            </td>
+                            <td>
+                                <div class="action-cell">
+                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
+                                        <font-awesome-icon icon="fa-solid fa-eye" />
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                <span class="fw-bold">TC0003</span>
+                                <p>26/03/2026</p>
+                                <p>26/04/2026</p>
+                            </td>
+                            <td>Lê văn Luyện</td>
+                            <td><span class="text-danger fw-bold">15.000.000</span></td>
+                            <td><span class="text-success fw-bold">500.000</span></td>
+                            <td><span class="text fw-bold">15.250.000</span></td>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
+                            </td>
+                            <td>
+                                <div class="action-cell">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
+                                            icon="circle-xmark" /></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                <span class="fw-bold">TC0001</span>
+                                <p>26/03/2026</p>
+                                <p>26/04/2026</p>
+                            </td>
+                            <td>Thầy Ông Nội</td>
+                            <td><span class="text-danger fw-bold">30.000.000</span></td>
+                            <td><span class="text-success fw-bold">700.000</span></td>
+                            <td><span class="text fw-bold">31.400.000</span></td>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
+                            </td>
+                            <td>
+                                <div class="action-cell">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
+                                            icon="circle-xmark" /></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <div class="pagination-info">
+                    <span class="page-info">Trang 1/5 (72)</span>
+                </div>
+                <div class="pagination-controls">
+                    <button class="page-btn"><font-awesome-icon icon="angles-left" /></button>
+                    <button class="page-btn"><font-awesome-icon icon="angle-left" /></button>
+                    <button class="page-btn">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn"><font-awesome-icon icon="angle-right" /></button>
+                    <button class="page-btn"><font-awesome-icon icon="angles-right" /></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

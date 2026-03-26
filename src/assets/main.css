@@ -587,7 +587,7 @@ nav a {
 }
 
 .table tbody tr:nth-child(even) {
-  background-color: #CFCFCF;
+  background-color: #e2e2e2;
 }
 
 .sort-icon {
@@ -760,6 +760,12 @@ nav a {
   width: 150px;
 }
 
+.time-range-input span {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000000;
+}
+
 /* ─── REPAYMENT ─── */
 .repayment {
   padding: 10px 20px;
@@ -767,4 +773,9 @@ nav a {
 
 .table td p {
   margin-bottom: 0;
+}
+
+/* ─── PLEDGES ─── */
+.pledges {
+  padding: 10px 20px;
 }

@@ -128,7 +128,27 @@
             </div>
         </div>
     </div>
+    <AddCustomer />
 </template>
+
+<script setup>
+import AddCustomer from '@/components/AddCustomer.vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+const customers = ref([]);
+const showAddCustomer = ref(false);
+
+const fetchcustomer = async () => {
+    const respone = await axios.get('http://localhost:3000/api/customer');
+    customers.value = await respone.data;
+    console.log(customers.value);
+}
+
+onMounted(() => {
+    fetchcustomer();
+})
+</script>
 
 <style scoped>
 @import '@/assets/main.css';

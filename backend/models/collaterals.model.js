@@ -2,19 +2,27 @@ const db = require('../config/database');
 
 const Collaterals = {
     getAll: () => {
-        const sql = `SELECT * FROM collaterals`;
+        const sql = `SELECT * FROM collaterals
+        LEFT JOIN collaterals_type ON collaterals.id_collateral_type = collaterals_type.id
+        LEFT JOIN images ON collaterals.id = images.id_collateral`;
         const stmt = db.prepare(sql);
         return stmt.all();
     },
     getById: (id) => {
-        const sql = `SELECT * FROM collaterals WHERE id = ?`;
+        const sql = `SELECT * FROM collaterals
+        LEFT JOIN collaterals_type ON collaterals.id_collateral_type = collaterals_type.id
+        LEFT JOIN images ON collaterals.id = images.id_collateral
+        WHERE collaterals.id = ?`;
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
     getByContractId: (id) => {
-        const sql = `SELECT * FROM collaterals WHERE id_contract = ?`;
+        const sql = `SELECT * FROM collaterals 
+        LEFT JOIN collaterals_type ON collaterals.id_collateral_type = collaterals_type.id
+        LEFT JOIN images ON collaterals.id = images.id_collateral
+        WHERE id_contract = ?`;
         const stmt = db.prepare(sql);
-        return stmt.get(id);
+        return stmt.all(id);
     },
     create: (data) => {
         const sql = `INSERT INTO collaterals (name, metadata, status, id_contract, id_collateral_type) VALUES (?, ?, ?, ?, ?)`;

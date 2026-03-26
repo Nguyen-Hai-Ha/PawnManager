@@ -151,6 +151,7 @@ INSERT INTO permissions (name) VALUES
 ('contract.delete'),
 ('customer.create'),
 ('customer.read'),
+('customer.detail'),
 ('customer.update'),
 ('customer.delete'),
 ('collateral.create'),

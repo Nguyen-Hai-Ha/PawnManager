@@ -151,7 +151,7 @@
               <circle
                 cx="50" cy="50" r="40"
                 fill="none"
-                stroke="#3480E4"
+                stroke="#1a7a6e"
                 stroke-width="20"
                 stroke-dasharray="251.2 0"
                 stroke-dashoffset="62.8"
@@ -194,7 +194,7 @@
               <circle
                 cx="50" cy="50" r="40"
                 fill="none"
-                stroke="#49A4E5"
+                stroke="#1a7a6e"
                 stroke-width="20"
                 stroke-dasharray="25.33 225.87"
                 stroke-dashoffset="-13.35"

@@ -5,10 +5,18 @@ import RepaymentView from "@/views/admin/RepaymentView.vue";
 import PledgesView from "@/views/admin/PledgesView.vue";
 import AssetsView from "@/views/admin/AssetsView.vue";
 import StaffView from "@/views/admin/StaffView.vue";
+import LoginView from "@/views/LoginView.vue";
 
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const routes = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginView,
+    meta: { public: true }
+  },
   {
     path: '/admin/dashboard',
     name: 'AdminDashboard',
@@ -49,6 +57,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  const isAuthenticated = !!authStore.user;
+
+  if (!to.meta.public && !isAuthenticated) {
+    next('/login');
+  } else if (to.name === 'Login' && isAuthenticated) {
+    next('/admin/dashboard');
+  } else {
+    next();
+  }
 });
 
 export default router;

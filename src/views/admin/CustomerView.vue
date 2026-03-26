@@ -23,85 +23,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>0123456789</td>
-                            <td>012345678911</td>
-                            <td>Thanh Hóa,...</td>
-                            <td><img src="@/assets/images/604541102_851721887617478_7372388113818936334_n.jpg" alt=""
-                                    class="cccd-img"></td>
+                        <tr v-for="customer in customers" :key="customer.id">
+                            <td>{{ customer.id }}</td>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.phone }}</td>
+                            <td>{{ customer.cccd }}</td>
+                            <td>{{ customer.address }}</td>
+                            <td><img :src="getImageUrl(customer.images_cccd)" alt="" class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
                                     <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
-                                            icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Nguyễn Văn B</td>
-                            <td>0987654321</td>
-                            <td>0123456789</td>
-                            <td>Hồ Chí Minh</td>
-                            <td><img src="@/assets/images/604541102_851721887617478_7372388113818936334_n.jpg" alt=""
-                                    class="cccd-img"></td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
-                                            icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Nguyễn Văn C</td>
-                            <td>0123456789</td>
-                            <td>012345678911</td>
-                            <td>Thanh Hóa,...</td>
-                            <td><img src="@/assets/images/604541102_851721887617478_7372388113818936334_n.jpg" alt=""
-                                    class="cccd-img"></td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
-                                            icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Nguyễn Văn D</td>
-                            <td>0987654321</td>
-                            <td>0123456789</td>
-                            <td>Hồ Chí Minh</td>
-                            <td><img src="@/assets/images/604541102_851721887617478_7372388113818936334_n.jpg" alt=""
-                                    class="cccd-img"></td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
-                                            icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>0123456789</td>
-                            <td>012345678911</td>
-                            <td>Thanh Hóa,...</td>
-                            <td><img src="@/assets/images/604541102_851721887617478_7372388113818936334_n.jpg" alt=""
-                                    class="cccd-img"></td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
@@ -128,25 +59,32 @@
             </div>
         </div>
     </div>
-    <AddCustomer />
+    <AddCustomer v-if="showAddCustomer" @close="showAddCustomer = false" />
 </template>
 
 <script setup>
 import AddCustomer from '@/components/AddCustomer.vue';
-import { ref, onMounted } from 'vue';
-import apiClient from '@/plugins/axios';
+import { onMounted } from 'vue';
+import { useCustomerStore } from '@/stores/customer';
+import { storeToRefs } from 'pinia';
 
-const customers = ref([]);
-const showAddCustomer = ref(false);
+const store = useCustomerStore();
 
-const fetchcustomer = async () => {
-    const respone = await apiClient.get('/customer');
-    customers.value = await respone.data;
-    console.log(customers.value);
-}
+const { customers, showAddCustomer } = storeToRefs(store);
 
-onMounted(() => {
-    fetchcustomer();
+const { fetchcustomer } = store;
+
+const getImageUrl = (name) => {
+    if (!name) return '';
+    return new URL(`../../assets/images/${name}`, import.meta.url).href;
+};
+
+onMounted(async () => {
+    const promise = [];
+    if (customers.value.length === 0) {
+        promise.push(fetchcustomer());
+    }
+    await Promise.all(promise);
 })
 </script>
 

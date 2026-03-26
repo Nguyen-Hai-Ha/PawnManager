@@ -181,16 +181,12 @@ INSERT INTO permissions (name) VALUES
 ('role_permission.update'),
 ('role_permission.delete');
 
+INSERT INTO role (name) VALUES ('admin'), ('manager'), ('staff');
 
-INSERT INTO role (name) VALUES ('admin'), ('staff');
 INSERT INTO role_permissions (id_role, id_permission) VALUES
-(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
-(1, 6), (1, 7), (1, 8), (1, 9), (1, 10),
-(1, 11), (1, 12), (1, 13), (1, 14), (1, 15),
-(1, 16), (1, 17), (1, 18), (1, 19), (1, 20),
-(1, 21), (1, 22), (1, 23), (1, 24), (1, 25),
-(1, 26), (1, 27), (1, 28), (1, 29), (1, 30),
-(1, 31), (1, 32), (1, 33), (1, 34), (1, 35);
+(2, 1), (2, 2), (2, 3), (2, 4),
+(2, 6), (2, 7), (2, 8), (2, 9), (2, 10),
+(2, 17), (2, 18), (2, 19), (2, 20);
 
 INSERT INTO transactions_types (name) VALUES 
 ('Chi cho Vay'), ('Kỳ lãi'), ('Tất toán'), ('Trả bớt gốc');
@@ -204,3 +200,5 @@ INSERT INTO collaterals_type (name) VALUES
 INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES 
 ('admin', 'pawnadmin@gmail.com', '$2b$10$MzZzlleAClylZEveCMNPvuMe/9ylJj0V3aEa/2lhQxEVoZZ89ZGx2', '0123456789', 'admin', 'admin', 1);
 
+INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES 
+('Quản Lý Lỏ', 'staff1@gmail.com', '$2b$10$hahZcDljoDgAKzRmniRJu.32/PxxIfGc27/eF/aUfBNR4L/R4Wj2.', '0123456789', 'staff1', 'staff1', 2);

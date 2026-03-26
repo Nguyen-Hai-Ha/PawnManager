@@ -23,5 +23,6 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('permissions');
       localStorage.removeItem('access_token'); // Dọn dẹp cả token từ axios plugin nếu có
     }
-  }
+  },
+  persist: true
 });

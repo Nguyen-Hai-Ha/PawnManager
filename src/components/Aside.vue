@@ -9,43 +9,43 @@
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'customer.read'">
                     <router-link to="/admin/customers" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-user" />Khách Hàng
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'contract.read'">
                     <router-link to="/admin/loan-pawn" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Cầm Đồ
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'contract.read'">
                     <router-link to="/admin/repayments" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Trả Góp
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'contract.read'">
                     <router-link to="/admin/pledges" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Tín Chấp
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'collateral.read'">
                     <router-link to="/admin/assets" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-car-side" />Quản Lý Tài Sản
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'staff.read'">
                     <router-link to="/admin/staff" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-users-gear" />Quản Lý Nhân Viên
                     </router-link>
                 </li>
 
-                <li>
+                <li v-permission="'transaction.read'">
                     <router-link to="/admin/transactions" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-invoice-dollar" />Quản Lý Thu Chi
                     </router-link>

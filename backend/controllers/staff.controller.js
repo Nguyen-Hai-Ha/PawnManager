@@ -1,4 +1,4 @@
-const { Staff, RolePermission } = require('../models');
+const { Staff, RolePermission, Role } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config');
@@ -58,7 +58,16 @@ const StaffController = {
             const permissions = RolePermission.getPermissionByRoleId(staff.id_role);
             const permissionNames = permissions.map(p => p.permission);
 
-            const token = jwt.sign({ id: staff.id }, config.secret, { expiresIn: '1d' });
+            // Fetch role name
+            const role = Role.getById(staff.id_role);
+            staff.role = role ? role.name : 'staff';
+
+            const token = jwt.sign(
+                { id: staff.id, role: staff.role, permissions: permissionNames },
+                config.secret,
+                { expiresIn: '1d' }
+            );
+
             res.json({ staff, token, permissions: permissionNames });
         } catch (error) {
             res.status(500).json({ error: error.message });

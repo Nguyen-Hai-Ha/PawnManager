@@ -57,7 +57,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import axios from 'axios';
+import apiClient  from '@/plugins/axios';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -74,7 +74,7 @@ const handleLogin = async () => {
     error.value = null;
 
     try {
-        const response = await axios.post('http://localhost:3000/api/staff/login', {
+        const response = await apiClient.post('/staff/login', {
             email: email.value,
             password: password.value
         });

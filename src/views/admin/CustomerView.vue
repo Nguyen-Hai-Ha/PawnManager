@@ -5,7 +5,7 @@
                 <input type="text" placeholder="Tìm kiếm theo tên, SĐT">
             </div>
             <div class="button-group">
-                <button>Thêm khách hàng</button>
+                <button v-permission="'customer.create'">Thêm khách hàng</button>
             </div>
         </div>
         <div class="table-wrapper">
@@ -134,13 +134,13 @@
 <script setup>
 import AddCustomer from '@/components/AddCustomer.vue';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import apiClient from '@/plugins/axios';
 
 const customers = ref([]);
 const showAddCustomer = ref(false);
 
 const fetchcustomer = async () => {
-    const respone = await axios.get('http://localhost:3000/api/customer');
+    const respone = await apiClient.get('/customer');
     customers.value = await respone.data;
     console.log(customers.value);
 }

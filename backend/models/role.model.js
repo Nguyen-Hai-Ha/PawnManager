@@ -17,6 +17,11 @@ const Role = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    getById: (id) => {
+        const sql = `SELECT * FROM role WHERE id = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.get(id);
     }
 }
 

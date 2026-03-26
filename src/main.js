@@ -13,14 +13,14 @@ import {
     faCarSide, faUsersGear, faFileInvoiceDollar,
     faRotate, faSort, faPenToSquare, faCircleXmark,
     faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight,
-    faCoins, faEye
+    faCoins, faEye, faGavel
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faUser, faChartLine, faFileSignature,
     faCarSide, faUsersGear, faFileInvoiceDollar,
     faRotate, faSort, faPenToSquare, faCircleXmark,
     faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight,
-    faCoins, faEye
+    faCoins, faEye, faGavel
 )
 
 const app = createApp(App)

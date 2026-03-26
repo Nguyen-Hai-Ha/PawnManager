@@ -553,6 +553,7 @@ nav a {
 .table {
   width: 100%;
   overflow-x: auto;
+  margin-bottom: 15px;
 }
 
 .table table {
@@ -777,5 +778,15 @@ nav a {
 
 /* ─── PLEDGES ─── */
 .pledges {
+  padding: 10px 20px;
+}
+
+/* ─── ASSETS ─── */
+.assets {
+  padding: 10px 20px;
+}
+
+/* ─── STAFF ─── */
+.staff {
   padding: 10px 20px;
 }

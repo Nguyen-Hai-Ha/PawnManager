@@ -10,10 +10,8 @@
                     <label for="filter">Trạng thái</label>
                     <select id="filter">
                         <option value="">Tất cả</option>
-                        <option value="">Đang cầm</option>
-                        <option value="">Đã hoàn thành</option>
-                        <option value="">Cần thanh lý</option>
-                        <option value="">Đã thanh lý</option>
+                        <option value="">Đang vay</option>
+                        <option value="">Đã thanh toán</option>
                         <option value="">Quá hạn</option>
                     </select>
                 </div>
@@ -57,12 +55,13 @@
                             <td><span class="text-danger fw-bold">20.000.000</span></td>
                             <td><span class="text-success fw-bold">10.500.000</span></td>
                             <td><span class="text fw-bold">10.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
                             </td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi"><font-awesome-icon
-                                            icon="coins" /></button>
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
@@ -79,7 +78,7 @@
                             <td><span class="text-danger fw-bold">11.000.000</span></td>
                             <td><span class="text-success fw-bold">3.850.000</span></td>
                             <td><span class="text fw-bold">7.700.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
                             </td>
                             <td>
                                 <div class="action-cell">
@@ -100,12 +99,13 @@
                             <td><span class="text-danger fw-bold">20.000.000</span></td>
                             <td><span class="text-success fw-bold">500.000</span></td>
                             <td><span class="text fw-bold">20.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
                             </td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi"><font-awesome-icon
-                                            icon="coins" /></button>
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
@@ -122,12 +122,13 @@
                             <td><span class="text-danger fw-bold">20.000.000</span></td>
                             <td><span class="text-success fw-bold">500.000</span></td>
                             <td><span class="text fw-bold">20.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
                             </td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi"><font-awesome-icon
-                                            icon="coins" /></button>
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>

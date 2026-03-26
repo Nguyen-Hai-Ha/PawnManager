@@ -33,9 +33,9 @@
                                     class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action btn-edit" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action btn-delete" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>
@@ -50,9 +50,9 @@
                                     class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action btn-edit" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action btn-delete" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>
@@ -67,9 +67,9 @@
                                     class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action btn-edit" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action btn-delete" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>
@@ -84,9 +84,9 @@
                                     class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action btn-edit" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action btn-delete" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>
@@ -101,9 +101,9 @@
                                     class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action btn-edit" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action btn-delete" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>

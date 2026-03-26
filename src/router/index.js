@@ -1,6 +1,7 @@
 import DashboardView from "@/views/admin/DashboardView.vue";
 import CustomerView from "@/views/admin/CustomerView.vue";
 import LoanPawnView from "@/views/admin/LoanPawnView.vue";
+import RepaymentView from "@/views/admin/RepaymentView.vue";
 
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -19,6 +20,11 @@ const routes = [
     path: '/admin/loan-pawn',
     name: 'AdminLoanPawn',
     component: LoanPawnView
+  },
+  {
+    path: '/admin/repayments',
+    name: 'AdminRepayments',
+    component: RepaymentView
   }
 ];
 

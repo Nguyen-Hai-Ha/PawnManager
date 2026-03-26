@@ -577,12 +577,17 @@ nav a {
   vertical-align: middle;
 }
 
+.table td p {
+  font-size: 12px;
+  color: #666;
+}
+
 .table tbody tr {
   background-color: #ffffff;
 }
 
 .table tbody tr:nth-child(even) {
-  background-color: #dcdcdc;
+  background-color: #CFCFCF;
 }
 
 .sort-icon {
@@ -640,14 +645,6 @@ nav a {
   visibility: visible;
 }
 
-.btn-edit {
-  color: #2eac5b;
-}
-
-.btn-delete {
-  color: #ff3b3b;
-}
-
 .pagination {
   display: flex;
   justify-content: space-between;
@@ -691,4 +688,83 @@ nav a {
 
 .page-btn:hover {
   background-color: #c4c4c4;
+}
+
+/* ─── LOAN PAWN ─── */
+.loan-pawn {
+  padding: 10px 20px;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.search-input input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  width: 300px;
+}
+
+.filter select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.filter label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.time-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-range-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-range-input label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.time-range-input input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 12px;
+  width: 150px;
+}
+
+/* ─── REPAYMENT ─── */
+.repayment {
+  padding: 10px 20px;
+}
+
+.table td p {
+  margin-bottom: 0;
 }

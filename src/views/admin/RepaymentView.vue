@@ -134,6 +134,29 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                <span class="fw-bold">HD0001</span>
+                                <p>26/03/2026</p>
+                                <p>26/04/2026</p>
+                            </td>
+                            <td>Nguyễn Văn A</td>
+                            <td><span class="text-danger fw-bold">20.000.000</span></td>
+                            <td><span class="text-success fw-bold">500.000</span></td>
+                            <td><span class="text fw-bold">20.500.000</span></td>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang vay</span>
+                            </td>
+                            <td>
+                                <div class="action-cell">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                        <font-awesome-icon icon="coins" />
+                                    </button>
+                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
+                                            icon="circle-xmark" /></button>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

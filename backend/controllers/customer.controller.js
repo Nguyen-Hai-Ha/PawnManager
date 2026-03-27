@@ -47,8 +47,17 @@ const CustomerController = {
     },
     delete: (req, res) => {
         try {
-            const customer = Customer.delete(req.params.id);
-            res.json(customer);
+            const customer = Customer.getById(req.params.id);
+            if (!customer) {
+                return res.status(404).json({ error: 'Customer not found' });
+            }
+            const contract = Contract.getByIdCustomer(req.params.id);
+            if (contract) {
+                return res.status(400).json({ error: 'Customer has contract' });
+            }
+            Customer.delete(req.params.id);
+            const relative = Relative.deleteByIdCustomer(req.params.id);
+            res.json({customer, relative});
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

@@ -95,6 +95,11 @@ const Contract = {
             WHERE c.id = ?`;
         const stmt = db.prepare(sql);
         return stmt.get(id);
+    },
+    getByIdCustomer: (id_customer) => {
+        const sql = `SELECT * FROM contracts WHERE id_customer = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id_customer);
     }
 };
 

@@ -74,6 +74,7 @@ export const useCustomerStore = defineStore('customer', () => {
         }
     };
 
+    const deleteCutomer = async (id) => {
     const fetchcustomer = async () => {
         const respone = await apiClient.get('/customer');
         customers.value = await respone.data;

@@ -23,6 +23,12 @@ const Relative = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    deleteByIdCustomer: (id_customer) => {
+        const sql = `DELETE FROM relatives WHERE id_customer = ?`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run(id_customer);
+        return result.changes;
     }
 }
 

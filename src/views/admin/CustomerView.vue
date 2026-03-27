@@ -1,3 +1,4 @@
+<script setup>
 <template>
     <div class="customer">
         <div class="group-function">
@@ -35,6 +36,7 @@
                                     <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" @click="deleteCutomer(customer.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>
@@ -63,7 +65,6 @@
         <AddCustomer @close="closeModal" />
     </div>
 </template>
-
 <script setup>
 import AddCustomer from '@/components/AddCustomer.vue';
 import { onMounted } from 'vue';

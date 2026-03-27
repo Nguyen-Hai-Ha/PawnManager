@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
-import { ref, watch } from "vue";
+import { ref, computed, nextTick } from "vue";
 
 export const useCustomerStore = defineStore('customer', () => {
     const customers = ref([]);
+    const showAddCustomer = ref(false);
     const form = ref({
         name: '',
         phone: '',
@@ -49,6 +50,7 @@ export const useCustomerStore = defineStore('customer', () => {
             fileInput.value = '';
         }
     }
+    };
 
     const submitForm = async () => {
         const formData = new FormData();
@@ -58,8 +60,10 @@ export const useCustomerStore = defineStore('customer', () => {
         console.log("SubmitForm - Form values:", form.value);
         // Gửi birth_date để khớp với Database Model
         formData.append('birth_date', form.value.birth_date || form.value.birth_day || '');
+        formData.append('birth_date', form.value.birth_date || '');
         formData.append('address', form.value.address);
         formData.append('images_cccd', form.value.images_cccd);
+        formData.append('relatives', JSON.stringify(relative.value));
 
         // Debug FormData
         for (let pair of formData.entries()) {
@@ -75,6 +79,7 @@ export const useCustomerStore = defineStore('customer', () => {
     };
 
     const deleteCutomer = async (id) => {
+        try {
     const fetchcustomer = async () => {
         const respone = await apiClient.get('/customer');
         customers.value = await respone.data;
@@ -83,6 +88,7 @@ export const useCustomerStore = defineStore('customer', () => {
     return {
         customers, form, showAddCustomer,
         openModal, closeModal, handleImageChange, removeImage, submitForm,
+        // state
         fetchcustomer
     }
 })

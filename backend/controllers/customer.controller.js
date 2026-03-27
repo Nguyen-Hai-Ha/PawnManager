@@ -1,4 +1,4 @@
-const { Customer } = require('../models');
+const { Customer, Relative, Contract } = require('../models');
 
 const CustomerController = {
     getAll: (req, res) => {
@@ -21,17 +21,17 @@ const CustomerController = {
         try {
             const data = { ...req.body };
 
-            // Hiển thị dữ liệu nhận được để debug (tùy chọn)
-            console.log('Backend received:', data);
-            if (req.file) console.log('File received:', req.file);
-
-
-            // Nếu có file upload từ multer
             if (req.file) {
                 data.images_cccd = req.file.filename;
             }
 
             const customer = Customer.create(data);
+            if (data.relatives && data.relatives.length > 0) {
+                const relatives = JSON.parse(data.relatives);
+                relatives.forEach(item => {
+                    Relative.create({ ...item, id_customer: customer.id });
+                });
+            }
             res.json(customer);
         } catch (error) {
             res.status(500).json({ error: error.message });

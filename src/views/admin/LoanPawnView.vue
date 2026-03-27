@@ -1,3 +1,23 @@
+<script setup>
+import { useLoanStore } from '@/stores/loan';
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
+
+const loanStore = useLoanStore();
+
+const { loans } = storeToRefs(loanStore);
+const { getAllLoans, formatCurrency } = loanStore;
+
+onMounted(async() => {
+    const promise = [];
+    if (loans.value.length === 0) {
+        promise.push(getAllLoans());
+    }
+    await Promise.all(promise);
+})
+
+</script>
+
 <template>
     <div class="loan-pawn">
         <div class="group-function">
@@ -48,91 +68,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr v-for = " loan in loans" :key = "loan.id">
                             <td>1</td>
                             <td>
-                                <span class="fw-bold">HD0001</span>
-                                <p>26/03/2026</p>
-                                <p>26/04/2026</p>
+                                <span class="fw-bold">{{ loan.code }}</span>
+                                <p>{{ loan.start_date }}</p>
+                                <p>{{ loan.end_date }}</p>
                             </td>
-                            <td>Nguyễn Văn A</td>
-                            <td>Vàng 24k</td>
-                            <td><span class="text-danger fw-bold">20.000.000</span></td>
-                            <td><span class="text-success fw-bold">500.000</span></td>
-                            <td><span class="text fw-bold">20.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
-                            </td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
-                                        <font-awesome-icon icon="coins" />
-                                    </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>
-                                <span class="fw-bold">HD0002</span>
-                                <p>26/03/2026</p>
-                                <p>26/04/2026</p>
-                            </td>
-                            <td>Nguyễn Ro nan đô</td>
-                            <td>Xe máy</td>
-                            <td><span class="text-danger fw-bold">20.000.000</span></td>
-                            <td><span class="text-success fw-bold">500.000</span></td>
-                            <td><span class="text fw-bold">20.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
-                            </td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
-                                        <font-awesome-icon icon="coins" />
-                                    </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>
-                                <span class="fw-bold">HD0003</span>
-                                <p>26/03/2026</p>
-                                <p>26/04/2026</p>
-                            </td>
-                            <td>Tokuda</td>
-                            <td>oto Toyota</td>
-                            <td><span class="text-danger fw-bold">20.000.000</span></td>
-                            <td><span class="text-success fw-bold">500.000</span></td>
-                            <td><span class="text fw-bold">20.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
-                            </td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
-                                        <font-awesome-icon icon="coins" />
-                                    </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>
-                                <span class="fw-bold">HD0004</span>
-                                <p>26/03/2026</p>
-                                <p>26/04/2026</p>
-                            </td>
-                            <td>Lê La Lê</td>
-                            <td>Samsung Galaxy S24 Ultra</td>
-                            <td><span class="text-danger fw-bold">20.000.000</span></td>
-                            <td><span class="text-success fw-bold">500.000</span></td>
-                            <td><span class="text fw-bold">20.500.000</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
+                            <td>{{ loan.customer_name }}</td>
+                            <td>{{ loan.collateral_name }}</td>
+                            <td><span class="text-danger fw-bold">{{ formatCurrency(loan.loan_amount) }}</span></td>
+                            <td><span class="text-success fw-bold">{{ formatCurrency(loan.had_paid) }}</span></td>
+                            <td><span class="text fw-bold">{{ formatCurrency(loan.remaining_amount) }}</span></td>
+                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">{{ loan.status }}</span>
                             </td>
                             <td>
                                 <div class="action-cell">

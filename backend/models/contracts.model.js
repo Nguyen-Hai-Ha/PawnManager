@@ -2,7 +2,25 @@ const db = require('../config/database');
 
 const Contract = {
     getAll: () => {
-        const sql = `SELECT * FROM contracts`;
+        const sql = `
+            SELECT 
+                c.id,
+                c.code,
+                c.loan_amount,
+                c.start_date,
+                c.end_date,
+                c.status,
+                cu.name as customer_name,
+                cu.phone as customer_phone,
+                ct.id as contract_type_id,
+                cl.name as collateral_name,
+                COALESCE((SELECT SUM(amount) FROM transactions WHERE id_contract = c.id AND id_transaction_type = 2), 0) as had_paid,
+                COALESCE((SELECT SUM(principal_amount + interest_amount) FROM payment_schedules WHERE id_contract = c.id AND is_paid = 0), 0) as remaining_amount
+            FROM contracts c
+            LEFT JOIN customers cu ON c.id_customer = cu.id
+            LEFT JOIN contracts_types ct ON c.id_contract_type = ct.id
+            LEFT JOIN collaterals cl ON c.id == cl.id_contract
+            GROUP BY c.id`;
         const stmt = db.prepare(sql);
         return stmt.all();
     },

@@ -1,16 +1,18 @@
 <script setup>
 import AddCustomer from '@/components/AddCustomer.vue';
+import EditCustomer from '@/components/EditCustomer.vue'
 import { onMounted } from 'vue';
 import { useCustomerStore } from '@/stores/customer';
 import { storeToRefs } from 'pinia';
 
 const store = useCustomerStore();
 
-const { customers, showAddCustomer, paginated, currentPage, totalPage, search } = storeToRefs(store);
+const { customers, showAddCustomer, paginated, currentPage, totalPage, search, showEditCustomer } = storeToRefs(store);
 
 const { fetchcustomer, closeModal, openModal,
         changePage, goToFirstPage, goToLastPage,
-        goToNextPage, goToPrevPage, deleteCutomer } = store;
+        goToNextPage, goToPrevPage, deleteCutomer,
+        openEditModal, closeEditModal } = store;
 
 onMounted(async () => {
     const promise = [];
@@ -54,7 +56,7 @@ onMounted(async () => {
                             <td><img :src="`http://localhost:3000/uploads/` + customer.images_cccd" alt="" class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa" @click="openEditModal(customer)"><font-awesome-icon
                                             icon="pen-to-square" /></button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa" @click="deleteCutomer(customer.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
@@ -84,6 +86,9 @@ onMounted(async () => {
     </div>
     <div class="pm-modal-overlay" v-if="showAddCustomer">
         <AddCustomer @close="closeModal" />
+    </div>
+    <div class="pm-modal-overlay" v-if="showEditCustomer">
+        <EditCustomer @close="closeEditModal" />
     </div>
 </template>
 <style scoped>

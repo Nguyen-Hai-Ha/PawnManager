@@ -104,6 +104,7 @@ export const useCustomerStore = defineStore('customer', () => {
 
     const openEditModal = (customer) => {
         Editform.value = customer;
+        relative.value = customer.relatives ? JSON.parse(customer.relatives) : [];
         showEditCustomer.value = true;
 
         nextTick(() => {
@@ -177,6 +178,25 @@ export const useCustomerStore = defineStore('customer', () => {
         }
     };
 
+    const updateCustomer = async () => {
+        const formData = new FormData();
+        formData.append('name', Editform.value.name);
+        formData.append('phone', Editform.value.phone);
+        formData.append('cccd', Editform.value.cccd);
+        formData.append('birth_date', Editform.value.birth_date || '');
+        formData.append('address', Editform.value.address);
+        formData.append('images_cccd', Editform.value.images_cccd);
+        formData.append('relatives', JSON.stringify(relative.value));
+
+        try {
+            await apiClient.put(`/customer/${Editform.value.id}`, formData);
+            await fetchcustomer();
+            closeEditModal();
+        } catch (error) {
+            console.error('Error updating customer:', error);
+        }
+    }
+
     const deleteCutomer = async (id) => {
         try {
             await apiClient.delete(`/customer/${id}`);
@@ -194,7 +214,8 @@ export const useCustomerStore = defineStore('customer', () => {
     return {
         // state
         customers, form, showAddCustomer, relative,
-        itemPage, currentPage, search,
+        itemPage, currentPage, search, showEditCustomer,
+        Editform,
 
         // computed
         paginated, totalPage, searchCustomer,
@@ -203,6 +224,7 @@ export const useCustomerStore = defineStore('customer', () => {
         changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openModal, closeModal, handleImageChange, removeImage, 
         addRelative, removeRelative, submitForm, deleteCutomer,
+        closeEditModal, openEditModal,
 
         // fetch
         fetchcustomer

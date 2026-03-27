@@ -39,7 +39,36 @@ const CustomerController = {
     },
     update: (req, res) => {
         try {
-            const customer = Customer.update(req.params.id, req.body);
+            const data = { ...req.body };
+
+            if (req.file) {
+                data.images_cccd = req.file.filename;
+            }
+
+            const customer = Customer.update(req.params.id, data);
+            if (data.relatives && data.relatives.length > 0) {
+                const relatives = JSON.parse(data.relatives);
+                const oldRelatives = Relative.getByIdCustomer(req.params.id);
+                const oldIds = oldRelatives.map(item => item.id)
+                const newIds = relatives.map(item => item.id)
+                
+                const idsToDelete = oldIds.filter(id => !newIds.includes(id));
+                
+                if (idsToDelete) {
+                    idsToDelete.forEach(id => {
+                        Relative.delete(id);
+                    });
+                }
+
+                relatives.forEach(item => {
+                    if (item.id) {
+                        Relative.update(item.id, item);
+                    } else {
+                        Relative.create({ ...item, id_customer: customer.id });
+                    }
+                });
+                
+            }
             res.json(customer);
         } catch (error) {
             res.status(500).json({ error: error.message });

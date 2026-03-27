@@ -2,7 +2,24 @@ const db = require('../config/database');
 
 const Customer = {
     getAll: () => {
-        const sql = `SELECT * FROM customers`;
+        const sql = `
+            SELECT c.*,
+            (
+                SELECT JSON_GROUP_ARRAY(
+                    JSON_OBJECT(
+                        'id', id,
+                        'name', name,
+                        'address', address,
+                        'cccd', cccd,
+                        'phone', phone,
+                        'job', job,
+                        'workplace', workplace
+                    )
+                )
+                FROM relatives 
+                WHERE id_customer = c.id
+            ) as relatives
+            FROM customers c`;
         const stmt = db.prepare(sql);
         return stmt.all();
     },

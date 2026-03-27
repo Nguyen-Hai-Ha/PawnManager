@@ -17,7 +17,7 @@ const corsOptions = {
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            callback(null, true); 
+            callback(null, true);
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -25,11 +25,16 @@ const corsOptions = {
     credentials: true
 };
 
+const path = require('path');
+
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
 app.use(cookieParser());
+
+// Serve static images
+app.use('/uploads', express.static(path.join(__dirname, 'images')));
 
 app.use('/api', router);
 

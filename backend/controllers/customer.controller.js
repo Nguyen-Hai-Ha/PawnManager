@@ -19,7 +19,14 @@ const CustomerController = {
     },
     create: (req, res) => {
         try {
-            const customer = Customer.create(req.body);
+            const data = { ...req.body };
+
+            // Nếu có file upload từ multer
+            if (req.file) {
+                data.images_cccd = req.file.filename;
+            }
+
+            const customer = Customer.create(data);
             res.json(customer);
         } catch (error) {
             res.status(500).json({ error: error.message });

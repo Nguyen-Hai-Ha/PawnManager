@@ -21,6 +21,11 @@ const CustomerController = {
         try {
             const data = { ...req.body };
 
+            // Hiển thị dữ liệu nhận được để debug (tùy chọn)
+            console.log('Backend received:', data);
+            if (req.file) console.log('File received:', req.file);
+
+
             // Nếu có file upload từ multer
             if (req.file) {
                 data.images_cccd = req.file.filename;

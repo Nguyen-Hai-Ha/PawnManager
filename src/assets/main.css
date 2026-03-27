@@ -828,7 +828,8 @@ nav a {
   border: 0.5px solid #B1B1B1;
   white-space: nowrap;
 }
-.table-trannsaction .special{
+
+.table-trannsaction .special {
   text-align: center;
 }
 
@@ -853,4 +854,161 @@ nav a {
 
 .table-trannsaction tbody tr:nth-child(even) {
   background-color: #e2e2e2;
-} 
+}
+
+
+/* ─── MODAL ─── */
+.pm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+  /* Tăng z-index để chắc chắn đè lên sidebar */
+}
+
+.pm-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-out;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pm-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pm-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a7a6e;
+  margin: 0;
+}
+
+.pm-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.pm-modal-body {
+  padding: 20px;
+}
+
+.form-row {
+  display: flex;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pm-form-group {
+  margin-bottom: 16px;
+  display: grid;
+  width: 100%;
+}
+
+.pm-form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.pm-form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.pm-form-group input:focus {
+  outline: none;
+  border-color: #1a7a6e;
+}
+
+.pm-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-submit {
+  padding: 10px 24px;
+  background: #1a7a6e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  padding: 10px 24px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+.btn-cancel:hover {
+  background: #e5e7eb;
+}
+
+.image-preview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.remove-image {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}

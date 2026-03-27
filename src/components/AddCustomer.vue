@@ -3,8 +3,9 @@ import { useCustomerStore } from '@/stores/customer';
 import { storeToRefs } from 'pinia';
 
 const store = useCustomerStore();
-const { form } = storeToRefs(store);
-const { closeModal, handleImageChange, removeImage, submitForm } = store;
+const { form, relative } = storeToRefs(store);
+const { closeModal, handleImageChange, removeImage, 
+        submitForm, addRelative, removeRelative } = store;
 
 </script>
 <template>
@@ -12,6 +13,7 @@ const { closeModal, handleImageChange, removeImage, submitForm } = store;
         <div class="pm-modal-content">
             <div class="pm-modal-header">
                 <h2 class="pm-modal-title">Thêm khách hàng</h2>
+                
                 <button class="pm-modal-close" @click="closeModal">&times;</button>
             </div>
             <div class="pm-modal-body">
@@ -23,7 +25,7 @@ const { closeModal, handleImageChange, removeImage, submitForm } = store;
                         </div>
                         <div class="pm-form-group">
                             <label for="phone">Số điện thoại</label>
-                            <input type="number" id="phone" v-model="form.phone" required>
+                            <input type="text" id="phone" v-model="form.phone" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -54,7 +56,44 @@ const { closeModal, handleImageChange, removeImage, submitForm } = store;
                             </div>
                         </div>
                     </div>
+                    <div class="relative-info" v-for="(item, index) in relative" :key="index">
+                        <div class="pm-form-group">
+                            <span class="text-dark fw-bold ">Người thân {{ index + 1 }}  <span class="text-danger" style="cursor: pointer;" @click="removeRelative(index)">Xóa</span> </span>
+                            
+                        </div>
+                        <div class="form-row">
+                            <div class="pm-form-group">
+                                <label for="relative_name">Họ và tên</label>
+                                <input type="text" id="relative_name" v-model="item.name" required>
+                            </div>
+                            <div class="pm-form-group">
+                                <label for="relative_phone">Số điện thoại</label>
+                                <input type="text" id="relative_phone" v-model="item.phone" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="pm-form-group">
+                                <label for="relative_cccd">CCCD</label>
+                                <input type="text" id="relative_cccd" v-model="item.cccd" required>
+                            </div>
+                            <div class="pm-form-group">
+                                <label for="relative_address">Địa chỉ</label>
+                                <input type="text" id="relative_address" v-model="item.address" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="pm-form-group">
+                                <label for="relative_job">Nghề nghiệp</label>
+                                <input type="text" id="relative_job" v-model="item.job" required>
+                            </div>
+                            <div class="pm-form-group">
+                                <label for="relative_workplace">Nơi làm việc</label>
+                                <input type="text" id="relative_workplace" v-model="item.workplace" required>
+                            </div>
+                        </div>
+                    </div>
                     <div class="pm-modal-footer">
+                        <button class="btn-submit" @click="addRelative">Thêm người thân </button>
                         <button type="submit" class="btn-submit">Thêm</button>
                         <button type="button" class="btn-cancel" @click="closeModal">Hủy</button>
                     </div>

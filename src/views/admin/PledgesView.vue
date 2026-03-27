@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="button-group">
-                <button>Thêm khách hàng</button>
+                <button>Thêm hợp đồng</button>
             </div>
         </div>
         <div class="table-wrapper">

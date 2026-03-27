@@ -5,7 +5,7 @@
                 <input type="text" placeholder="Tìm kiếm theo tên, SĐT">
             </div>
             <div class="button-group">
-                <button v-permission="'customer.create'">Thêm khách hàng</button>
+                <button @click="openModal" v-permission="'customer.create'">Thêm khách hàng</button>
             </div>
         </div>
         <div class="table-wrapper">
@@ -59,7 +59,9 @@
             </div>
         </div>
     </div>
-    <AddCustomer v-if="showAddCustomer" @close="showAddCustomer = false" />
+    <div class="pm-modal-overlay" v-if="showAddCustomer">
+        <AddCustomer @close="closeModal" />
+    </div>
 </template>
 
 <script setup>
@@ -72,11 +74,16 @@ const store = useCustomerStore();
 
 const { customers, showAddCustomer } = storeToRefs(store);
 
-const { fetchcustomer } = store;
+const { fetchcustomer, closeModal, openModal } = store;
 
 const getImageUrl = (name) => {
     if (!name) return '';
-    return new URL(`../../assets/images/${name}`, import.meta.url).href;
+    // Nếu là file mock cũ (có trong assets)
+    if (name.includes('604541102')) {
+        return new URL(`../../assets/images/${name}`, import.meta.url).href;
+    }
+    // Còn lại là file upload từ backend
+    return `http://localhost:3000/uploads/${name}`;
 };
 
 onMounted(async () => {

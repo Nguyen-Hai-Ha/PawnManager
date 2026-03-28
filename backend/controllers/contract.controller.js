@@ -84,7 +84,7 @@ const ContractController = {
                 } else if (dataContract.interest_type === "percent/term") {
                     interestAmount = (dataContract.loan_amount * (dataContract.interest_rate / 100)) / dataContract.total_periods;
                 } else if (dataContract.interest_type === "daily_amount") {
-                    interestAmount = dataContract.interest_rate * dataContract.payment_term;
+                    interestAmount = dataContract.interest_rate * (dataContract.payment_term * dataContract.total_periods);
                 }
 
                 // tính ngày trả cho từng kỳ
@@ -106,7 +106,6 @@ const ContractController = {
                     expectedDate.setDate(expectedDate.getDate() + (i * paymentTerm));
                     const formattedDate = expectedDate.toISOString().split('T')[0];
 
-                    // from_date for the first period is startDate, for others it's previous expected_date + 1 day
                     let currentFromDate;
                     if (i === 1) {
                         currentFromDate = startDate.toISOString().split('T')[0];

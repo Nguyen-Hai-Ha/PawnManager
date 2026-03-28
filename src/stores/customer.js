@@ -16,6 +16,7 @@ export const useCustomerStore = defineStore('customer', () => {
         imagePreview: ''
     });
     const Editform = ref({
+        id: '',
         name: '',
         phone: '',
         cccd: '',
@@ -100,6 +101,11 @@ export const useCustomerStore = defineStore('customer', () => {
 
     const openModal = () => {
         showAddCustomer.value = true;
+
+        nextTick(() => {
+            const firstInput =document.getElementById('name');
+            if (firstInput) firstInput.focus();
+        })
     };
 
     const openEditModal = (customer) => {
@@ -224,7 +230,7 @@ export const useCustomerStore = defineStore('customer', () => {
         changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openModal, closeModal, handleImageChange, removeImage, 
         addRelative, removeRelative, submitForm, deleteCutomer,
-        closeEditModal, openEditModal,
+        closeEditModal, openEditModal, updateCustomer,
 
         // fetch
         fetchcustomer

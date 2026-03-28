@@ -1,6 +1,6 @@
 <script setup>
-import AddCustomer from '@/components/AddCustomer.vue';
-import EditCustomer from '@/components/EditCustomer.vue'
+import AddCustomer from '@/components/customer/AddCustomer.vue';
+import EditCustomer from '@/components/customer/EditCustomer.vue'
 import { onMounted } from 'vue';
 import { useCustomerStore } from '@/stores/customer';
 import { storeToRefs } from 'pinia';

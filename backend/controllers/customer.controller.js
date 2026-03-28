@@ -46,14 +46,14 @@ const CustomerController = {
             }
 
             const customer = Customer.update(req.params.id, data);
+            const relatives = JSON.parse(data.relatives);
             if (data.relatives && data.relatives.length > 0) {
-                const relatives = JSON.parse(data.relatives);
                 const oldRelatives = Relative.getByIdCustomer(req.params.id);
                 const oldIds = oldRelatives.map(item => item.id)
                 const newIds = relatives.map(item => item.id)
                 
                 const idsToDelete = oldIds.filter(id => !newIds.includes(id));
-                
+
                 if (idsToDelete) {
                     idsToDelete.forEach(id => {
                         Relative.delete(id);
@@ -62,14 +62,14 @@ const CustomerController = {
 
                 relatives.forEach(item => {
                     if (item.id) {
-                        Relative.update(item.id, item);
+                        Relative.update(item.id, {...item, id_customer: req.params.id});
                     } else {
-                        Relative.create({ ...item, id_customer: customer.id });
+                        Relative.create({ ...item, id_customer: req.params.id });
                     }
                 });
                 
             }
-            res.json(customer);
+            res.json({customer, relatives});
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

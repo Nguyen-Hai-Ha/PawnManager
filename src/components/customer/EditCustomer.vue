@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 const store = useCustomerStore();
 const { Editform, relative } = storeToRefs(store);
 const { closeEditModal, handleImageChange, removeImage, 
-        submitForm, addRelative, removeRelative } = store;
+        addRelative, removeRelative, updateCustomer } = store;
 
 </script>
 <template>
@@ -17,7 +17,7 @@ const { closeEditModal, handleImageChange, removeImage,
                 <button class="pm-modal-close" @click="closeEditModal">&times;</button>
             </div>
             <div class="pm-modal-body">
-                <form @submit.prevent="submitForm">
+                <form @submit.prevent="updateCustomer">
                     <div class="form-row">
                         <div class="pm-form-group">
                             <label for="name">Họ và tên</label>
@@ -45,7 +45,7 @@ const { closeEditModal, handleImageChange, removeImage,
                     <div class="form-row">
                         <div class="pm-form-group">
                             <label for="images_cccd">Hình ảnh CCCD</label>
-                            <input type="file" id="edit-images_cccd" @change="handleImageChange" required>
+                            <input type="file" id="edit-images_cccd" @change="handleImageChange">
                         </div>
                         <div class="pm-form-group">
                             <div class="image-preview" v-if="Editform.imagePreview">
@@ -101,7 +101,7 @@ const { closeEditModal, handleImageChange, removeImage,
                     <div class="pm-modal-footer">
                         <button class="btn-submit" @click="addRelative">Thêm người thân </button>
                         <button type="submit" class="btn-submit">Lưu</button>
-                        <button type="button" class="btn-cancel" @click="closeModal">Hủy</button>
+                        <button type="button" class="btn-cancel" @click="closeEditModal">Hủy</button>
                     </div>
                 </form>
             </div>

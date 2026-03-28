@@ -70,8 +70,8 @@ onMounted(async() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for = " loan in loans" :key = "loan.id">
-                            <td>1</td>
+                        <tr v-for = " loan, index in loans" :key = "loan.id">
+                            <td>{{ index + 1 }}</td>
                             <td>
                                 <span class="fw-bold">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>

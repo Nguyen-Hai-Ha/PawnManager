@@ -1,3 +1,4 @@
+const { json } = require('express');
 const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer } = require('../models');
 const generateContractDoc = require('../services/DocumentService');
 const dayjs = require('dayjs');
@@ -36,17 +37,20 @@ const ContractController = {
     create: (req, res) => {
         try {
             const dataContract = req.body.contract;
-            const dataCollateral = req.body.collateral;
+            const dataCollateral = JSON.parse(req.body.collateral);
             const dataStaff = req.body.staff;
             let dataRelative = null;
             let dataImage = null;
-            if (req.body.relative && req.body.image) {
+            if (req.body.relative) {
                 dataRelative = req.body.relative;
-                dataImage = req.body.image;
                 const relative = Relative.create(dataRelative);
-                const image = Image.create(dataImage);
             }
 
+            if (req.body.images){
+                dataImage = req.body.images;
+                const images = Image.create(dataImage);
+            }
+            
             if (!dataContract || !dataCollateral) {
                 return res.status(400).json({ error: 'Data is required' });
             }

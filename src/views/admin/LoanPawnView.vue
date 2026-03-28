@@ -3,10 +3,12 @@ import { useLoanStore } from '@/stores/loan';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
+import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
+
 const loanStore = useLoanStore();
 
-const { loans } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency } = loanStore;
+const { loans, showModal } = storeToRefs(loanStore);
+const { getAllLoans, formatCurrency, openModal, closeModal } = loanStore;
 
 onMounted(async() => {
     const promise = [];
@@ -47,7 +49,7 @@ onMounted(async() => {
                 </div>
             </div>
             <div class="button-group">
-                <button>Thêm khách hàng</button>
+                <button @click="openModal">Thêm hợp đồng</button>
             </div>
         </div>
 
@@ -112,7 +114,9 @@ onMounted(async() => {
             </div>
         </div>
     </div>
-
+    <div class="modal-overlay" v-if="showModal">
+        <AddNewLoan @close="closeModal" />
+    </div>
 </template>
 
 <style scoped>

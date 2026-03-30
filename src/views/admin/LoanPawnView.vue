@@ -4,11 +4,12 @@ import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
+import InterestPayment from '@/components/contracts/InterestPayment.vue';
 
 const loanStore = useLoanStore();
 
-const { loans, showModal } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, openModal, closeModal } = loanStore;
+const { loans, showModal, showInterestModal } = storeToRefs(loanStore);
+const { getAllLoans, formatCurrency, openModal, closeModal, openInterestModal, closeInterestModal } = loanStore;
 
 onMounted(async() => {
     const promise = [];
@@ -86,7 +87,7 @@ onMounted(async() => {
                             </td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
@@ -116,6 +117,9 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showModal">
         <AddNewLoan @close="closeModal" />
+    </div>
+    <div class="modal-overlay" v-if="showInterestModal">
+        <InterestPayment @close="closeInterestModal" />
     </div>
 </template>
 

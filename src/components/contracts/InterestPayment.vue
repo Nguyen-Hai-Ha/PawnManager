@@ -5,8 +5,8 @@ import { ref, onMounted } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
 const store = useLoanStore();
-const { paymentDetails, formDetails, loanDetails } = storeToRefs(store);
-const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
+const { paymentDetails, formDetails, loanDetails, historyPayment } = storeToRefs(store);
+const { formatCurrency, closeInterestModal, submitInterestPayment, fetchHistoryPayment } = store;
 
 const emit = defineEmits(['close']);
 const activeTab = ref('Chi tiết đóng lãi');
@@ -27,6 +27,9 @@ onMounted(async() => {
     const promise = [];
     if (loanDetails.value.length === 0) {
         promise.push(fetchContractDetails);
+    }
+    if (historyPayment.value.length === 0) {
+        promise.push(fetchHistoryPayment);
     }
     await Promise.all(promise);
 })
@@ -175,6 +178,29 @@ onMounted(async() => {
                 </div>
             </div>
 
+            <div class="modal-body" v-if="activeTab === 'Lịch sử đóng lãi'">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Ngày Thanh Toán</th>
+                                <th>Tiền Thanh Toán</th>
+                                <th>Phí Khác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item, index in historyPayment">
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ item.created_at }}</td>
+                                <td>{{ formatCurrency(item.amount) }}</td>
+                                <td>{{ formatCurrency(item.other_fees) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="modal-footer">
                 <div class="footer-left">
                     <button class="btn-primary">
@@ -186,7 +212,7 @@ onMounted(async() => {
                 </div>
                 <div class="footer-right">
                     <button class="btn-secondary" @click="closeInterestModal">
-                        Đóng <font-awesome-icon icon="circle-xmark" />
+                        Đóng
                     </button>
                 </div>
             </div>

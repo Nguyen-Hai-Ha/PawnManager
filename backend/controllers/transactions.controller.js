@@ -34,6 +34,14 @@ const TransactionsController = {
             res.status(500).json({ error: error.message });
         }
     },
+    getHistoryPayment: (req, res) => {
+        try {
+            const transactions = Transactions.getHistoryPayment(req.params.id);
+            res.json(transactions);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
     create: (req, res) => {
         try {
             const data = req.body;

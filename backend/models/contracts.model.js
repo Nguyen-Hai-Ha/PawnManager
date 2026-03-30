@@ -35,7 +35,12 @@ const Contract = {
                 ps.*,
                 IFNULL(SUM(t.amount), 0) as paid_amount,
                 ((ps.interest_amount + ps.principal_amount) - IFNULL(SUM(t.amount), 0)) as remaining_amount,
-                GROUP_CONCAT(t.amount || ' (' || t.created_at || ')', '\n') as payment_history
+                JSON_GROUP_ARRAY(
+                    JSON_OBJECT(
+                        'amount', t.amount,
+                        'created_at', DATE(t.created_at)
+                    )
+                ) as payment_history
             FROM payment_schedules ps
             LEFT JOIN transactions t ON ps.id = t.id_schedule
             WHERE ps.id_contract = ?

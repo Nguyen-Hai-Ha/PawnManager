@@ -30,10 +30,17 @@ const Transactions = {
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },
-    create: (data) => {
-        const sql = `INSERT INTO transactions (id_contract, id_transaction_type, id_schedule, id_staff, amount, other_fees) VALUES (?, ?, ?, ?, ?, ?)`
+    getHistoryPayment: (id) => {
+        const sql = `SELECT * FROM transactions 
+        INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
+        WHERE id_contract = ? AND id_transaction_type != 1`;
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.id_contract, data.id_transaction_type, data.id_schedule, data.id_staff, data.amount, data.other_fees);
+        return stmt.all(id);
+    },
+    create: (data) => {
+        const sql = `INSERT INTO transactions (id_contract, id_transaction_type, id_schedule, id_staff, amount, other_fees, description) VALUES (?, ?, ?, ?, ?, ?, ?)`
+        const stmt = db.prepare(sql);
+        const result = stmt.run(data.id_contract, data.id_transaction_type, data.id_schedule, data.id_staff, data.amount, data.other_fees, data.description);
         return { id: result.lastInsertRowid };
     },
     delete: (id) => {

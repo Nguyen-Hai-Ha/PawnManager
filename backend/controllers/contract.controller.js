@@ -19,7 +19,8 @@ const ContractController = {
             // const relative = Relative.getById(req.params.id);
             const paymentSchedules = PaymentSchedules.getByContractId(req.params.id);
             const transactions = Transactions.getByContractId(req.params.id);
-            res.json({ contract, collateral, paymentSchedules, transactions });
+            const customer = Customer.getById(contract.id_customer);
+            res.json({ contract, collateral, paymentSchedules, transactions, customer });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

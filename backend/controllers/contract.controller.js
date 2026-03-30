@@ -37,9 +37,9 @@ const ContractController = {
     },
     create: (req, res) => {
         try {
-            const dataContract = req.body.contract;
+            const dataContract = JSON.parse(req.body.contract);
             const dataCollateral = JSON.parse(req.body.collateral);
-            const dataStaff = req.body.staff;
+            const dataStaff = JSON.parse(req.body.staff);
             let dataRelative = null;
             let dataImage = null;
             if (req.body.relative) {
@@ -193,7 +193,7 @@ const ContractController = {
                     if (dataContract.interest_type === "percent*term") {
                         interestAmount = dataContract.loan_amount * dataContract.interest_rate / 100;
                     } else if (dataContract.interest_type === "percent/term") {
-                        interestAmount = (dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.payment_term;
+                        interestAmount = (dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.total_periods;
                     } else if (dataContract.interest_type === "daily_amount") {
                         interestAmount = dataContract.interest_rate * daysInThisMonth;
                     }

@@ -97,7 +97,7 @@ export const useLoanStore = defineStore("loan", () => {
         id_type: ''
     });
     const loan = ref({
-        code: code.value,
+        code: '',
         loan_amount: '',
         interest_rate: '',
         start_date: '',
@@ -110,7 +110,7 @@ export const useLoanStore = defineStore("loan", () => {
     });
 
     const paymentDetails = ref([]);
-    
+    const historyPayment = ref([]);
     const images = ref([]);
     const imagePreviews = ref([]);
     const showModal = ref(false);
@@ -251,6 +251,18 @@ export const useLoanStore = defineStore("loan", () => {
             metadata: {},
             id_type: ''
         };
+        loan.value = {
+            code: '',
+            loan_amount: '',
+            interest_rate: '',
+            start_date: '',
+            end_date: '',
+            payment_term: '',
+            term_unit: '',
+            total_periods: '',
+            interest_type: '',
+            id_customer: '',
+        };
         revokeImages();
         showModal.value = false;
     };
@@ -284,32 +296,48 @@ export const useLoanStore = defineStore("loan", () => {
     };
 
     const submitLoan = async () => {
-        const payload = {
-            contract: {
-                code: loan.value.code,
-                loan_amount: loan.value.loan_amount,
-                interest_rate: loan.value.interest_rate,
-                start_date: StartDate.value,
-                end_date: EndDate.value,
-                payment_term: loan.value.payment_term,
-                term_unit: loan.value.term_unit,
-                total_periods: loan.value.total_periods,
-                interest_type: loan.value.interest_type,
-                status: status.value,
-                id_customer: loan.value.id_customer,
-                id_contract_type: id_contract_type.value
-            },
-            collateral: {
-                name: assets.value.name,
-                metadata: JSON.stringify(assets.value.metadata),
-                status: 'Đang cầm',
-                id_collateral_type: assets.value.id_type
-            },
-            images: { images: images.value },
-            staff: { id: staffId.value }
+        const formData = new FormData();
+
+        // Append contract fields
+        const contractData = {
+            code: code.value,
+            loan_amount: loan.value.loan_amount,
+            interest_rate: loan.value.interest_rate,
+            start_date: StartDate.value,
+            end_date: EndDate.value,
+            payment_term: loan.value.payment_term,
+            term_unit: loan.value.term_unit,
+            total_periods: loan.value.total_periods,
+            interest_type: loan.value.interest_type,
+            status: status.value,
+            id_customer: loan.value.id_customer,
+            id_contract_type: id_contract_type.value
         }
+        formData.append('contract', JSON.stringify(contractData));
+
+        const collateralData = {
+            name: assets.value.name,
+            metadata: JSON.stringify(assets.value.metadata),
+            status: 'Đang cầm',
+            id_collateral_type: assets.value.id_type
+        };
+        formData.append('collateral', JSON.stringify(collateralData));
+
+        const staffData = {
+            id: staffId.value,
+        };
+        formData.append('staff', JSON.stringify(staffData));
+
+        images.value.forEach((file) => {
+            formData.append('images', file);
+        });
+
+        console.log(formData);
+
         try {
-            const response = await apiClient.post('/contract', payload);
+            const response = await apiClient.post('/contract', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             await getAllLoans();
             closeModal();
         } catch (error) {
@@ -321,6 +349,7 @@ export const useLoanStore = defineStore("loan", () => {
         const payload = {
             amount: parseInt(formDetails.value.payment_amount),
             other_fee: parseInt(formDetails.value.other_fees),
+            description: formDetails.value.note,
             id_contract: formDetails.value.id_contract,
             id_transaction_type: 2,
             id_staff: staffId.value,
@@ -366,7 +395,6 @@ export const useLoanStore = defineStore("loan", () => {
     const fetchPaymentDetails = async (id) => {
         try {
             const response = await apiClient.get(`/contract/${id}/payment-details`);
-            await fetchContractDetails(id);
             if (response.data.paymentDetails) {
                 response.data.paymentDetails = response.data.paymentDetails.map(item => {
                     // 1. Lấy dữ liệu history
@@ -389,6 +417,9 @@ export const useLoanStore = defineStore("loan", () => {
             formDetails.value.id_contract = response.data.contract.id;
             formDetails.value.customer_name = response.data.customer.name;
             formDetails.value.payment_amount = schedule.value?.remaining_amount;
+
+            await fetchContractDetails(id);
+            await fetchHistoryPayment(id);
         } catch (error) {
             console.error('Error fetching payment details:', error);
         }
@@ -402,13 +433,22 @@ export const useLoanStore = defineStore("loan", () => {
             console.error('Error fetching contract details:', error);
         }
     };
+
+    const fetchHistoryPayment = async (id) => {
+        try {
+            const response = await apiClient.get(`/transaction/schedule/${id}`);
+            historyPayment.value = response.data;
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+        }
+    };
     
 
     return {
         //state
         loans, customers, assetTypes, assets, images, imagePreviews, showModal, loan, status,
         showInterestModal, paymentDetails, formDetails, search, paginated, totalPage, currentPage,
-        loanDetails,
+        loanDetails, historyPayment,
 
         //computed
         StartDate, EndDate, TotalInterest, id_contract_type, schedule, searchLoans,  
@@ -422,6 +462,7 @@ export const useLoanStore = defineStore("loan", () => {
         getAllLoans,
         fetchCustomer,
         fetchAssetTypes,
-        fetchPaymentDetails
+        fetchPaymentDetails,
+        fetchHistoryPayment
     }
 });

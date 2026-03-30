@@ -11,17 +11,33 @@ if (!fs.existsSync(dbDir)) {
 const dbPath = path.join(dbDir, 'pawn.db');
 const sqlPath = path.join(__dirname, '../models/init.sql');
 
+// Khởi tạo 1 connection duy nhất
+const db = new Database(dbPath, { verbose: console.log });
+
+// Đặt timeout trước để chờ nếu DB đang bị process khác hold lock
+db.pragma('busy_timeout = 5000');
+
+// Bật WAL mode cho phép đọc/ghi đồng thời không lock DB
+// Đặt trong try-catch vì nếu bạn đang mở DB bằng app khác (như DB Browser, DBeaver), 
+// SQLite sẽ không cho phép đổi journal_mode và quăng lỗi "database is locked".
 try {
-    const db = new Database(dbPath, { verbose: console.log });
+    db.pragma('journal_mode = WAL');
+} catch (err) {
+    console.warn('--- Chú ý: Không thể bật WAL mode do database đang bị ứng dụng khác khoá. ---');
+}
+
+db.pragma('foreign_keys = ON');
+
+try {
     const sqlContent = fs.readFileSync(sqlPath, 'utf8');
     db.exec(sqlContent);
-    db.pragma('foreign_keys = ON');
     console.log(`--- Database initialized successfully ---`);
 } catch (error) {
-    console.error(`--- Database initialization failed: ${error.message} ---`);
+    if (error.code !== 'SQLITE_ERROR') {
+        // Chỉ log nếu lỗi nghiêm trọng (ngoại trừ bảng đã có sẵn)
+        console.error(`--- Database initialization warning: ${error.message} ---`);
+    }
 }
-const db = new Database(dbPath, { verbose: console.log });
-db.pragma('foreign_keys = ON');
 
 console.log(`--- Database connected tại: ${dbPath} ---`);
 

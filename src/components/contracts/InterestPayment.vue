@@ -2,26 +2,36 @@
 import { useLoanStore } from '@/stores/loan';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
+import { Money3Component as Money3 } from 'v-money3';
 
 const store = useLoanStore();
 const { paymentDetails, formDetails } = storeToRefs(store);
-const { formatCurrency } = store;
+const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
 
 const emit = defineEmits(['close']);
 const activeTab = ref('Chi tiết đóng lãi');
 const tabs = ['Chi tiết đóng lãi', 'Thông Tin hợp đồng', 'Lịch sử đóng lãi'];
 
-const closeModal = () => {
-    emit('close');
-}
+const moneyConfig = {
+    prefix: '',
+    suffix: '',
+    thousands: '.',
+    decimal: ',',
+    precision: 0,
+    masked: false,
+    disableNegative: true,
+    min: 0,
+};
+
+
 </script>
 
 <template>
-    <div class="modal-interest-container" @click.self="closeModal">
+    <div class="modal-interest-container" @click.self="closeInterestModal">
         <div class="modal-interest-content">
             <div class="modal-header">
                 <h2>Đóng Lãi</h2>
-                <button class="btn-close" @click="closeModal">&times;</button>
+                <button class="btn-close" @click="closeInterestModal">&times;</button>
             </div>
 
             <div class="modal-tabs">
@@ -65,7 +75,7 @@ const closeModal = () => {
 
                 <div class="form-container">
                     <div class="form-header">Đóng Lãi</div>
-                    <form action="">
+                    <form @submit.prevent="submitInterestPayment">
                         <div class="form-body">
                             <div class="form-group">
                                 <label>Ngày Thanh Toán</label>
@@ -77,11 +87,11 @@ const closeModal = () => {
                             </div>
                             <div class="form-group">
                                 <label>Tiền Thanh Toán</label>
-                                <input id="payment_amount" type="text" v-model="formDetails.payment_amount" >
+                                <money3 id="payment_amount" v-model="formDetails.payment_amount" v-bind="moneyConfig"></money3>
                             </div>
                             <div class="form-group">
                                 <label>Phí khác</label>
-                                <input type="text" v-model="formDetails.other_fees">
+                                <money3 v-model="formDetails.other_fees" v-bind="moneyConfig"></money3>
                             </div>
                             <div class="form-group">
                                 <label>Ghi chú</label>
@@ -105,7 +115,7 @@ const closeModal = () => {
                     </button>
                 </div>
                 <div class="footer-right">
-                    <button class="btn-secondary" @click="closeModal">
+                    <button class="btn-secondary" @click="closeInterestModal">
                         Đóng <font-awesome-icon icon="circle-xmark" />
                     </button>
                 </div>

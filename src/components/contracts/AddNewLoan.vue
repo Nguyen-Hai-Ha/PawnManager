@@ -2,10 +2,22 @@
 import { useLoanStore } from '@/stores/loan';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { Money3Component as Money3 } from 'v-money3';
 
 const store = useLoanStore();
 const { customers, assetTypes, assets, imagePreviews, loan, StartDate, EndDate, TotalInterest } = storeToRefs(store);
 const { fetchAssetTypes, fetchCustomer, handleImageChange, closeModal, removeImage, formatCurrency, submitLoan } = store;
+
+const moneyConfig = {
+    prefix: '',
+    suffix: '',
+    thousands: '.',
+    decimal: ',',
+    precision: 0,
+    masked: false,
+    disableNegative: true,
+    min: 0,
+};
 
 onMounted(async () => {
     const promises = [];
@@ -127,7 +139,7 @@ onMounted(async () => {
                         <div class="loan-grid-row">
                             <div class="loan-group">
                                 <label for="loan_amount">Tổng tiền vay</label>
-                                <input type="text" id="loan_amount" v-model="loan.loan_amount" required>
+                                <money3 id="loan_amount" v-model="loan.loan_amount" v-bind="moneyConfig"></money3>
                             </div>
                             <div class="loan-group">
                                 <label for="interest_period">Kỳ đóng lãi:</label>

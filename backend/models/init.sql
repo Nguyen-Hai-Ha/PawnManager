@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS transactions(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     amount REAL NOT NULL,
     other_fees REAL NULL,
+    description TEXT NULL,
     id_contract INTEGER NOT NULL,
     id_schedule INTEGER NULL,
     id_transaction_type INTEGER NOT NULL,

@@ -211,6 +211,18 @@ export const useLoanStore = defineStore("loan", () => {
     };
 
     const closeInterestModal = () => {
+        formDetails.value = {
+            payment_date: StartDate.value,
+            customer_name: '',
+            payment_amount: '',
+            other_fees: '',
+            note: '',
+            id_schedule: '',
+            id_contract: '',
+            id_transaction_type: '',
+            id_staff: staffId.value,
+        };
+        paymentDetails.value = [];
         showInterestModal.value = false;
     };
 
@@ -245,6 +257,25 @@ export const useLoanStore = defineStore("loan", () => {
             closeModal();
         } catch (error) {
             console.error('Error submitting loan:', error);
+        }
+    }
+
+    const submitInterestPayment = async () => {
+        const payload = {
+            amount: parseInt(formDetails.value.payment_amount),
+            other_fee: parseInt(formDetails.value.other_fees),
+            id_contract: formDetails.value.id_contract,
+            id_transaction_type: 2,
+            id_staff: staffId.value,
+            id_schedule: schedule.value.id
+        }
+        console.log(payload);
+        try {
+            const response = await apiClient.post('/transaction', payload);
+            await getAllLoans();
+            closeInterestModal();
+        } catch (error) {
+            console.error('Error submitting interest payment:', error);
         }
     }
 
@@ -309,14 +340,16 @@ export const useLoanStore = defineStore("loan", () => {
     return {
         //state
         loans, customers, assetTypes, assets, images, imagePreviews, showModal, loan, status,
-        showInterestModal, paymentDetails, formDetails,
+        showInterestModal, paymentDetails, formDetails, search, paginated, totalPage, currentPage,
 
         //computed
-        StartDate, EndDate, TotalInterest, id_contract_type, schedule,
+        StartDate, EndDate, TotalInterest, id_contract_type, schedule, searchLoans,  
 
         //actions
         formatCurrency, handleImageChange, openModal, closeModal, removeImage, submitLoan,
-        openInterestModal, closeInterestModal, 
+        openInterestModal, closeInterestModal, submitInterestPayment,
+        changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
+
         //fetch
         getAllLoans,
         fetchCustomer,

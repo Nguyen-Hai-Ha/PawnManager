@@ -142,7 +142,7 @@ const TransactionsController = {
 
             const calculateInterest = (loanAmount, rate, type) => {
                 if (type === 'daily_amount') {
-                    return rate; 
+                    return rate;
                 }
                 return Math.round((loanAmount * rate) / 100);
             };
@@ -157,7 +157,7 @@ const TransactionsController = {
             const days_new = total_days - days_old;
 
             // lãi mỗi ngày gốc cũ 
-            const interest_old_full = current_schedule.interest_amount; 
+            const interest_old_full = current_schedule.interest_amount;
             const interest_per_day_old = interest_old_full / total_days;
 
             // Lãi mỗi ngày theo gốc MỚI
@@ -168,7 +168,7 @@ const TransactionsController = {
             const new_current_period_interest = Math.round((days_old * interest_per_day_old) + (days_new * interest_per_day_new));
 
             let principalAmount = 0;
-            if(current_schedule.principal_amount > 0 && contract.id_contract_type == 3){
+            if (current_schedule.principal_amount > 0 && contract.id_contract_type == 3) {
                 const total_principal = schedules.reduce((acc, schedule) => acc + schedule.principal_amount, 0);
                 principalAmount = Math.floor(total_principal - newLoanAmount);
             }
@@ -264,7 +264,7 @@ const TransactionsController = {
             if (amount < (total + interest_amount)) {
                 return { error: "Số tiền không đủ để tất toán hợp đồng" };
             }
-            
+
             if (schedules.length === 0) {
                 return { error: "Hợp đồng đã hoàn tất" };
             }

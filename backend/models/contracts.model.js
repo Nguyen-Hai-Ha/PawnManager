@@ -37,7 +37,7 @@ const Contract = {
                 ((ps.interest_amount + ps.principal_amount) - IFNULL(SUM(t.amount), 0)) as remaining_amount,
                 JSON_GROUP_ARRAY(
                     JSON_OBJECT(
-                        'amount', t.amount,
+                        'amount', CAST(t.amount AS INTEGER),
                         'created_at', DATE(t.created_at)
                     )
                 ) as payment_history

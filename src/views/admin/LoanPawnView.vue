@@ -8,8 +8,8 @@ import InterestPayment from '@/components/contracts/InterestPayment.vue';
 
 const loanStore = useLoanStore();
 
-const { loans, showModal, showInterestModal } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, openModal, closeModal, openInterestModal, closeInterestModal } = loanStore;
+const { loans, showModal, showInterestModal, paginated, totalPage, currentPage, search } = storeToRefs(loanStore);
+const { getAllLoans, formatCurrency, openModal, closeModal, openInterestModal, closeInterestModal, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage } = loanStore;
 
 onMounted(async() => {
     const promise = [];
@@ -83,34 +83,56 @@ onMounted(async() => {
                             <td><span class="text-danger fw-bold">{{ formatCurrency(loan.loan_amount) }}</span></td>
                             <td><span class="text-success fw-bold">{{ formatCurrency(loan.had_paid) }}</span></td>
                             <td><span class="text fw-bold">{{ formatCurrency(loan.remaining_amount) }}</span></td>
-                            <td><span class="badge rounded-pill bg-warning text-warning-emphasis">{{ loan.status }}</span>
+                            <td>
+                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Đang cầm'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg-danger text-danger-emphasis fw-bold" v-if="loan.status === 'Cần thanh lý'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg-primary fw-bold" v-if="loan.status === 'Đã thanh lý'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg-danger text-info-emphasis fw-bold" v-if="loan.status === 'Quá hạn'">
+                                    {{ loan.status }}
+                                </span>
                             </td>
                             <td>
-                                <div class="action-cell">
+                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất'">
+                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
+                                        <font-awesome-icon icon="fa-solid fa-eye" />
+                                    </button>
+                                </div>
+                                <div class="action-cell" v-else>
                                     <button class="btn-action text-success" data-tooltip="Đóng lãi" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
+                                
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="pagination">
+            <div class="pagination" v-if="totalPage >= 1">
                 <div class="pagination-info">
-                    <span class="page-info">Trang 1/5 (72)</span>
+                    <span class="page-info">Trang {{ currentPage }}/{{ totalPage }} ({{ loans.length }})</span>
                 </div>
                 <div class="pagination-controls">
-                    <button class="page-btn"><font-awesome-icon icon="angles-left" /></button>
-                    <button class="page-btn"><font-awesome-icon icon="angle-left" /></button>
-                    <button class="page-btn">1</button>
-                    <button class="page-btn">2</button>
-                    <button class="page-btn">3</button>
-                    <button class="page-btn">4</button>
-                    <button class="page-btn"><font-awesome-icon icon="angle-right" /></button>
-                    <button class="page-btn"><font-awesome-icon icon="angles-right" /></button>
+                    <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
+                    <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
+                    <button class="page-btn" v-for="page in Math.min(5, totalPage)" 
+                        :key="page" @click="changePage(page)"
+                        :class="{ 'active': page === currentPage ? 'btb-primary' : ''}">
+                        {{ page }}
+                    </button>
+                    <button class="page-btn" @click="goToNextPage"><font-awesome-icon icon="angle-right" /></button>
+                    <button class="page-btn" @click="goToLastPage"><font-awesome-icon icon="angles-right" /></button>
                 </div>
             </div>
         </div>

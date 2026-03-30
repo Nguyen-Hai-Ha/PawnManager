@@ -27,7 +27,7 @@ onMounted(async() => {
             <div class="search">
                 <div class="search-input">
                     <label for="search">Tìm kiếm</label>
-                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT">
+                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, mã hợp đồng, TS thế chấp" v-model="search">
                 </div>
                 <div class="filter">
                     <label for="filter">Trạng thái</label>
@@ -71,7 +71,7 @@ onMounted(async() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for = " loan, index in loans" :key = "loan.id">
+                        <tr v-for = " loan, index in paginated" :key = "loan.id">
                             <td>{{ index + 1 }}</td>
                             <td>
                                 <span class="fw-bold">{{ loan.code }}</span>
@@ -84,19 +84,16 @@ onMounted(async() => {
                             <td><span class="text-success fw-bold">{{ formatCurrency(loan.had_paid) }}</span></td>
                             <td><span class="text fw-bold">{{ formatCurrency(loan.remaining_amount) }}</span></td>
                             <td>
-                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Đang cầm'">
+                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Đang cầm' || loan.status === 'Đang Cầm'">
                                     {{ loan.status }}
                                 </span>
                                 <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-danger text-danger-emphasis fw-bold" v-if="loan.status === 'Cần thanh lý'">
+                                <span class="badge rounded-pill bg-danger text-danger-emphasis fw-bold" v-if="loan.status === 'Cần thanh lý' || loan.status === 'Quá hạn'">
                                     {{ loan.status }}
                                 </span>
                                 <span class="badge rounded-pill bg-primary fw-bold" v-if="loan.status === 'Đã thanh lý'">
-                                    {{ loan.status }}
-                                </span>
-                                <span class="badge rounded-pill bg-danger text-info-emphasis fw-bold" v-if="loan.status === 'Quá hạn'">
                                     {{ loan.status }}
                                 </span>
                             </td>

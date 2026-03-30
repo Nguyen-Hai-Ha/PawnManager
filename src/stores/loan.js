@@ -7,6 +7,62 @@ import dayjs from "dayjs";
 
 export const useLoanStore = defineStore("loan", () => {
     const route = useRoute();
+    const itemPage = 8;
+    const currentPage = ref(1);
+    const search = ref('');
+
+    const paginated = computed(() => {
+        const start = (currentPage.value - 1) * itemPage;
+        const end = start + itemPage;
+        return searchLoans.value.slice(start, end);
+    });
+
+    const totalPage = computed(() => {
+        return Math.ceil(searchLoans.value.length / itemPage);
+    });
+
+    const changePage = ( page) => {
+        if (page >= 1 && page < totalPage){
+            currentPage.value = page;
+        }
+    };
+
+    const goToFirstPage = () => {
+        currentPage.value = 1;
+    };
+
+    const goToNextPage = () => {
+        if (currentPage.value < totalPage.value) {
+            currentPage.value++;
+        }
+    };
+
+    const goToPrevPage = () => {
+        if (currentPage.value > 1) {
+            currentPage.value--;
+        }
+    };
+
+    const goToLastPage = () => {
+        currentPage.value = totalPage.value;
+    };
+
+    const searchLoans = computed (() => {
+        if (!search.value.trim()) {
+            return loans.value;
+        }
+        const searchTerm = search.value.trim().toLowerCase();
+
+        return loans.value.filter(loan => {
+            const searchFields = [
+                loan.code,
+                loan.customer_name,
+                loan.collateral_name,
+            ];
+            return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
+        });
+    })
+
     const pageTitles = {
         'AdminLoanPawn': 1,
         'AdminRepayments': 3,
@@ -31,6 +87,7 @@ export const useLoanStore = defineStore("loan", () => {
         return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
     });
 
+    const loanDetails = ref([]);
     const loans = ref([]);
     const customers = ref([]);
     const assetTypes = ref([]);
@@ -309,6 +366,7 @@ export const useLoanStore = defineStore("loan", () => {
     const fetchPaymentDetails = async (id) => {
         try {
             const response = await apiClient.get(`/contract/${id}/payment-details`);
+            await fetchContractDetails(id);
             if (response.data.paymentDetails) {
                 response.data.paymentDetails = response.data.paymentDetails.map(item => {
                     // 1. Lấy dữ liệu history
@@ -335,20 +393,30 @@ export const useLoanStore = defineStore("loan", () => {
             console.error('Error fetching payment details:', error);
         }
     };
+
+    const fetchContractDetails = async (id) => {
+        try {
+            const response = await apiClient.get(`/contract/${id}`);
+            loanDetails.value = response.data;
+        } catch (error) {
+            console.error('Error fetching contract details:', error);
+        }
+    };
     
 
     return {
         //state
         loans, customers, assetTypes, assets, images, imagePreviews, showModal, loan, status,
         showInterestModal, paymentDetails, formDetails, search, paginated, totalPage, currentPage,
+        loanDetails,
 
         //computed
         StartDate, EndDate, TotalInterest, id_contract_type, schedule, searchLoans,  
 
         //actions
         formatCurrency, handleImageChange, openModal, closeModal, removeImage, submitLoan,
-        openInterestModal, closeInterestModal, submitInterestPayment,
-        changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
+        openInterestModal, closeInterestModal, submitInterestPayment, fetchContractDetails,
+        changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, 
 
         //fetch
         getAllLoans,

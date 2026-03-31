@@ -85,11 +85,11 @@ const ContractController = {
                 // percent/term: lãi mỗi kỳ chia cho số kỳ VD: 30tr x 5% = 1tr5 tổng lãi chia cho 3 kỳ = 500k/kỳ
                 // daily_amount: lãi mỗi ngày nhân với số ngày VD: lãi 50k/ngày nhân với số ngày 
                 if (dataContract.interest_type === "percent*term") {
-                    interestAmount = dataContract.loan_amount * dataContract.interest_rate / 100;
+                    interestAmount = Math.ceil(dataContract.loan_amount * dataContract.interest_rate / 100);
                 } else if (dataContract.interest_type === "percent/term") {
-                    interestAmount = (dataContract.loan_amount * (dataContract.interest_rate / 100)) / dataContract.total_periods;
+                    interestAmount = Math.ceil((dataContract.loan_amount * (dataContract.interest_rate / 100)) / dataContract.total_periods);
                 } else if (dataContract.interest_type === "daily_amount") {
-                    interestAmount = dataContract.interest_rate * (dataContract.payment_term * dataContract.total_periods);
+                    interestAmount = Math.ceil(dataContract.interest_rate * (dataContract.payment_term * dataContract.total_periods));
                 }
 
                 // tính ngày trả cho từng kỳ
@@ -100,7 +100,7 @@ const ContractController = {
                 let principalAmount = 0;
                 // tiền gốc mỗi kỳ chỉ áp dụng cho HĐ trả góp
                 if (dataContract.id_contract_type == 3) {
-                    principalAmount = dataContract.loan_amount / dataContract.total_periods;
+                    principalAmount = Math.ceil(dataContract.loan_amount / dataContract.total_periods);
                 }
 
                 // lưu tạm thời cho kỳ đầu tiên
@@ -165,7 +165,7 @@ const ContractController = {
                 let principalAmount = 0;
                 // tiền gốc mỗi kỳ chỉ áp dụng cho HĐ trả góp
                 if (dataContract.id_contract_type == 3) {
-                    principalAmount = dataContract.loan_amount / dataContract.total_periods;
+                    principalAmount = Math.ceil(dataContract.loan_amount / dataContract.total_periods);
                 }
 
                 // lưu tạm thời cho kỳ đầu tiên
@@ -191,11 +191,11 @@ const ContractController = {
                     // percent/term: lãi mỗi kỳ chia cho số kỳ VD: 30tr x 5% = 1tr5 tổng lãi chia cho 3 kỳ = 500k/kỳ
                     // daily_amount: lãi mỗi ngày nhân với số ngày VD: lãi 50k/ngày nhân với số ngày 
                     if (dataContract.interest_type === "percent*term") {
-                        interestAmount = dataContract.loan_amount * dataContract.interest_rate / 100;
+                        interestAmount = Math.ceil(dataContract.loan_amount * dataContract.interest_rate / 100);
                     } else if (dataContract.interest_type === "percent/term") {
-                        interestAmount = (dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.total_periods;
+                        interestAmount = Math.ceil((dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.total_periods);
                     } else if (dataContract.interest_type === "daily_amount") {
-                        interestAmount = dataContract.interest_rate * daysInThisMonth;
+                        interestAmount = Math.ceil(dataContract.interest_rate * daysInThisMonth);
                     }
 
                     paymentSchedule = PaymentSchedules.create({

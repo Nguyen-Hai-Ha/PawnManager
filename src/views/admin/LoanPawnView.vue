@@ -1,7 +1,7 @@
 <script setup>
 import { useLoanStore } from '@/stores/loan';
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
-import { useInterestPaymentStore } from '@/stores/contract/interestPayment';
+import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
@@ -10,7 +10,7 @@ import InterestPayment from '@/components/contracts/InterestPayment.vue';
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
-const interestPaymentStore = useInterestPaymentStore();
+const interestPaymentStore = useInterestPayment();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig } = storeToRefs(loanStore);
 const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort } = loanStore;

@@ -1,12 +1,12 @@
 <script setup>
-import { useLoanStore } from '@/stores/loan';
+import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { storeToRefs } from 'pinia';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
-const store = useLoanStore();
+const store = useInterestPayment();
 const { paymentDetails, formDetails, loanDetails, historyPayment } = storeToRefs(store);
-const { formatCurrency, closeInterestModal, submitInterestPayment, fetchHistoryPayment } = store;
+const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
 
 const emit = defineEmits(['close']);
 const activeTab = ref('Chi tiết đóng lãi');
@@ -22,17 +22,6 @@ const moneyConfig = {
     disableNegative: true,
     min: 0,
 };
-
-onMounted(async() => {
-    const promise = [];
-    if (loanDetails.value.length === 0) {
-        promise.push(fetchContractDetails);
-    }
-    if (historyPayment.value.length === 0) {
-        promise.push(fetchHistoryPayment);
-    }
-    await Promise.all(promise);
-})
 </script>
 
 <template>

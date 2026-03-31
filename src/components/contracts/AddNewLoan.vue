@@ -1,10 +1,10 @@
 <script setup>
-import { useLoanStore } from '@/stores/loan';
+import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
-const store = useLoanStore();
+const store = useAddNewLoanStore();
 const { customers, assetTypes, assets, imagePreviews, loan, StartDate, EndDate, TotalInterest } = storeToRefs(store);
 const { fetchAssetTypes, fetchCustomer, handleImageChange, closeModal, removeImage, formatCurrency, submitLoan } = store;
 

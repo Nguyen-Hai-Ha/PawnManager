@@ -1,17 +1,26 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
 import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 
 export const useLoanStore = defineStore("loan", () => {
     const itemPage = 8;
     const currentPage = ref(1);
     const search = ref('');
+    const route = useRoute();
+    const pageTitles = {
+        'AdminLoanPawn': 1,
+        'AdminPledges': 2,
+        'AdminRepayments': 3
+    }
 
     const paginated = computed(() => {
         const start = (currentPage.value - 1) * itemPage;
         const end = start + itemPage;
         return sortedLoans.value.slice(start, end);
     });
+
+    const id_contract_type = computed(() => pageTitles[route.name]);
 
     const totalPage = computed(() => {
         return Math.ceil(sortedLoans.value.length / itemPage);
@@ -111,7 +120,7 @@ export const useLoanStore = defineStore("loan", () => {
 
     const getAllLoans = async () => {
         try {
-            const response = await apiClient.get('/contract');
+            const response = await apiClient.get(`/contract/type/${id_contract_type.value}`);
             loans.value = response.data;
         } catch (error) {
             console.error('Error fetching loans:', error);
@@ -138,11 +147,11 @@ export const useLoanStore = defineStore("loan", () => {
 
     return {
         //state
-        loans, customers, assetTypes, assets, search, paginated, totalPage, currentPage,
+        loans, customers, assetTypes, assets, search, paginated, totalPage, currentPage, pageTitles,
         
 
         //computed
-       searchLoans, sortConfig,
+        searchLoans, sortConfig, id_contract_type,
 
         //actions
         formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort,

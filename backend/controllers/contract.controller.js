@@ -12,6 +12,14 @@ const ContractController = {
             res.status(500).json({ error: error.message });
         }
     },
+    getByIdContractType: (req, res) => {
+        try {
+            const contracts = Contract.getByIdContractType(req.params.id);
+            res.json(contracts);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
     getById: (req, res) => {
         try {
             const contract = Contract.getById(req.params.id);

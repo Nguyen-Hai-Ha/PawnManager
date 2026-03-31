@@ -231,7 +231,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
 
     const getAllLoans = async () => {
         try {
-            const response = await apiClient.get('/contract');
+            const response = await apiClient.get(`/contract/type/${id_contract_type.value}`);
             loans.value = response.data;
         } catch (error) {
             console.error('Error fetching loans:', error);

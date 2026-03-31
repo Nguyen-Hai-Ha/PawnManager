@@ -48,6 +48,12 @@ const Transactions = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    deleteByContractId: (id) => {
+        const sql = `DELETE FROM transactions WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run(id);
+        return result.changes;
     }
 }
 

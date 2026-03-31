@@ -1383,3 +1383,10 @@ nav a {
 .loan-detail-value {
   color: #666;
 }
+
+.add-relative-info { 
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}

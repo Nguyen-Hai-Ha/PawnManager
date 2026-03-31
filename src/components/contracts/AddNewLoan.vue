@@ -5,7 +5,9 @@ import { onMounted } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
 const store = useAddNewLoanStore();
-const { customers, assetTypes, assets, imagePreviews, loan, StartDate, EndDate, TotalInterest, id_contract_type } = storeToRefs(store);
+const { customers, assetTypes, assets, imagePreviews, 
+        loan, StartDate, EndDate, TotalInterest, newRelatives,
+        id_contract_type, checkRelative } = storeToRefs(store);
 const { fetchAssetTypes, fetchCustomer, handleImageChange, closeModal, removeImage, formatCurrency, submitLoan } = store;
 
 const moneyConfig = {
@@ -133,6 +135,44 @@ onMounted(async () => {
                             </div>
                         </div>
                     </div>
+                    <div class="add-relative-info" v-if="checkRelative && id_contract_type === 2" >
+                        <div class="relative_info" v-for="(relative, index) in newRelatives" :key="index">
+                            <div class="pm-form-group">
+                                <span class="text-dark fw-bold ">Người thân {{ index + 1 }}</span>
+                            </div>
+                            <div class="form-row">
+                                <div class="pm-form-group">
+                                    <label for="relative_name">Họ và tên</label>
+                                    <input type="text" id="relative_name" v-model="relative.name" required>
+                                </div>
+                                <div class="pm-form-group">
+                                    <label for="relative_phone">Số điện thoại</label>
+                                    <input type="text" id="relative_phone" v-model="relative.phone" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="pm-form-group">
+                                    <label for="relative_cccd">CCCD</label>
+                                    <input type="text" id="relative_cccd" v-model="relative.cccd" required>
+                                </div>
+                                <div class="pm-form-group">
+                                    <label for="relative_address">Địa chỉ</label>
+                                    <input type="text" id="relative_address" v-model="relative.address"  required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="pm-form-group">
+                                    <label for="relative_job">Nghề nghiệp</label>
+                                    <input type="text" id="relative_job" required>
+                                </div>
+                                <div class="pm-form-group">
+                                    <label for="relative_workplace">Nơi làm việc</label>
+                                    <input type="text" id="relative_workplace" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="loan-info">
                         <span class="loan-title">Thông tin khoản vay</span>
 

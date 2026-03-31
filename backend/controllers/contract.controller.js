@@ -54,7 +54,7 @@ const ContractController = {
 
             const contract = Contract.create(dataContract);
             let dataCollateral = null;
-            let dataRelative = null;
+            let dataRelatives = null;
             let dataImage = null;
             let collateral = null;
 
@@ -63,9 +63,15 @@ const ContractController = {
                 dataCollateral.id_contract = contract.id;
                 collateral = Collaterals.create(dataCollateral);
             }
-            if (req.body.relative) {
-                dataRelative = req.body.relative;
-                const relative = Relative.create(dataRelative);
+            if (req.body.relatives) {
+                // FE gửi mảng 2 người
+                dataRelatives = req.body.relatives
+                const relatives = JSON.parse(dataRelatives);
+                relatives.forEach(item => {
+                    if (item.name && item.name.trim() !== '') {
+                        Relative.create({ ...item, id_customer: dataContract.id_customer });
+                    }
+                });
             }
 
             if (req.body.images){
@@ -73,8 +79,6 @@ const ContractController = {
                 dataImage.id_collateral = collateral.id;
                 const images = Image.create(dataImage);
             }
-            
-            
 
             const transaction = Transactions.create({
                 amount: dataContract.loan_amount,
@@ -105,7 +109,7 @@ const ContractController = {
                 } else if (dataContract.interest_type === "percent/term") {
                     interestAmount = Math.ceil((dataContract.loan_amount * (dataContract.interest_rate / 100)) / dataContract.total_periods);
                 } else if (dataContract.interest_type === "daily_amount") {
-                    interestAmount = Math.ceil(dataContract.interest_rate * (dataContract.payment_term * dataContract.total_periods));
+                    interestAmount = Math.ceil(dataContract.interest_rate * dataContract.payment_term );
                 }
 
                 // tính ngày trả cho từng kỳ
@@ -252,8 +256,9 @@ const ContractController = {
         try {
             const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
             const collateral = Collaterals.deleteByContractId(req.params.id);
+            const transaction = Transactions.deleteByContractId(req.params.id);
             const contract = Contract.delete(req.params.id);
-            res.json({ contract, paymentSchedules, collateral });
+            res.json({ contract, paymentSchedules, collateral, transaction });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

@@ -13,7 +13,7 @@ const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort } = loanStore;
+const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
 
 const { showModal } = storeToRefs(addNewLoanStore);
 const { openModal, closeModal } = addNewLoanStore;
@@ -22,7 +22,8 @@ const { showInterestModal } = storeToRefs(interestPaymentStore);
 const { openInterestModal, closeInterestModal } = interestPaymentStore;
 
 onMounted(async() => {
-    await getAllLoans()
+    await getAllLoans();
+    await fetchCustomer()
 })
 
 </script>
@@ -98,8 +99,8 @@ onMounted(async() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for = " loan in paginated" :key = "loan.id">
-                            <td>{{ loan.id }}</td>
+                        <tr v-for = " loan, index in paginated" :key = "loan.id">
+                            <td>{{ index + 1 }}</td>
                             <td>
                                 <span class="fw-bold">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>

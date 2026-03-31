@@ -8,6 +8,24 @@ import dayjs from "dayjs";
 export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const loans = ref([]);
     const customers = ref([]);
+    const newRelatives = ref([
+        {
+            name: '',
+            phone: '',
+            cccd: '',
+            address: '',
+            job: '',
+            workplace: ''
+        },
+        {
+            name: '',
+            phone: '',
+            cccd: '',
+            address: '',
+            job: '',
+            workplace: ''
+        }
+    ]);
     const assetTypes = ref([]);
     const assets = ref({
         name: '',
@@ -38,7 +56,14 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const id_contract_type = computed(() => pageTitles[route.name]);
     const status = computed(() => id_contract_type.value === 1 ? "Đang cầm" : "Đang vay");
     const code = computed(() => {
-        const prefix = id_contract_type.value === 1 ? "C" : "V";
+        let prefix = "";
+        if (id_contract_type.value === 1) {
+            prefix = "CD";
+        } else if (id_contract_type.value === 2) {
+            prefix = "TC";
+        } else if (id_contract_type.value === 3) {
+            prefix = "TG";
+        }
 
         if (loans.value.length === 0) {
             return `${prefix}0001`
@@ -52,6 +77,16 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
     });
     
+    const checkRelative = computed(() => {
+        const findCustomer = customers.value.find((customer) => customer.id === loan.value.id_customer);
+        let relative = []
+        if (findCustomer?.relatives) {
+            relative = typeof findCustomer.relatives === 'string' 
+            ? JSON.parse(findCustomer.relatives) 
+            : findCustomer.relatives;
+        }
+        return relative.length >= 2 ? false : true;
+    })
 
     const authStore = useAuthStore();
     const staffId = computed(() => authStore.user.id);
@@ -178,6 +213,24 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
             interest_type: '',
             id_customer: '',
         };
+        newRelatives.value = [
+            {
+                name: '',
+                phone: '',
+                cccd: '',
+                address: '',
+                job: '',
+                workplace: ''
+            },
+            {
+                name: '',
+                phone: '',
+                cccd: '',
+                address: '',
+                job: '',
+                workplace: ''
+            }
+        ];
         revokeImages();
         showModal.value = false;
     };
@@ -214,6 +267,14 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
             images.value.forEach((file) => {
                 formData.append('images', file);
             });
+        }
+
+        // nếu là tín chấp thì thêm người thân
+        if (id_contract_type.value === 2) {
+            const validRelatives = newRelatives.value.filter(rel => rel.name && rel.name.trim() !== '');
+            if (validRelatives.length > 0) {
+                formData.append('relatives', JSON.stringify(validRelatives));
+            }
         }
         const staffData = {
             id: staffId.value,
@@ -260,10 +321,10 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
 
     return {
         //state
-        loans, customers, assetTypes, assets, images, imagePreviews, showModal, loan, status, pageTitles,
+        loans, customers, assetTypes, assets, images, imagePreviews, showModal, loan, status, pageTitles, newRelatives,
 
         //computed
-        StartDate, EndDate, TotalInterest, id_contract_type,
+        StartDate, EndDate, TotalInterest, id_contract_type, checkRelative,
 
         //actions
         formatCurrency, handleImageChange, openModal, closeModal, removeImage, submitLoan,

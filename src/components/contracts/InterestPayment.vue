@@ -1,12 +1,20 @@
 <script setup>
 import { useInterestPayment } from '@/stores/contract/interestPayment';
+import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
 const store = useInterestPayment();
+const reducePrincipalStore = useReducePrincipalStore();
+
+
 const { paymentDetails, formDetails, loanDetails, historyPayment } = storeToRefs(store);
 const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
+
+const { showReducePrincipalModal } = storeToRefs(reducePrincipalStore);
+const { closeReducePrincipalModal, openReducePrincipalModal } = reducePrincipalStore;
+
 
 const emit = defineEmits(['close']);
 const activeTab = ref('Chi tiết đóng lãi');
@@ -195,7 +203,7 @@ const moneyConfig = {
                     <button class="btn-primary">
                         <font-awesome-icon icon="hand-holding-dollar" /> Tất Toán
                     </button>
-                    <button class="btn-primary">
+                    <button class="btn-primary" @click="openReducePrincipalModal">
                         <font-awesome-icon icon="money-bill-wave" /> Trả Bớt Gốc
                     </button>
                 </div>

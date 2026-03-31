@@ -97,7 +97,7 @@ onMounted(async() => {
                         <tr v-for="loan, index in paginated" :key="loan.id">
                             <td>{{ index + 1 }}</td>
                             <td>
-                                <span class="fw-bold">{{ loan.code }}</span>
+                                <span class="text-success fw-bold">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>

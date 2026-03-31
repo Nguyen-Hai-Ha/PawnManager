@@ -2,15 +2,18 @@
 import { useLoanStore } from '@/stores/loan';
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
+import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
+import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
+const reducePrincipalStore = useReducePrincipalStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig } = storeToRefs(loanStore);
 const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
@@ -20,6 +23,9 @@ const { openModal, closeModal } = addNewLoanStore;
 
 const { showInterestModal } = storeToRefs(interestPaymentStore);
 const { openInterestModal, closeInterestModal } = interestPaymentStore;
+
+const { showReducePrincipalModal } = storeToRefs(reducePrincipalStore);
+const { openReducePrincipalModal, closeReducePrincipalModal } = reducePrincipalStore;
 
 onMounted(async() => {
     await getAllLoans();
@@ -102,7 +108,7 @@ onMounted(async() => {
                         <tr v-for = " loan, index in paginated" :key = "loan.id">
                             <td>{{ index + 1 }}</td>
                             <td>
-                                <span class="fw-bold">{{ loan.code }}</span>
+                                <span class="text-success fw-bold">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>
@@ -134,6 +140,9 @@ onMounted(async() => {
                                 <div class="action-cell" v-else>
                                     <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'contract.detail'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
+                                    </button>
+                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal">
+                                        <font-awesome-icon icon="money-bill-wave" />
                                     </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'"><font-awesome-icon
                                             icon="circle-xmark" /></button>
@@ -167,6 +176,9 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showInterestModal">
         <InterestPayment @close="closeInterestModal" />
+    </div>
+    <div class="modal-overlay" v-if="showReducePrincipalModal">
+        <ReducePrincipal @close="closeReducePrincipalModal" />
     </div>
 </template>
 

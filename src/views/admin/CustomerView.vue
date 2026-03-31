@@ -7,12 +7,12 @@ import { storeToRefs } from 'pinia';
 
 const store = useCustomerStore();
 
-const { customers, showAddCustomer, paginated, currentPage, totalPage, search, showEditCustomer } = storeToRefs(store);
+const { customers, showAddCustomer, paginated, currentPage, totalPage, search, showEditCustomer, sortConfig } = storeToRefs(store);
 
 const { fetchcustomer, closeModal, openModal,
         changePage, goToFirstPage, goToLastPage,
         goToNextPage, goToPrevPage, deleteCutomer,
-        openEditModal, closeEditModal } = store;
+        openEditModal, closeEditModal, handleSort } = store;
 
 onMounted(async () => {
     const promise = [];
@@ -37,9 +37,24 @@ onMounted(async () => {
                 <table>
                     <thead>
                         <tr>
-                            <th>STT <font-awesome-icon icon="sort" class="sort-icon" /></th>
-                            <th>Họ và tên <font-awesome-icon icon="sort" class="sort-icon" /></th>
-                            <th>SĐT <font-awesome-icon icon="sort" class="sort-icon" /></th>
+                            <th>STT 
+                                <span class="sort-icon" @click="handleSort('id')">
+                                    <font-awesome-icon v-if="sortConfig.key === 'id'" :icon="sortConfig.direction === 'asc' ? 'sort-up' : 'sort-down'" class="sort-icon" />
+                                    <font-awesome-icon v-else icon="sort" class="sort-icon"/>
+                                </span>
+                            </th>
+                            <th>Họ và tên 
+                                <span class="sort-icon" @click="handleSort('name')">
+                                    <font-awesome-icon v-if="sortConfig.key === 'name'" :icon="sortConfig.direction === 'asc' ? 'sort-up' : 'sort-down'" class="sort-icon"/>
+                                    <font-awesome-icon v-else icon="sort" class="sort-icon"/>
+                                </span>
+                            </th>
+                            <th>SĐT 
+                                <span class="sort-icon" @click="handleSort('phone')" >
+                                    <font-awesome-icon v-if="sortConfig.key === 'phone'" :icon="sortConfig.direction === 'asc' ? 'sort-up' : 'sort-down'" class="sort-icon"/>
+                                    <font-awesome-icon v-else icon="sort" class="sort-icon"/>
+                                </span>
+                            </th>
                             <th>CCCD</th>
                             <th>Địa chỉ</th>
                             <th>Hình CCCD</th>
@@ -47,8 +62,8 @@ onMounted(async () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(customer, index) in paginated" :key="customer.id">
-                            <td>{{ index + 1 }}</td>
+                        <tr v-for="customer in paginated" :key="customer.id">
+                            <td>{{ customer.id }}</td>
                             <td>{{ customer.name }}</td>
                             <td>{{ customer.phone }}</td>
                             <td>{{ customer.cccd }}</td>

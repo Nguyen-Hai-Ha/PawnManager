@@ -32,10 +32,43 @@ export const useCustomerStore = defineStore('customer', () => {
 
     const search = ref('');
 
+    const sortConfig = ref({
+        key: 'name',
+        direction: 'asc'
+    });
+
+    const handleSort = (key) => {
+        if (sortConfig.value.key === key) {
+            sortConfig.value.direction = sortConfig.value.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortConfig.value.key = key;
+            sortConfig.value.direction = 'asc';
+        }
+    }
+
+    const sortedCustomers = computed(() => {
+        const list = [...searchCustomer.value];
+        const { key, direction } = sortConfig.value;
+        list.sort((a, b) => {
+            let valA = a[key];
+            let valB = b[key];
+            // So sánh số cho STT (index), còn lại so sánh string
+            if (typeof valA === 'number' && typeof valB === 'number') {
+                return direction === 'asc' ? valA - valB : valB - valA;
+            }
+            valA = String(valA ?? '').toLowerCase();
+            valB = String(valB ?? '').toLowerCase();
+            if (valA < valB) return direction === 'asc' ? -1 : 1;
+            if (valA > valB) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        return list;
+    });
+
     const paginated = computed(() => {
         const start = (currentPage.value - 1) * itemPage;
         const end = start + itemPage;
-        return searchCustomer.value.slice(start, end);
+        return sortedCustomers.value.slice(start, end);
     });
 
     const totalPage = computed(() => {
@@ -221,16 +254,16 @@ export const useCustomerStore = defineStore('customer', () => {
         // state
         customers, form, showAddCustomer, relative,
         itemPage, currentPage, search, showEditCustomer,
-        Editform,
+        Editform, sortConfig,
 
         // computed
-        paginated, totalPage, searchCustomer,
+        paginated, totalPage, searchCustomer, sortedCustomers,
 
         // method
         changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openModal, closeModal, handleImageChange, removeImage, 
         addRelative, removeRelative, submitForm, deleteCutomer,
-        closeEditModal, openEditModal, updateCustomer,
+        closeEditModal, openEditModal, updateCustomer, handleSort,
 
         // fetch
         fetchcustomer

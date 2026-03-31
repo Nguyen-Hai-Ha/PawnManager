@@ -54,7 +54,7 @@ onMounted(async() => {
                 </div>
             </div>
             <div class="button-group">
-                <button @click="openModal">Thêm hợp đồng</button>
+                <button v-permission="'contract.create'" @click="openModal">Thêm hợp đồng</button>
             </div>
         </div>
         <div class="table-wrapper">
@@ -119,10 +119,10 @@ onMounted(async() => {
                             </td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" @click="openInterestModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'contract.detail'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa" @click="deleteLoan(loan.id)"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>

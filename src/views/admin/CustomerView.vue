@@ -71,9 +71,9 @@ onMounted(async () => {
                             <td><img :src="`http://localhost:3000/uploads/` + customer.images_cccd" alt="" class="cccd-img"></td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa" @click="openEditModal(customer)"><font-awesome-icon
+                                    <button class="btn-action text-warning" data-tooltip="Chỉnh sửa" v-permission="'customer.update'" @click="openEditModal(customer)"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa" @click="deleteCutomer(customer.id)"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'customer.delete'" @click="deleteCutomer(customer.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>

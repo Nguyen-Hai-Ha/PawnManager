@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
-import { ref, nextTick, onBeforeUnmount, computed } from "vue";
+import { ref, computed } from "vue";
 
 export const useLoanStore = defineStore("loan", () => {
     const itemPage = 8;

@@ -95,8 +95,8 @@ onMounted(async() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for = " loan, index in paginated" :key = "loan.id">
-                            <td>{{ index + 1 }}</td>
+                        <tr v-for = " loan in paginated" :key = "loan.id">
+                            <td>{{ loan.id }}</td>
                             <td>
                                 <span class="fw-bold">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>
@@ -179,7 +179,9 @@ th.sortable {
     margin-left: 4px;
     opacity: 0.6;
     font-size: 0.8em;
+    color: #ffffff;
 }
+
 th.sortable:hover .sort-icon {
     opacity: 1;
 }

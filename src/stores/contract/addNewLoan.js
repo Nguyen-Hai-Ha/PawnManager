@@ -148,7 +148,8 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         revokeImages();
     });
 
-    const openModal = () => {
+    const openModal = async () => {
+        await getAllLoans(); // fetch danh sách mới nhất để tính code chính xác
         showModal.value = true;
         nextTick(() => {
             const firstInput = document.getElementById('assets_name');

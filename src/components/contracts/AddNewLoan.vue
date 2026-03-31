@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
 const store = useAddNewLoanStore();
-const { customers, assetTypes, assets, imagePreviews, loan, StartDate, EndDate, TotalInterest } = storeToRefs(store);
+const { customers, assetTypes, assets, imagePreviews, loan, StartDate, EndDate, TotalInterest, id_contract_type } = storeToRefs(store);
 const { fetchAssetTypes, fetchCustomer, handleImageChange, closeModal, removeImage, formatCurrency, submitLoan } = store;
 
 const moneyConfig = {
@@ -45,7 +45,7 @@ onMounted(async () => {
                         <option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name
                             }} - {{ customer.cccd }}</option>
                     </select>
-                    <div class="assets-info">
+                    <div class="assets-info" v-if="id_contract_type === 1">
                         <span class="assets-title">Thông tin tài sản</span>
                         <div class="form-row">
                             <div class="pm-form-group">

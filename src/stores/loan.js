@@ -118,6 +118,15 @@ export const useLoanStore = defineStore("loan", () => {
         return `${formattedAmount} VNĐ`;
     }
 
+    const deleteLoan = async (id) => {
+        try {
+            const response = await apiClient.delete(`/contract/${id}`);
+            await getAllLoans();
+        } catch (error) {
+            console.error('Error deleting loan:', error);
+        }
+    }
+
     const getAllLoans = async () => {
         try {
             const response = await apiClient.get(`/contract/type/${id_contract_type.value}`);
@@ -161,5 +170,6 @@ export const useLoanStore = defineStore("loan", () => {
         getAllLoans,
         fetchCustomer,
         fetchAssetTypes,
+        deleteLoan
     }
 });

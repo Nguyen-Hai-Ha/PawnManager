@@ -1,5 +1,7 @@
 <script setup>
 import { useLoanStore } from '@/stores/loan';
+import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
+import { useInterestPaymentStore } from '@/stores/contract/interestPayment';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
@@ -7,9 +9,17 @@ import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
 
 const loanStore = useLoanStore();
+const addNewLoanStore = useAddNewLoanStore();
+const interestPaymentStore = useInterestPaymentStore();
 
-const { loans, showModal, showInterestModal, paginated, totalPage, currentPage, search } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, openModal, closeModal, openInterestModal, closeInterestModal, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage } = loanStore;
+const { loans, paginated, totalPage, currentPage, search, sortConfig } = storeToRefs(loanStore);
+const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort } = loanStore;
+
+const { showModal } = storeToRefs(addNewLoanStore);
+const { openModal, closeModal } = addNewLoanStore;
+
+const { showInterestModal } = storeToRefs(interestPaymentStore);
+const { openInterestModal, closeInterestModal } = interestPaymentStore;
 
 onMounted(async() => {
     const promise = [];
@@ -59,8 +69,22 @@ onMounted(async() => {
                 <table>
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Mã hợp đồng</th>
+                            <th class="sortable" @click="handleSort('id')">
+                                STT
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'id' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'id' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th class="sortable" @click="handleSort('code')">
+                                Mã hợp đồng
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'code' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'code' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
                             <th>Tên khách hàng</th>
                             <th>TS thế chấp</th>
                             <th>Số tiền vay</th>
@@ -78,7 +102,7 @@ onMounted(async() => {
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>
-                            <td>{{ loan.customer_name }}</td>
+                            <td>{{ loan.customer_name }} {{ loan.customer_phone }}</td>
                             <td>{{ loan.collateral_name }}</td>
                             <td><span class="text-danger fw-bold">{{ formatCurrency(loan.loan_amount) }}</span></td>
                             <td><span class="text-success fw-bold">{{ formatCurrency(loan.had_paid) }}</span></td>
@@ -144,4 +168,19 @@ onMounted(async() => {
 
 <style scoped>
 @import '@/assets/main.css';
+
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.sort-icon {
+    margin-left: 4px;
+    opacity: 0.6;
+    font-size: 0.8em;
+}
+th.sortable:hover .sort-icon {
+    opacity: 1;
+}
 </style>

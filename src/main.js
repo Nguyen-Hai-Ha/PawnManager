@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
     faUser, faChartLine, faFileSignature,
     faCarSide, faUsersGear, faFileInvoiceDollar,
-    faRotate, faSort, faPenToSquare, faCircleXmark,
+    faRotate, faSort, faSortUp, faSortDown, faPenToSquare, faCircleXmark,
     faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight,
     faCoins, faEye, faGavel, faUserLock, faTrashCan,
     faLock, faEyeSlash, faCircleExclamation, faHandHoldingDollar, faMoneyBillWave
@@ -19,7 +19,7 @@ import {
 
 library.add(faUser, faChartLine, faFileSignature,
     faCarSide, faUsersGear, faFileInvoiceDollar,
-    faRotate, faSort, faPenToSquare, faCircleXmark,
+    faRotate, faSort, faSortUp, faSortDown, faPenToSquare, faCircleXmark,
     faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight,
     faCoins, faEye, faGavel, faUserLock, faTrashCan,
     faLock, faEyeSlash, faCircleExclamation, faHandHoldingDollar, faMoneyBillWave

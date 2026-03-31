@@ -22,11 +22,7 @@ const { showInterestModal } = storeToRefs(interestPaymentStore);
 const { openInterestModal, closeInterestModal } = interestPaymentStore;
 
 onMounted(async() => {
-    const promise = [];
-    if (loans.value.length === 0) {
-        promise.push(getAllLoans());
-    }
-    await Promise.all(promise);
+    await getAllLoans()
 })
 
 </script>
@@ -85,7 +81,14 @@ onMounted(async() => {
                                     <font-awesome-icon v-else icon="sort" />
                                 </span>
                             </th>
-                            <th>Tên khách hàng</th>
+                            <th class="sortable" @click="handleSort('customer_name')">
+                                Tên khách hàng
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'customer_name' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'customer_name' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
                             <th>TS thế chấp</th>
                             <th>Số tiền vay</th>
                             <th>Số tiền đã trả</th>

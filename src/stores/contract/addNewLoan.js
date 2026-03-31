@@ -96,6 +96,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         return end.diff(start, 'day');
     }
 
+    // tổng lãi, hiển thị Front end, ko gửi đi
     const TotalInterest = computed(() => {
         const { loan_amount, interest_rate, interest_type, total_periods, term_unit, payment_term } = loan.value;
         const LoanAmount = parseFloat(loan_amount);
@@ -149,7 +150,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     });
 
     const openModal = async () => {
-        await getAllLoans(); // fetch danh sách mới nhất để tính code chính xác
+        await getAllLoans();
         showModal.value = true;
         nextTick(() => {
             const firstInput = document.getElementById('assets_name');
@@ -184,7 +185,6 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const submitLoan = async () => {
         const formData = new FormData();
 
-        // Append contract fields
         const contractData = {
             code: code.value,
             loan_amount: loan.value.loan_amount,
@@ -201,22 +201,24 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         }
         formData.append('contract', JSON.stringify(contractData));
 
-        const collateralData = {
-            name: assets.value.name,
-            metadata: JSON.stringify(assets.value.metadata),
-            status: 'Đang cầm',
-            id_collateral_type: assets.value.id_type
-        };
-        formData.append('collateral', JSON.stringify(collateralData));
+        // nếu là cầm đồ thì thêm tài sản và ảnh tài sản 
+        if (id_contract_type.value === 1) {
+            const collateralData = {
+                name: assets.value.name,
+                metadata: JSON.stringify(assets.value.metadata),
+                status: 'Đang cầm',
+                id_collateral_type: assets.value.id_type
+            };
+            formData.append('collateral', JSON.stringify(collateralData));
 
+            images.value.forEach((file) => {
+                formData.append('images', file);
+            });
+        }
         const staffData = {
             id: staffId.value,
         };
         formData.append('staff', JSON.stringify(staffData));
-
-        images.value.forEach((file) => {
-            formData.append('images', file);
-        });
 
         try {
             const response = await apiClient.post('/contract', formData, {

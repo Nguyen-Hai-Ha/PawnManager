@@ -45,11 +45,24 @@ const ContractController = {
     },
     create: (req, res) => {
         try {
-            const dataContract = JSON.parse(req.body.contract);
-            const dataCollateral = JSON.parse(req.body.collateral);
+            const dataContract = JSON.parse(req.body.contract); 
             const dataStaff = JSON.parse(req.body.staff);
+            
+            if (!dataContract) {
+                return res.status(400).json({ error: 'Data is required' });
+            }
+
+            const contract = Contract.create(dataContract);
+            let dataCollateral = null;
             let dataRelative = null;
             let dataImage = null;
+            let collateral = null;
+
+            if (req.body.collateral) {
+                dataCollateral = JSON.parse(req.body.collateral);
+                dataCollateral.id_contract = contract.id;
+                collateral = Collaterals.create(dataCollateral);
+            }
             if (req.body.relative) {
                 dataRelative = req.body.relative;
                 const relative = Relative.create(dataRelative);
@@ -57,16 +70,11 @@ const ContractController = {
 
             if (req.body.images){
                 dataImage = req.body.images;
+                dataImage.id_collateral = collateral.id;
                 const images = Image.create(dataImage);
             }
             
-            if (!dataContract || !dataCollateral) {
-                return res.status(400).json({ error: 'Data is required' });
-            }
-
-            const contract = Contract.create(dataContract);
-            dataCollateral.id_contract = contract.id;
-            const collateral = Collaterals.create(dataCollateral);
+            
 
             const transaction = Transactions.create({
                 amount: dataContract.loan_amount,
@@ -235,7 +243,7 @@ const ContractController = {
             }
 
             // const image = Image.create(dataImage);
-            res.json({ contract, collateral, paymentSchedule, transaction, auditLog });
+            res.json({ contract, paymentSchedule, transaction, auditLog });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

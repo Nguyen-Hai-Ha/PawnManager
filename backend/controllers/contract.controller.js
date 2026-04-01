@@ -211,9 +211,9 @@ const ContractController = {
                     // percent/term: lãi mỗi kỳ chia cho số kỳ VD: 30tr x 5% = 1tr5 tổng lãi chia cho 3 kỳ = 500k/kỳ
                     // daily_amount: lãi mỗi ngày nhân với số ngày VD: lãi 50k/ngày nhân với số ngày 
                     if (dataContract.interest_type === "percent*term") {
-                        interestAmount = Math.ceil(dataContract.loan_amount * dataContract.interest_rate / 100);
+                        interestAmount = Math.ceil(dataContract.loan_amount * (dataContract.interest_rate / 100));
                     } else if (dataContract.interest_type === "percent/term") {
-                        interestAmount = Math.ceil((dataContract.loan_amount * dataContract.interest_rate / 100) / dataContract.total_periods);
+                        interestAmount = Math.ceil((dataContract.loan_amount * (dataContract.interest_rate / 100) / dataContract.total_periods));
                     } else if (dataContract.interest_type === "daily_amount") {
                         interestAmount = Math.ceil(dataContract.interest_rate * daysInThisMonth);
                     }
@@ -254,9 +254,9 @@ const ContractController = {
     },
     delete: (req, res) => {
         try {
+            const transaction = Transactions.deleteByContractId(req.params.id);
             const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
             const collateral = Collaterals.deleteByContractId(req.params.id);
-            const transaction = Transactions.deleteByContractId(req.params.id);
             const contract = Contract.delete(req.params.id);
             res.json({ contract, paymentSchedules, collateral, transaction });
         } catch (error) {

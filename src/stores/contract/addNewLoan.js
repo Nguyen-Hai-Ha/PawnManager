@@ -1,12 +1,16 @@
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import apiClient from "@/plugins/axios";
 import { useAuthStore } from '../auth';
+import { useLoanStore } from '../loan';
 import { ref, nextTick, onBeforeUnmount, computed } from "vue";
 import { useRoute } from "vue-router";
 import dayjs from "dayjs";
 
 export const useAddNewLoanStore = defineStore('addNewLoan', () => {
-    const loans = ref([]);
+    const loanStore = useLoanStore();
+    const { loans } = storeToRefs(loanStore);
+    const { getAllLoans } = loanStore;
+
     const customers = ref([]);
     const newRelatives = ref([
         {
@@ -292,14 +296,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         }
     }
 
-    const getAllLoans = async () => {
-        try {
-            const response = await apiClient.get(`/contract/type/${id_contract_type.value}`);
-            loans.value = response.data;
-        } catch (error) {
-            console.error('Error fetching loans:', error);
-        }
-    };
+
 
     const fetchCustomer = async () => {
         try {

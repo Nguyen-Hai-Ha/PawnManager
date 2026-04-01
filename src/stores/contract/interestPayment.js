@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
 import { useAuthStore } from '../auth';
+import { useLoanStore } from '../loan';
 import { ref, nextTick, computed } from "vue";
 
 export const useInterestPayment = defineStore('interestPayment', () => {
+    const loanStore = useLoanStore();
     const loanDetails = ref([]);
     const paymentDetails = ref([]);
     const historyPayment = ref([]);
@@ -87,7 +89,7 @@ export const useInterestPayment = defineStore('interestPayment', () => {
         console.log(payload);
         try {
             const response = await apiClient.post('/transaction', payload);
-            await getAllLoans();
+            await loanStore.getAllLoans();
             closeInterestModal();
         } catch (error) {
             console.error('Error submitting interest payment:', error);

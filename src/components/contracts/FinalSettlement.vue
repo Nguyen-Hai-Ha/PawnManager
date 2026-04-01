@@ -1,15 +1,33 @@
 <script setup>
+import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { storeToRefs } from 'pinia';
+import { ref } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
-import { onMounted } from 'vue';
 
+const finalSettlementStore = useFinalSettlementStore();
 const reducePrincipalStore = useReducePrincipalStore();
 const interestPaymentStore = useInterestPayment();
 
-const { paymentDetails, StartDate, formReducePrincipal, historyReducePrincipal } = storeToRefs(reducePrincipalStore);
-const { closeReducePrincipalModal, formatCurrency, submitReducePrincipal } = reducePrincipalStore;
+const { settlementData } = storeToRefs(finalSettlementStore);
+const { closeFinalModal } = finalSettlementStore;
+const { openReducePrincipalModal } = reducePrincipalStore;
+const { openInterestModal } = interestPaymentStore;
+
+const loanStore = {
+    formatCurrency: (amount) => {
+        if (amount === undefined || amount === null) return '0';
+        return new Intl.NumberFormat('ni-VN').format(amount) + ' VNĐ';
+    }
+};
+
+const formatCurrency = loanStore.formatCurrency;
+
+const formDetails = ref({
+    other_fees: 0,
+    note: ''
+});
 
 const moneyConfig = {
     prefix: '',
@@ -25,40 +43,40 @@ const moneyConfig = {
 </script>
  
 <template>
-    <div class="modal-interest-container" @click.self="closeReducePrincipalModal">
+    <div class="modal-interest-container" @click.self="closeFinalModal">
         <div class="modal-interest-content">
             <div class="modal-header">
-                <h2>Trả Bớt Gốc</h2>
-                <button class="btn-close" @click="closeReducePrincipalModal">&times;</button>
+                <h2>Tất toán</h2>
+                <button class="btn-close" @click="closeFinalModal">&times;</button>
             </div>
 
             <div class="modal-body" >
                 <div class="form-container">
-                    <div class="form-header">Trả Bớt Gốc</div>
-                    <form @submit.prevent="submitReducePrincipal">
+                    <div class="form-header">Tất toán</div>
+                    <form>
                         <div class="form-body">
                             <div class="form-group">
                                 <label>Ngày thanh toán</label>
-                                <input type="text" style="background-color: #E8E8E8;" :value="StartDate" readonly>
+                                <input type="text" :value="new Date().toLocaleDateString('vi-VN')" style="background-color: #E8E8E8;"  readonly>
                             </div>
                             <div class="form-group">
                                 <label>Người thanh toán</label>
-                                <input type="text" style="background-color: #E8E8E8;" :value="paymentDetails.customer.name" readonly>
+                                <input type="text" :value="settlementData?.customer?.name" style="background-color: #E8E8E8;"  readonly>
                             </div>
                             <div class="form-group">
                                 <label>Tiền tất toán</label>
-                                <money3 id="payment_amount" v-model="formReducePrincipal.amount" v-bind="moneyConfig"></money3>
+                                 <input type="text" :value="formatCurrency(settlementData?.total_remaining)" style="background-color: #E8E8E8;"  readonly>
                             </div>
                             <div class="form-group">
                                 <label>Phí khác</label>
-                                <money3  v-bind="moneyConfig" v-model="formReducePrincipal.other_fees"></money3>
+                                <money3 v-model="formDetails.other_fees" v-bind="moneyConfig" ></money3>
                             </div>
                             <div class="form-group">
                                 <label>Ghi chú</label>
-                                <input type="text" v-model="formReducePrincipal.note">
+                                <input type="text" v-model="formDetails.note">
                             </div>
                             <div class="form-actions">
-                                <button class="btn-confirm">Xác nhận</button>
+                                <button class="btn-confirm" type="button" @click="finalSettlementStore.submitFinalSettlement(formDetails)">Xác nhận</button>
                             </div>
                         </div>
                     </form>
@@ -68,37 +86,41 @@ const moneyConfig = {
                         <div class="info">
                             <div class="info-item">
                                 <span class="fw-bold">Mã hợp đồng</span>
-                                <span class="text-success fw-bold">{{ paymentDetails.contract.code }}</span>
+                                <span class="text-success fw-bold">{{ settlementData?.contract?.code }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="fw-bold">Tên khách hàng</span>
-                                <span>{{ paymentDetails.customer.name }}</span>
+                                <span>{{ settlementData?.customer?.name }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="fw-bold">Số điện thoại</span>
-                                <span>{{ paymentDetails.customer.phone }}</span>
+                                <span>{{ settlementData?.customer?.phone }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="fw-bold">CCCD</span>
-                                <span>{{ paymentDetails.customer.cccd }}</span>
+                                <span>{{ settlementData?.customer?.cccd }}</span>
                             </div>
                         </div>
                         <div class="info">
                             <div class="info-item">
                                 <span class="fw-bold">Số tiền vay:</span>
-                                <span class="text-danger fw-bold">{{ formatCurrency(paymentDetails.contract.loan_amount) }}</span>
+                                <span class="text-danger fw-bold">{{ formatCurrency(settlementData?.contract?.loan_amount) }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="fw-bold">Kiểu hợp đồng:</span>
-                                <span v-if="paymentDetails.contract.id_contract_type === 1">Cầm đồ</span>
-                                <span v-if="paymentDetails.contract.id_contract_type === 2">Tín chấp</span>
-                                <span v-if="paymentDetails.contract.id_contract_type === 3">Trả góp</span>
+                                <span class="fw-bold">Kiểu lãi:</span>
+                                <span>{{ settlementData?.contract?.interest_type }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="fw-bold">Số tiền đã trả:</span>
+                                <span class="fw-bold">Lãi đã trả:</span>
+                                <span class="text-success">{{ formatCurrency(settlementData?.total_interest_paid) }}</span>
                             </div>
                             <div class="info-item">
-                                <span class="fw-bold">Số tiền còn lại phải trả:</span>
+                                <span class="fw-bold">Tổng tiền tất toán (tính đến nay):</span>
+                                <span class="text-danger fw-bold">{{ formatCurrency(settlementData?.total_remaining) }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="fw-bold">Số ngày đã qua:</span>
+                                <span>{{ settlementData?.day_count }} ngày</span>
                             </div>
                         </div>
                     </div>
@@ -107,15 +129,15 @@ const moneyConfig = {
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <button class="btn-primary">
-                        <font-awesome-icon icon="hand-holding-dollar" /> Trả Bớt Gốc
+                    <button class="btn-primary" @click="openReducePrincipalModal(settlementData?.contract?.id)">
+                        <font-awesome-icon icon="money-bill-wave" /> Trả Bớt Gốc
                     </button>
-                    <button class="btn-primary">
+                    <button class="btn-primary" @click="openInterestModal(settlementData?.contract?.id)">
                         <font-awesome-icon icon="coins" /> Đóng Lãi
                     </button>
                 </div>
                 <div class="footer-right">
-                    <button class="btn-secondary" @click="closeReducePrincipalModal">
+                    <button class="btn-secondary" @click="closeFinalModal">
                         Đóng
                     </button>
                 </div>
@@ -150,7 +172,7 @@ const moneyConfig = {
     gap: 24px;
     padding: 0 10px;
     flex: 1;
-    max-height: 230px;
+    max-height: 190px;
     border: 1px solid #ccc;
     border-radius: 8px;
 }
@@ -158,7 +180,6 @@ const moneyConfig = {
 .container{
     display: flex;
     flex-direction: column;
-    gap: 24px;
 }
 .table{
     border: 1px solid #ddd;

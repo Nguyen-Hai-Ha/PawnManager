@@ -286,7 +286,7 @@ const TransactionsController = {
                 PaymentSchedules.updateStatus({ is_paid: 1 }, schedule.id);
             });
 
-            return { transaction, current_schedule, msg: "Hợp đồng đã được tất toán" };
+            return { transaction, msg: "Hợp đồng đã được tất toán" };
         });
         try {
             const result = final(req.body);

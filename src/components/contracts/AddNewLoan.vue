@@ -244,8 +244,8 @@ onMounted(async () => {
                             </div>
                             <div class="loan-detail-item">
                                 <span class="loan-detail-label">Tổng lãi suất:</span>
-                                <span class="loan-detail-value" v-if="loan.interest_type === 'percent*term'">{{ formatCurrency(TotalInterest) }} ({{ loan.interest_rate }}% x {{ loan.total_periods }} Kỳ)</span>
-                                <span class="loan-detail-value" v-if="loan.interest_type === 'percent/term'">{{ formatCurrency(TotalInterest) }} ({{ loan.interest_rate }}% / {{ loan.total_periods }} Kỳ)</span>
+                                <span class="loan-detail-value" v-if="loan.interest_type === 'percent*term'">{{ formatCurrency(TotalInterest) }} ({{ loan.interest_rate }}% x Kỳ)</span>
+                                <span class="loan-detail-value" v-if="loan.interest_type === 'percent/term'">{{ formatCurrency(TotalInterest) }} ({{ loan.interest_rate }}% / Kỳ)</span>
                                 <span class="loan-detail-value" v-if="loan.interest_type === 'daily_amount'">{{ formatCurrency(TotalInterest) }} ({{ formatCurrency(loan.interest_rate) }}/Ngày)</span>
                             </div>
                             <div class="loan-detail-item">

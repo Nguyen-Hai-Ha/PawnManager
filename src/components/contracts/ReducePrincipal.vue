@@ -151,7 +151,7 @@ const moneyConfig = {
                                 <tr v-for="(item, index) in historyReducePrincipal" :key="index">
                                     <td>{{ index + 1 }}</td>
                                     <td>{{ item.customer_name }}</td>
-                                    <td>{{ item.payment_date }}</td>
+                                    <td>{{ item.created_at }}</td>
                                     <td>{{formatCurrency(item.amount)}}</td>
                                     <td>{{formatCurrency(item.other_fees)}}</td>
                                     <td>{{ item.description }}</td>

@@ -30,9 +30,8 @@ export const useInterestPayment = defineStore('interestPayment', () => {
         if (!Array.isArray(list)) {
             return null;
         }
-
         const firstUnpaid = list.find(item => item.is_paid === 0);
-
+        
         return firstUnpaid? firstUnpaid : null;
     })
     

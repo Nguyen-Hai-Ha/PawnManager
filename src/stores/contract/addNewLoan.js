@@ -149,7 +149,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         }
 
         if (interest_type === 'percent*term') {
-            return ((LoanAmount * InterestRate / 100));
+            return ((LoanAmount * InterestRate / 100) * TotalPeriods);
         } else if (interest_type === 'percent/term') {
             return ((LoanAmount * InterestRate / 100) / TotalPeriods);
         } else if (interest_type === 'daily_amount') {

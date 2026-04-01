@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS transactions(
     id_schedule INTEGER NULL,
     id_transaction_type INTEGER NOT NULL,
     id_staff INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (date('now')),
     FOREIGN KEY (id_contract) REFERENCES contracts(id),
     FOREIGN KEY (id_schedule) REFERENCES payment_schedules(id),
     FOREIGN KEY (id_transaction_type) REFERENCES transactions_types(id),

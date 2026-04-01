@@ -33,7 +33,7 @@ const Transactions = {
     getHistoryPayment: (id) => {
         const sql = `SELECT * FROM transactions 
         INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
-        WHERE id_contract = ? AND id_transaction_type != 1`;
+        WHERE id_contract = ? AND id_transaction_type = 2`;
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },

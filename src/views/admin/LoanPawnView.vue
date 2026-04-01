@@ -16,7 +16,7 @@ const interestPaymentStore = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
+const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, deleteLoan } = loanStore;
 
 const { showModal } = storeToRefs(addNewLoanStore);
 const { openModal, closeModal } = addNewLoanStore;
@@ -141,10 +141,10 @@ onMounted(async() => {
                                     <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'contract.detail'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
-                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal">
+                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal(loan.id)">
                                         <font-awesome-icon icon="money-bill-wave" />
                                     </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                                 

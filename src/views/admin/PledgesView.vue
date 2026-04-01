@@ -7,10 +7,13 @@ import { onMounted } from 'vue';
 
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
+import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
+import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
+const reducePrincipalStore = useReducePrincipalStore();
 
 const {loans, paginated, totalPage, currentPage, search, sortConfig} = storeToRefs(loanStore);
 const { getAllLoans, deleteLoan, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
@@ -20,6 +23,9 @@ const { openModal, closeModal } = addNewLoanStore;
 
 const { showInterestModal } = storeToRefs(interestPaymentStore);
 const { openInterestModal, closeInterestModal } = interestPaymentStore;
+
+const { showReducePrincipalModal } = storeToRefs(reducePrincipalStore);
+const { openReducePrincipalModal, closeReducePrincipalModal } = reducePrincipalStore;
 
 onMounted(async() => {
     await getAllLoans();
@@ -121,6 +127,9 @@ onMounted(async() => {
                                     <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'contract.detail'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
+                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal(loan.id)">
+                                        <font-awesome-icon icon="money-bill-wave" />
+                                    </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
@@ -152,5 +161,8 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showInterestModal">
         <InterestPayment @close="closeInterestModal" />
+    </div>
+    <div class="modal-overlay" v-if="showReducePrincipalModal">
+        <ReducePrincipal @close="closeReducePrincipalModal" />
     </div>
 </template>

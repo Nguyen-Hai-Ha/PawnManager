@@ -45,9 +45,9 @@ const ContractController = {
     },
     create: (req, res) => {
         try {
-            const dataContract = JSON.parse(req.body.contract); 
+            const dataContract = JSON.parse(req.body.contract);
             const dataStaff = JSON.parse(req.body.staff);
-            
+
             if (!dataContract) {
                 return res.status(400).json({ error: 'Data is required' });
             }
@@ -74,7 +74,7 @@ const ContractController = {
                 });
             }
 
-            if (req.body.images){
+            if (req.body.images) {
                 dataImage = req.body.images;
                 dataImage.id_collateral = collateral.id;
                 const images = Image.create(dataImage);
@@ -109,7 +109,7 @@ const ContractController = {
                 } else if (dataContract.interest_type === "percent/term") {
                     interestAmount = Math.ceil((dataContract.loan_amount * (dataContract.interest_rate / 100)) / dataContract.total_periods);
                 } else if (dataContract.interest_type === "daily_amount") {
-                    interestAmount = Math.ceil(dataContract.interest_rate * dataContract.payment_term );
+                    interestAmount = Math.ceil(dataContract.interest_rate * dataContract.payment_term);
                 }
 
                 // tính ngày trả cho từng kỳ
@@ -125,18 +125,11 @@ const ContractController = {
 
                 // lưu tạm thời cho kỳ đầu tiên
 
-                let prevExpectedDate = startDate;
+                let currentFromDate = dataContract.start_date;
                 for (let i = 1; i <= totalPeriods; i++) {
                     let expectedDate = new Date(startDate);
                     expectedDate.setDate(expectedDate.getDate() + (i * paymentTerm));
                     const formattedDate = expectedDate.toISOString().split('T')[0];
-
-                    let currentFromDate;
-                    if (i === 1) {
-                        currentFromDate = startDate.toISOString().split('T')[0];
-                    } else {
-                        currentFromDate = dayjs(prevExpectedDate).add(1, 'day').format('YYYY-MM-DD');
-                    }
 
                     PaymentSchedules.create({
                         id_contract: contract.id,
@@ -148,7 +141,8 @@ const ContractController = {
                         principal_amount: principalAmount
                     });
 
-                    prevExpectedDate = dayjs(formattedDate).add(1, 'day').format('YYYY-MM-DD');
+                    // sang kỳ tiếp theo thì ngày bắt đầu = ngày kết thúc kỳ trước
+                    currentFromDate = formattedDate;
 
                     // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
                     if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)) {
@@ -229,7 +223,7 @@ const ContractController = {
                     });
 
                     // sang kỳ tiếp theo thì ngày bắt đầu = ngày kết thúc kỳ trước + 1 ngày
-                    currentFromDate = dayjs(formattedDate).add(1, 'day').format('YYYY-MM-DD');
+                    currentFromDate = formattedDate;
 
                     // i = kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và trả góp thì tiền gốc = tiền vay, tiền lãi = 0
                     if (i == totalPeriods && (dataContract.id_contract_type == 1 || dataContract.id_contract_type == 2)) {

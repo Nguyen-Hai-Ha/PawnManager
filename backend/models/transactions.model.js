@@ -37,6 +37,13 @@ const Transactions = {
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },
+    getHistoryReducePrincipal: (id) => {
+        const sql = `SELECT * FROM transactions 
+        INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
+        WHERE id_contract = ? AND id_transaction_type = 4`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id);
+    },
     create: (data) => {
         const sql = `INSERT INTO transactions (id_contract, id_transaction_type, id_schedule, id_staff, amount, other_fees, description) VALUES (?, ?, ?, ?, ?, ?, ?)`
         const stmt = db.prepare(sql);

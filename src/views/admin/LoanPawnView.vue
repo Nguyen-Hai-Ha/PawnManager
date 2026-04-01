@@ -3,17 +3,20 @@ import { useLoanStore } from '@/stores/loan';
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
+import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
 import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
+import FinalSettlement from '@/components/contracts/FinalSettlement.vue';
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
+const finalSettlementStore = useFinalSettlementStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig } = storeToRefs(loanStore);
 const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, deleteLoan } = loanStore;
@@ -26,6 +29,9 @@ const { openInterestModal, closeInterestModal } = interestPaymentStore;
 
 const { showReducePrincipalModal } = storeToRefs(reducePrincipalStore);
 const { openReducePrincipalModal, closeReducePrincipalModal } = reducePrincipalStore;
+
+const { showFinalModal } = storeToRefs(finalSettlementStore);
+const { openFinalModal, closeFinalModal } = finalSettlementStore;
 
 onMounted(async() => {
     await getAllLoans();
@@ -144,6 +150,9 @@ onMounted(async() => {
                                     <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal(loan.id)">
                                         <font-awesome-icon icon="money-bill-wave" />
                                     </button>
+                                    <button class="btn-action text-success" data-tooltip="Tất toán" @click="openFinalModal(loan.id)">
+                                        <font-awesome-icon icon="hand-holding-dollar" />
+                                    </button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
@@ -179,6 +188,9 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showReducePrincipalModal">
         <ReducePrincipal @close="closeReducePrincipalModal" />
+    </div>
+    <div class="modal-overlay" v-if="showFinalModal">
+        <FinalSettlement @close="closeFinalModal" />
     </div>
 </template>
 

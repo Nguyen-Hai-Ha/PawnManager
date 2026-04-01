@@ -1,19 +1,21 @@
 <script setup>
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
+import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
 const store = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
+const finalSettlementStore = useFinalSettlementStore();
 
 
 const { paymentDetails, formDetails, loanDetails, historyPayment } = storeToRefs(store);
 const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
 
-const { showReducePrincipalModal } = storeToRefs(reducePrincipalStore);
-const { closeReducePrincipalModal, openReducePrincipalModal } = reducePrincipalStore;
+const { openReducePrincipalModal } = reducePrincipalStore;
+const { openFinalModal } = finalSettlementStore;
 
 
 const emit = defineEmits(['close']);
@@ -93,7 +95,7 @@ const moneyConfig = {
                             </div>
                             <div class="form-group">
                                 <label>Tiền Thanh Toán</label>
-                                <money3 id="payment_amount" v-model="formDetails.payment_amount" v-bind="moneyConfig"></money3>
+                                <money3 id="payment_amount" v-model="formDetails.payment_amount" v-bind="moneyConfig" ></money3>
                             </div>
                             <div class="form-group">
                                 <label>Phí khác</label>
@@ -200,7 +202,7 @@ const moneyConfig = {
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <button class="btn-primary">
+                    <button class="btn-primary" @click="openFinalModal(loanDetails.contract.id)">
                         <font-awesome-icon icon="hand-holding-dollar" /> Tất Toán
                     </button>
                     <button class="btn-primary" @click="openReducePrincipalModal(loanDetails.contract.id)">

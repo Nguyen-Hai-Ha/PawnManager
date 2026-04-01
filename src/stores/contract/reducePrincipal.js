@@ -5,11 +5,14 @@ import { useAuthStore } from '../auth';
 import { useLoanStore } from '../loan';
 
 import { useInterestPayment } from "./interestPayment";
+import { useFinalSettlementStore } from "./finalSettlement";
+
 export const useReducePrincipalStore = defineStore('reducePrincipal', () => {
     const loanStore = useLoanStore();
     const showReducePrincipalModal = ref(false);
     const id_contract = ref(null);
     const interestPaymentStore = useInterestPayment();
+    const finalSettlementStore = useFinalSettlementStore();
     const paymentDetails = ref([]);
     const historyReducePrincipal = ref([]);
 
@@ -40,6 +43,7 @@ export const useReducePrincipalStore = defineStore('reducePrincipal', () => {
 
     const openReducePrincipalModal = async (id) => {
         interestPaymentStore.closeInterestModal(); 
+        finalSettlementStore.closeFinalModal();
         id_contract.value = id;
         await fetchPaymentDetails(id);
         showReducePrincipalModal.value = true;

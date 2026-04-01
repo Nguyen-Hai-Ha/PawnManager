@@ -2,10 +2,14 @@ import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
 import { useAuthStore } from '../auth';
 import { useLoanStore } from '../loan';
+import { useFinalSettlementStore } from './finalSettlement';
+import { useReducePrincipalStore } from './reducePrincipal';
 import { ref, nextTick, computed } from "vue";
 
 export const useInterestPayment = defineStore('interestPayment', () => {
     const loanStore = useLoanStore();
+    const finalSettlementStore = useFinalSettlementStore();
+    const reducePrincipalStore = useReducePrincipalStore();
     const loanDetails = ref([]);
     const paymentDetails = ref([]);
     const historyPayment = ref([]);
@@ -48,6 +52,8 @@ export const useInterestPayment = defineStore('interestPayment', () => {
     });
 
     const openInterestModal = (id) => {
+        finalSettlementStore.closeFinalModal();
+        reducePrincipalStore.closeReducePrincipalModal();
         showInterestModal.value = true;
         fetchPaymentDetails(id);
 

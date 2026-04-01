@@ -1,15 +1,20 @@
 <script setup>
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
+import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 import { storeToRefs } from 'pinia';
 import { Money3Component as Money3 } from 'v-money3';
 import { onMounted } from 'vue';
 
 const reducePrincipalStore = useReducePrincipalStore();
 const interestPaymentStore = useInterestPayment();
+const finalSettlementStore = useFinalSettlementStore();
 
 const { paymentDetails, StartDate, formReducePrincipal, historyReducePrincipal } = storeToRefs(reducePrincipalStore);
 const { closeReducePrincipalModal, formatCurrency, submitReducePrincipal } = reducePrincipalStore;
+const { openInterestModal } = interestPaymentStore;
+const { openFinalModal } = finalSettlementStore;
+
 
 const moneyConfig = {
     prefix: '',
@@ -164,10 +169,10 @@ const moneyConfig = {
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <button class="btn-primary">
+                    <button class="btn-primary" @click="openFinalModal(paymentDetails.contract.id)">
                         <font-awesome-icon icon="hand-holding-dollar" /> Tất Toán
                     </button>
-                    <button class="btn-primary">
+                    <button class="btn-primary" @click="openInterestModal(paymentDetails.contract.id)">
                         <font-awesome-icon icon="coins" /> Đóng Lãi
                     </button>
                 </div>

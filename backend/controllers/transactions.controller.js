@@ -42,6 +42,14 @@ const TransactionsController = {
             res.status(500).json({ error: error.message });
         }
     },
+    getHistoryReducePrincipal: (req, res) => {
+        try {
+            const transactions = Transactions.getHistoryReducePrincipal(req.params.id);
+            res.json(transactions);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
     create: (req, res) => {
         try {
             const data = req.body;
@@ -101,6 +109,7 @@ const TransactionsController = {
             const payment_date = data.payment_date || new Date().toISOString().split('T')[0];
             const other_fees = data.other_fees || 0;
             const newInterestRate = data.interest_rate;
+            const note = data.note;
 
             const contract = Contract.getById(id_contract);
             if (!contract) return res.status(404).json({ error: "Hợp đồng không tồn tại" });
@@ -119,8 +128,8 @@ const TransactionsController = {
             const transaction = Transactions.create({
                 amount: amount,
                 other_fees: other_fees,
+                description: note,
                 id_contract: id_contract,
-                id_schedule: current_schedule.id,
                 id_transaction_type: 4, // trả bớt gốc
                 id_staff: data.id_staff
             });
@@ -148,9 +157,12 @@ const TransactionsController = {
                 return Math.round((e - s) / (1000 * 60 * 60 * 24));
             };
 
-            const calculateInterest = (loanAmount, rate, type) => {
+            const calculateInterest = (loanAmount, rate, type, days) => {
                 if (type === 'daily_amount') {
-                    return rate;
+                    return Math.round(rate * days);
+                }
+                if (type === 'percent/term') {
+                    return Math.round((loanAmount * (rate / 100)) / contract.total_periods);
                 }
                 return Math.round((loanAmount * rate) / 100);
             };
@@ -166,25 +178,25 @@ const TransactionsController = {
 
             // lãi mỗi ngày gốc cũ 
             const interest_old_full = current_schedule.interest_amount;
-            const interest_per_day_old = interest_old_full / total_days;
+            const interest_per_day_old = (contract.interest_type === 'daily_amount') ? contract.interest_rate : interest_old_full / total_days;
 
             // Lãi mỗi ngày theo gốc MỚI
-            const interest_new_full = calculateInterest(newLoanAmount, newInterestRate, contract.interest_type);
-            const interest_per_day_new = interest_new_full / total_days;
+            const interest_new_full = calculateInterest(newLoanAmount, newInterestRate, contract.interest_type, total_days);
+            const interest_per_day_new = (contract.interest_type === 'daily_amount') ? newInterestRate : interest_new_full / total_days;
 
             // Lãi kỳ này = (Ngày cũ * Lãi cũ/ngày) + (Ngày mới * Lãi mới/ngày)
             const new_current_period_interest = Math.round((days_old * interest_per_day_old) + (days_new * interest_per_day_new));
 
             let principalAmount = 0;
             if (current_schedule.principal_amount > 0 && contract.id_contract_type == 3) {
-                const total_principal = schedules.reduce((acc, schedule) => acc + schedule.principal_amount, 0);
-                principalAmount = Math.floor(total_principal - newLoanAmount);
+                principalAmount = Math.floor(newLoanAmount / schedules.length);
             }
 
             // Cập nhật lại số tiền của kỳ hiện tại
             PaymentSchedules.update(current_schedule.id, {
                 id_contract: id_contract,
                 period_number: current_schedule.period_number,
+                from_date: current_schedule.from_date,
                 expected_date: current_schedule.expected_date,
                 is_paid: current_schedule.is_paid,
                 interest_amount: new_current_period_interest,
@@ -198,6 +210,9 @@ const TransactionsController = {
                 const future_schedule = schedules[i];
                 const islastPeriods = (i === schedules.length - 1);
 
+                const future_days = countDaysBetween(future_schedule.from_date, future_schedule.expected_date);
+                let future_interest = calculateInterest(newLoanAmount, newInterestRate, contract.interest_type, future_days);
+
                 let p_amount = 0;
                 if (contract.id_contract_type == 3) {
                     // Kỳ cuối của trả góp lấy phần còn lại để khớp 100%
@@ -205,15 +220,19 @@ const TransactionsController = {
                     runningPrincipalSum += p_amount;
                 } else if (islastPeriods && (contract.id_contract_type == 1 || contract.id_contract_type == 2)) {
                     // Hợp đồng cầm đồ bình thường thì gốc nằm ở kỳ cuối
+                    // lãi sẽ = 0
                     p_amount = newLoanAmount;
+                    future_interest = 0;
                 }
+
 
                 PaymentSchedules.update(future_schedule.id, {
                     id_contract: id_contract,
                     period_number: future_schedule.period_number,
+                    from_date: future_schedule.from_date,
                     expected_date: future_schedule.expected_date,
                     is_paid: future_schedule.is_paid,
-                    interest_amount: interest_new_full,
+                    interest_amount: future_interest,
                     principal_amount: p_amount
                 });
             }
@@ -281,7 +300,6 @@ const TransactionsController = {
                 amount: amount,
                 other_fees: other_fees,
                 id_contract: id_contract,
-                id_schedule: current_schedule.id,
                 id_transaction_type: 3,
                 id_staff: id_staff
             });

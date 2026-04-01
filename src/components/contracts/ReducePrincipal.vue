@@ -1,13 +1,15 @@
 <script setup>
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
+import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { storeToRefs } from 'pinia';
 import { Money3Component as Money3 } from 'v-money3';
+import { onMounted } from 'vue';
 
 const reducePrincipalStore = useReducePrincipalStore();
+const interestPaymentStore = useInterestPayment();
 
-const { closeReducePrincipalModal } = reducePrincipalStore;
-
-const emit = defineEmits(['close']);
+const { paymentDetails, StartDate, formReducePrincipal, historyReducePrincipal } = storeToRefs(reducePrincipalStore);
+const { closeReducePrincipalModal, formatCurrency, submitReducePrincipal } = reducePrincipalStore;
 
 const moneyConfig = {
     prefix: '',
@@ -19,8 +21,9 @@ const moneyConfig = {
     disableNegative: true,
     min: 0,
 };
-</script>
 
+</script>
+ 
 <template>
     <div class="modal-interest-container" @click.self="closeReducePrincipalModal">
         <div class="modal-interest-content">
@@ -32,43 +35,46 @@ const moneyConfig = {
             <div class="modal-body" >
                 <div class="form-container">
                     <div class="form-header">Trả Bớt Gốc</div>
-                    <form>
+                    <form @submit.prevent="submitReducePrincipal">
                         <div class="form-body">
                             <div class="form-group">
                                 <label>Ngày thanh toán</label>
-                                <input type="text" style="background-color: #E8E8E8;" readonly>
+                                <input type="text" style="background-color: #E8E8E8;" :value="StartDate" readonly>
                             </div>
                             <div class="form-group">
                                 <label>Người thanh toán</label>
-                                <input type="text" style="background-color: #E8E8E8;" readonly>
+                                <input type="text" style="background-color: #E8E8E8;" :value="paymentDetails.customer.name" readonly>
                             </div>
                             <div class="form-group">
                                 <label>Tiền trả bớt gốc</label>
-                                <money3 id="payment_amount"  v-bind="moneyConfig"></money3>
+                                <money3 id="payment_amount" v-model="formReducePrincipal.amount" v-bind="moneyConfig"></money3>
                             </div>
                             <div class="form-group">
                                 <div class="row-group">
                                     <div class="col-group">
                                         <label>Lãi suất cũ</label>
-                                        <input type="text" style="background-color: #E8E8E8;" readonly>
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'daily_amount'" :value="formatCurrency(paymentDetails.contract.interest_rate)" readonly>
+                                        <input type="text" style="background-color: #E8E8E8;" v-else :value="`${paymentDetails.contract.interest_rate}%`" readonly>
                                     </div>
                                     <div class="col-group">
                                         <label>Kiểu lãi xuất</label>
-                                        <input type="text" style="background-color: #E8E8E8;" readonly>
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'daily_amount'" :value="'Ngày'" readonly>
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'percent*term'" :value="`${paymentDetails.contract.interest_rate}%/Tháng`" readonly>  
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'percent/term'" :value="`${paymentDetails.contract.interest_rate}%/${paymentDetails.contract.total_periods} Tháng`" readonly>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Lãi suất mới</label>
-                                <money3  v-bind="moneyConfig"></money3>
+                                <money3  v-bind="moneyConfig"  v-model="formReducePrincipal.interest_rate"></money3>
                             </div>
                             <div class="form-group">
                                 <label>Phí khác</label>
-                                <money3  v-bind="moneyConfig"></money3>
+                                <money3  v-bind="moneyConfig" v-model="formReducePrincipal.other_fees"></money3>
                             </div>
                             <div class="form-group">
                                 <label>Ghi chú</label>
-                                <input type="text" >
+                                <input type="text" v-model="formReducePrincipal.note">
                             </div>
                             <div class="form-actions">
                                 <button class="btn-confirm">Xác nhận</button>
@@ -81,48 +87,51 @@ const moneyConfig = {
                             <div class="info">
                                 <div class="info-item">
                                     <span class="fw-bold">Mã hợp đồng</span>
-                                    <span class="text-success fw-bold"></span>
+                                    <span class="text-success fw-bold">{{ paymentDetails.contract.code }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Tên khách hàng</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.customer.name }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Số điện thoại</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.customer.phone }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">CCCD</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.customer.cccd }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Địa chỉ</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.customer.address }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Ngày sinh</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.customer.birth_date }}</span>
                                 </div>
                             </div>
                             <div class="info">
                                 <div class="info-item">
                                     <span class="fw-bold">Số tiền vay:</span>
-                                    <span class="text-danger fw-bold"></span>
+                                    <span class="text-danger fw-bold">{{ formatCurrency(paymentDetails.contract.loan_amount) }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Kiểu hợp đồng:</span>
+                                    <span v-if="paymentDetails.contract.id_contract_type === 1">Cầm đồ</span>
+                                    <span v-if="paymentDetails.contract.id_contract_type === 2">Tín chấp</span>
+                                    <span v-if="paymentDetails.contract.id_contract_type === 3">Trả góp</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Kỳ đóng lãi:</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.contract.payment_term }}/{{ paymentDetails.contract.term_unit }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Ngày bắt đầu:</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.contract.start_date }}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="fw-bold">Ngày kết thúc:</span>
-                                    <span></span>
+                                    <span>{{ paymentDetails.contract.end_date }}</span>
                                 </div>
                             </div>
                     </div>
@@ -139,13 +148,13 @@ const moneyConfig = {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Nguyễn Văn A</td>
-                                    <td>2022-01-01</td>
-                                    <td>1000000</td>
-                                    <td>100000</td>
-                                    <td>Ghi chú 1</td>
+                                <tr v-for="(item, index) in historyReducePrincipal" :key="index">
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ item.customer_name }}</td>
+                                    <td>{{ item.payment_date }}</td>
+                                    <td>{{formatCurrency(item.amount)}}</td>
+                                    <td>{{formatCurrency(item.other_fees)}}</td>
+                                    <td>{{ item.description }}</td>
                                 </tr>
                             </tbody>
                         </table>

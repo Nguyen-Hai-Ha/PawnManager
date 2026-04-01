@@ -83,7 +83,7 @@ const moneyConfig = {
                     <div class="form-header">Đóng Lãi</div>
                     <form @submit.prevent="submitInterestPayment">
                         <div class="form-body">
-                            <div class="form-group">
+                            <div class="form-group"> 
                                 <label>Ngày Thanh Toán</label>
                                 <input type="text" v-model="formDetails.payment_date" style="background-color: #E8E8E8;" readonly>
                             </div>
@@ -203,7 +203,7 @@ const moneyConfig = {
                     <button class="btn-primary">
                         <font-awesome-icon icon="hand-holding-dollar" /> Tất Toán
                     </button>
-                    <button class="btn-primary" @click="openReducePrincipalModal">
+                    <button class="btn-primary" @click="openReducePrincipalModal(loanDetails.contract.id)">
                         <font-awesome-icon icon="money-bill-wave" /> Trả Bớt Gốc
                     </button>
                 </div>

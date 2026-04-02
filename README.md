@@ -83,4 +83,4 @@ npm run dev
 - `public/`: Các tài nguyên công khai và file upload.
 
 ---
-© 2026 PawnManager System.
+© 2026 PawnManager System MADE BY NGUYEN HAI HA.

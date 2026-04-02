@@ -7,12 +7,21 @@ export const useAssetsStore = defineStore("assets", () => {
     const assets = ref([]);
     const liquidation = ref([]);
     const search = ref('');
+    const showAssetsDetailModal = ref(false);
     const showAssetsLiquidationModal = ref(false);
     const currentPage = ref(1);
     const itemPage = 12;
     const authStore = useAuthStore();
 
     const user = computed(() => authStore.user);
+
+    const openAssetsDetailModal = () => {
+        showAssetsDetailModal.value = true;
+    }
+
+    const closeAssetsDetailModal = () => {
+        showAssetsDetailModal.value = false;
+    }
 
     const openAssetsLiquidationModal = (id) => {
         fetchLiquidationById(id);
@@ -156,11 +165,13 @@ export const useAssetsStore = defineStore("assets", () => {
 
     return {
         //state
-        assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, liquidation, user,
+        assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, 
+        liquidation, user, showAssetsDetailModal,
         //computed
         searchAssets, sortedAssets, 
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
-        openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation
+        openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,
+        openAssetsDetailModal, closeAssetsDetailModal
     }
 });

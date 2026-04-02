@@ -4,13 +4,15 @@ import { storeToRefs } from 'pinia'
 import { useAssetsStore } from '@/stores/assets'
 
 import AssetsLiquidation from '@/components/assets/AssetsLiquidation.vue'
+import AssetsDetail from '@/components/assets/AssetsDetail.vue'
 
 const assetsStore = useAssetsStore()
-const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, showAssetsLiquidationModal } = storeToRefs(assetsStore)
+const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, showAssetsLiquidationModal, showAssetsDetailModal } = storeToRefs(assetsStore)
 const { 
         fetchAssets, formatCurrency, handleSort, changePage, 
         goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
-        openAssetsLiquidationModal, closeAssetsLiquidationModal
+        openAssetsLiquidationModal, closeAssetsLiquidationModal,
+        openAssetsDetailModal, closeAssetsDetailModal
     } = assetsStore
 
 onMounted(() => {
@@ -80,7 +82,7 @@ onMounted(() => {
                             <tr v-for="asset in paginatedAssets" :key="asset.id">
                                 <td>{{ asset.id }}</td>
                                 <td>
-                                    <span class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
+                                    <span @click="openAssetsDetailModal" class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
                                 </td>
                                 <td>{{ asset.name }}</td>
                                 <td><span class="text-success fw-bold">{{ asset.contract_code }}</span></td>
@@ -123,4 +125,16 @@ onMounted(() => {
     <div class="modal-overlay" v-if="showAssetsLiquidationModal">
         <AssetsLiquidation @close="closeAssetsLiquidationModal" />
     </div>
+    <div class="modal-overlay" v-if="showAssetsDetailModal">
+        <AssetsDetail @close="closeAssetsDetailModal" />
+    </div>
 </template>
+
+<style scoped>
+@import '@/assets/main.css';
+
+table td span:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+</style>

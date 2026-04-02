@@ -17,6 +17,14 @@ const CollateralsController = {
             res.status(500).json({ error: error.message });
         }
     },
+    getLiquidationById: (req, res) => {
+        try {
+            const collateral = Collaterals.getLiquidationById(req.params.id);
+            res.json(collateral);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
     create: (req, res) => {
         try {
             const data = req.body;

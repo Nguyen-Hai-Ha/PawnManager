@@ -191,7 +191,7 @@ INSERT INTO role_permissions (id_role, id_permission) VALUES
 (2, 17), (2, 18), (2, 19), (2, 20);
 
 INSERT INTO transactions_types (name) VALUES 
-('Chi cho Vay'), ('Kỳ lãi'), ('Tất toán'), ('Trả bớt gốc');
+('Chi cho Vay'), ('Kỳ lãi'), ('Tất toán'), ('Trả bớt gốc'), ('Thanh lý tài sản');
 
 INSERT INTO contracts_types (name) VALUES 
 ('Cầm Đồ'), ('Tín Chấp'), ('Trả Góp');

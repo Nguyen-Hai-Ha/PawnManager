@@ -36,6 +36,21 @@ const Collaterals = {
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
+    getLiquidationById: (id) => {
+        const sql = `SELECT 
+            c.*, 
+            co.id as contract_id,
+            co.code as contract_code,
+            co.loan_amount,
+            cu.name as customer_name,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE id_contract = co.id AND id_transaction_type != 1), 0) as had_paid
+        FROM collaterals c
+        LEFT JOIN contracts co ON c.id_contract = co.id
+        LEFT JOIN customers cu ON co.id_customer = cu.id
+        WHERE c.id = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.get(id);
+    },
     getByContractId: (id) => {
         const sql = `SELECT collaterals.*, collaterals_type.name as type_name, images.id as image_id, images.url as image_url FROM collaterals 
         LEFT JOIN collaterals_type ON collaterals.id_collateral_type = collaterals_type.id
@@ -53,6 +68,12 @@ const Collaterals = {
     },
     update: (id, data) => {
         const sql = `UPDATE collaterals SET code = @code, name = @name, metadata = @metadata, status = @status, id_contract = @id_contract, id_collateral_type = @id_collateral_type WHERE id = @id`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run({ ...data, id: id });
+        return result.changes;
+    },
+    updateStatus: (data, id) => {
+        const sql = `UPDATE collaterals SET status = @status WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;

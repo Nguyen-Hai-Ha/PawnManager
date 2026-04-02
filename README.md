@@ -42,7 +42,9 @@ npm run dev
 1. **Quản Lý Hợp Đồng**:
    - Tạo mới hợp đồng (Cầm đồ, Tín chấp, Trả góp).
    - Tự động tính toán lịch trả lãi/gốc.
-   - Hỗ trợ nhiều định kỳ trả lãi (Ngày, Tuần, Tháng, Quý, Năm).
+   - Tự động tính toán tiền lãi/gốc còn lại.
+   - Hỗ trợ nhiều định kỳ trả lãi (Ngày, Tháng).
+   - In hợp đồng, phiếu thu, phiếu chi.
 
 2. **Quản Lý Tài Sản (Collaterals)**:
    - Tự động cấp mã tài sản (TSxxxxx).
@@ -58,6 +60,21 @@ npm run dev
 4. **Khách Hàng**:
    - Quản lý thông tin khách hàng và người thân.
    - Theo dõi lịch sử giao dịch của từng khách hàng.
+
+5. **Nhân Viên**:
+   - Quản lý thông tin nhân viên.
+   - Phân quyền nhóm nhân viên nâng cao.
+
+6. **Quản Lý Thu Chi**:
+   - Quản lý thu chi.
+
+7. **Báo Cáo**:
+   - Báo cáo doanh thu.
+   - Báo cáo chi phí.
+   - Báo cáo lợi nhuận.
+   - Báo cáo tài sản.
+   - Báo cáo khách hàng.
+   - Báo cáo thu chi.
 
 ## 📂 Cơ Cấu Thư Mục
 

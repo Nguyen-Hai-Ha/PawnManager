@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
 
 const store = useAddNewLoanStore();
-const { customers, assetTypes, assets, imagePreviews, 
+const { customers, assetTypes, asset, imagePreviews, 
         loan, StartDate, EndDate, TotalInterest, newRelatives,
         id_contract_type, checkRelative } = storeToRefs(store);
 const { fetchAssetTypes, fetchCustomer, handleImageChange, closeModal, removeImage, formatCurrency, submitLoan } = store;
@@ -52,11 +52,11 @@ onMounted(async () => {
                         <div class="form-row">
                             <div class="pm-form-group">
                                 <label for="assets_name">Tên tài sản</label>
-                                <input type="text" id="assets_name" v-model="assets.name" required>
+                                <input type="text" id="assets_name" v-model="asset.name" required>
                             </div>
                             <div class="pm-form-group">
                                 <label for="assets_type">Loại tài sản</label>
-                                <select name="assets_type" id="assets_type" v-model="assets.id_type">
+                                <select name="assets_type" id="assets_type" v-model="asset.id_type">
                                     <option value="">Chọn loại tài sản</option>
                                     <option v-for="asset in assetTypes" :key="asset.id" :value="asset.id">{{ asset.name
                                         }}</option>
@@ -64,58 +64,58 @@ onMounted(async () => {
                             </div>
                         </div>
                         <!-- xe máy và oto -->
-                        <div class="form-row" v-if="assets.id_type === 1 || assets.id_type === 2">
+                        <div class="form-row" v-if="asset.id_type === 1 || asset.id_type === 2">
                             <div class="pm-form-group">
                                 <label for="assets_description">Biển số xe</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['biển số']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['biển số']" required>
                             </div>
                             <div class="pm-form-group">
                                 <label for="assets_description">Đặc điểm nhận dạng</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['đặc điểm nhận dạng']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['đặc điểm nhận dạng']" required>
                             </div>
                         </div>
-                        <div class="form-row" v-if="assets.id_type === 1 || assets.id_type === 2">
+                        <div class="form-row" v-if="asset.id_type === 1 || asset.id_type === 2">
                             <div class="pm-form-group">
                                 <label for="assets_description">Số máy</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['số máy']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['số máy']" required>
                             </div>
                             <div class="pm-form-group">
                                 <label for="assets_price">Số khung</label>
-                                <input type="text" id="assets_price" v-model="assets.metadata['số khung']" required>
+                                <input type="text" id="assets_price" v-model="asset.metadata['số khung']" required>
                             </div>
                         </div>
 
                         <!-- điện thoại -->
-                        <div class="form-row" v-if="assets.id_type === 3 || assets.id_type === 4">
+                        <div class="form-row" v-if="asset.id_type === 3 || asset.id_type === 4">
                             <div class="pm-form-group">
                                 <label for="assets_description">Màu sắc</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['màu sắc']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['màu sắc']" required>
                             </div>
                             <div class="pm-form-group">
                             </div>
                         </div>
 
                         <!-- vàng -->
-                        <div class="form-row" v-if="assets.id_type === 5">
+                        <div class="form-row" v-if="asset.id_type === 5">
                             <div class="pm-form-group">
                                 <label for="assets_description">Trọng lượng</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['trọng lượng']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['trọng lượng']" required>
                             </div>
                             <div class="pm-form-group">
                                 <label for="assets_description">Tình trạng</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['tình trạng']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['tình trạng']" required>
                             </div>
                         </div>
 
                         <!-- giấy tờ -->
-                        <div class="form-row" v-if="assets.id_type === 6">
+                        <div class="form-row" v-if="asset.id_type === 6">
                             <div class="pm-form-group">
                                 <label for="assets_description">Loại giấy tờ</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['loại giấy tờ']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['loại giấy tờ']" required>
                             </div>
                             <div class="pm-form-group">
                                 <label for="assets_description">Số giấy tờ</label>
-                                <input type="text" id="assets_description" v-model="assets.metadata['số giấy tờ']" required>
+                                <input type="text" id="assets_description" v-model="asset.metadata['số giấy tờ']" required>
                             </div>
                         </div>
 

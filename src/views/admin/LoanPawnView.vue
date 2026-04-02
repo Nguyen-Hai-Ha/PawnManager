@@ -118,7 +118,7 @@ onMounted(async() => {
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>
-                            <td>{{ loan.customer_name }} {{ loan.customer_phone }}</td>
+                            <td><span>{{ loan.customer_name }}</span> <p>{{ loan.customer_phone }}</p></td>
                             <td>{{ loan.collateral_name }}</td>
                             <td><span class="text-danger fw-bold">{{ formatCurrency(loan.loan_amount) }}</span></td>
                             <td><span class="text-success fw-bold">{{ formatCurrency(loan.had_paid) }}</span></td>

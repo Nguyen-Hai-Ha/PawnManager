@@ -3,13 +3,22 @@ const db = require('../config/database');
 const Collaterals = {
     getAll: () => {
         const sql = `SELECT 
-            c.*, 
-            ct.name as type_name, 
-            i.id as image_id, 
-            i.url as image_url 
+            c.code,
+            c.name,
+            c.status,
+            co.id as contract_id,
+            co.code as contract_code,
+            co.loan_amount,
+            cu.name as customer_name,
+            cu.phone as customer_phone,
+            MIN(i.id) as image_id,
+            MIN(i.url) as image_url
             FROM collaterals c
-            LEFT JOIN collaterals_type ct ON c.id_collateral_type = ct.id
-            LEFT JOIN images i ON c.id = i.id_collateral`;
+            LEFT JOIN contracts co ON c.id_contract = co.id
+            LEFT JOIN customers cu ON co.id_customer = cu.id
+            LEFT JOIN images i ON c.id = i.id_collateral
+            GROUP BY c.id`;
+            
         const stmt = db.prepare(sql);
         return stmt.all();
     },
@@ -35,14 +44,14 @@ const Collaterals = {
         return stmt.all(id);
     },
     create: (data) => {
-        const sql = `INSERT INTO collaterals (name, metadata, status, id_contract, id_collateral_type) VALUES (?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO collaterals (code, name, metadata, status, id_contract, id_collateral_type) VALUES (?, ?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.name, data.metadata, data.status, data.id_contract, data.id_collateral_type);
+        const result = stmt.run(data.code, data.name, data.metadata, data.status, data.id_contract, data.id_collateral_type);
         const id = result.lastInsertRowid;
         return { id };
     },
     update: (id, data) => {
-        const sql = `UPDATE collaterals SET name = @name, metadata = @metadata, status = @status, id_contract = @id_contract, id_collateral_type = @id_collateral_type WHERE id = @id`;
+        const sql = `UPDATE collaterals SET code = @code, name = @name, metadata = @metadata, status = @status, id_contract = @id_contract, id_collateral_type = @id_collateral_type WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;

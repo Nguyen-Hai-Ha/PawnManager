@@ -2,6 +2,7 @@ import { defineStore, storeToRefs } from "pinia";
 import apiClient from "@/plugins/axios";
 import { useAuthStore } from '../auth';
 import { useLoanStore } from '../loan';
+import { useAssetsStore } from '../assets';
 import { ref, nextTick, onBeforeUnmount, computed } from "vue";
 import { useRoute } from "vue-router";
 import dayjs from "dayjs";
@@ -10,6 +11,10 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const loanStore = useLoanStore();
     const { loans } = storeToRefs(loanStore);
     const { getAllLoans } = loanStore;
+
+    const assetsStore = useAssetsStore();
+    const { assets } = storeToRefs(assetsStore);
+    const { fetchAssets } = assetsStore;
 
     const customers = ref([]);
     const newRelatives = ref([
@@ -31,7 +36,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         }
     ]);
     const assetTypes = ref([]);
-    const assets = ref({
+    const asset = ref({
         name: '',
         metadata: {},
         id_type: ''
@@ -77,6 +82,24 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
 
         const lastNumber = parseInt(lastCode.replace(/\D/g, "")) || 0;
 
+        const nextNumber = lastNumber + 1;
+        return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
+    });
+
+    const codeAsset = computed(() => {
+        let prefix = "TS";
+        if (!assets.value || assets.value.length === 0) {
+            return `${prefix}00001`
+        }
+
+        // Tìm tài sản có code hợp lệ gần nhất
+        const validAssets = assets.value.filter(a => a.code && a.code.startsWith(prefix));
+        if (validAssets.length === 0) {
+            return `${prefix}00001`
+        }
+
+        const lastCode = validAssets[validAssets.length - 1].code;
+        const lastNumber = parseInt(lastCode.replace(/\D/g, "")) || 0;
         const nextNumber = lastNumber + 1;
         return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
     });
@@ -190,6 +213,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
 
     const openModal = async () => {
         await getAllLoans();
+        await fetchAssets();
         showModal.value = true;
         nextTick(() => {
             const firstInput = document.getElementById('assets_name');
@@ -200,7 +224,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     };
 
     const closeModal = () => {
-        assets.value = {
+        asset.value = {
             name: '',
             metadata: {},
             id_type: ''
@@ -261,10 +285,11 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         // nếu là cầm đồ thì thêm tài sản và ảnh tài sản 
         if (id_contract_type.value === 1) {
             const collateralData = {
-                name: assets.value.name,
-                metadata: JSON.stringify(assets.value.metadata),
+                code: codeAsset.value,
+                name: asset.value.name,
+                metadata: JSON.stringify(asset.value.metadata),
                 status: 'Đang cầm',
-                id_collateral_type: assets.value.id_type
+                id_collateral_type: asset.value.id_type
             };
             formData.append('collateral', JSON.stringify(collateralData));
 
@@ -289,7 +314,10 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
             const response = await apiClient.post('/contract', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            await getAllLoans();
+            if (response.data) {
+                await getAllLoans();
+                await fetchAssets();
+            }
             closeModal();
         } catch (error) {
             console.error('Error submitting loan:', error);
@@ -318,10 +346,10 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
 
     return {
         //state
-        loans, customers, assetTypes, assets, images, imagePreviews, showModal, loan, status, pageTitles, newRelatives,
+        loans, customers, assetTypes, asset, images, imagePreviews, showModal, loan, status, pageTitles, newRelatives,
 
         //computed
-        StartDate, EndDate, TotalInterest, id_contract_type, checkRelative,
+        StartDate, EndDate, TotalInterest, id_contract_type, checkRelative, codeAsset,
 
         //actions
         formatCurrency, handleImageChange, openModal, closeModal, removeImage, submitLoan,

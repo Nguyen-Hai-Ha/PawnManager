@@ -104,7 +104,6 @@ const ContractController = {
             const contract = Contract.create(dataContract);
             let dataCollateral = null;
             let dataRelatives = null;
-            let dataImage = null;
             let collateral = null;
 
             if (req.body.collateral) {
@@ -123,10 +122,14 @@ const ContractController = {
                 });
             }
 
-            if (req.body.images) {
-                dataImage = req.body.images;
-                dataImage.id_collateral = collateral.id;
-                const images = Image.create(dataImage);
+            if (collateral && req.files && req.files.length > 0) {
+                req.files.forEach(file => {
+                    const imageUrl = `/uploads/${file.filename}`;
+                    Image.create({
+                        url: imageUrl,
+                        id_collateral: collateral.id
+                    });
+                });
             }
 
             const transaction = Transactions.create({

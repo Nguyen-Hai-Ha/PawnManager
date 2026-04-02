@@ -3,7 +3,12 @@ const bcrypt = require('bcryptjs');
 
 const Staff = {
     getAll: () => {
-        const sql = `SELECT * FROM staff`;
+        const sql = `SELECT s.name, 
+                            s.email, 
+                            s.phone,
+                            r.name as role_name 
+                    FROM staff s 
+                    LEFT JOIN role r ON s.id_role = r.id`;
         const stmt = db.prepare(sql);
         return stmt.all();
     },

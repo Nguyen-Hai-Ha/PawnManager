@@ -8,23 +8,6 @@ const RoleController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    },
-    create: (req, res) => {
-        try {
-            const data = req.body;
-            const role = Role.create(data);
-            res.json(role);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
-    delete: (req, res) => {
-        try {
-            const role = Role.delete(req.params.id);
-            res.json(role);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
     }
 }
 

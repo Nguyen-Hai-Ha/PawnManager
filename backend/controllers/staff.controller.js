@@ -20,10 +20,10 @@ const StaffController = {
             res.status(500).json({ error: error.message });
         }
     },
-    create: (req, res) => {
+    create: async (req, res) => {
         try {
             const data = req.body;
-            const staff = Staff.create(data);
+            const staff = await Staff.create(data);
             res.json(staff);
         } catch (error) {
             res.status(500).json({ error: error.message });

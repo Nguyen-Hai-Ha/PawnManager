@@ -82,7 +82,7 @@ const moneyConfig = {
 
 .modal-header h2 {
     margin: 0;
-    color: #000
+    color: #1a7a6e
 }
 
 .close-btn {

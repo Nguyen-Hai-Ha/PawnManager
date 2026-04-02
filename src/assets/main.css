@@ -1390,3 +1390,139 @@ nav a {
   padding: 20px;
   margin-top: 20px;
 }
+
+/* ─── MODAL ADD STAFF ─── */
+.modal-add-staff {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 800px;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-out;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.modal-content-add-staff{
+  padding: 10px 20px;
+}
+
+.modal-add-staff-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-add-staff-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a7a6e;
+  margin: 0;
+}
+
+.modal-add-staff-header button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-add-staff-body {
+  padding: 20px;
+}
+
+.modal-add-staff-body form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row-add-staff {
+  display: flex;
+  gap: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #1a7a6e;
+}
+
+.form-group select {
+  width: 100%;
+}
+
+.modal-footer-add-staff {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-submit {
+  padding: 10px 24px;
+  background: #1a7a6e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  padding: 10px 24px;
+  background: #dbdbdb;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+.btn-cancel:hover {
+  background: #e5e7eb;
+}

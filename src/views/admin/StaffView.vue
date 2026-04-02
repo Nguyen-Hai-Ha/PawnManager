@@ -1,3 +1,26 @@
+<script setup>
+import { useStaffStore } from '@/stores/staff'
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue'
+import AddNewStaff from '@/components/staff/AddNewStaff.vue'
+
+const staffStore = useStaffStore()
+const { staff, showAddStaffModal, role } = storeToRefs(staffStore)
+const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole } = staffStore
+
+onMounted(() => {
+    const promise = []
+    if (staff.value.length === 0) {
+        promise.push(fetchStaff())
+    }
+    if (role.value.length === 0) {
+        promise.push(fetchRole())
+    }
+    Promise.all(promise)
+})
+</script>
+
+
 <template>
     <div class="staff">
         <div class="group-function">
@@ -9,7 +32,7 @@
             </div>
             <div class="button-group">
                 <button>Phân quyền nhóm</button>
-                <button>Thêm nhân viên</button>
+                <button @click="openAddStaffModal">Thêm nhân viên</button>
             </div>
         </div>
         <div class="table-wrapper">
@@ -26,41 +49,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Tôn Ngộ Không</td>
-                            <td>wukong123@gmail.com</td>
-                            <td>0123456789</td>
-                            <td>Quản lý</td>
+                        <tr v-for="item in staff" :key="item.id">
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.phone }}</td>
+                            <td>{{ item.role_name }}</td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Phân quyền">
-                                        <font-awesome-icon icon="fa-solid fa-user-lock" />
-                                    </button>
                                     <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa"><font-awesome-icon
                                             icon="pen-to-square" /></button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
                                             icon="circle-xmark" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Sugar Tank</td>
-                            <td>sugartankvip@gmail.com</td>
-                            <td>0123456789</td>
-                            <td>admin</td>
-                            <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Phân quyền">
-                                        <font-awesome-icon icon="fa-solid fa-user-lock" />
-                                    </button>
-                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa">
-                                        <font-awesome-icon icon="pen-to-square" />
-                                    </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa">
-                                        <font-awesome-icon icon="circle-xmark" />
-                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -80,6 +80,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="modal-overlay" v-if="showAddStaffModal">
+        <AddNewStaff @close="closeAddStaffModal" />
     </div>
 
 </template>

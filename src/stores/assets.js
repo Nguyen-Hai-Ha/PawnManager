@@ -1,12 +1,27 @@
 import { defineStore } from "pinia";
 import { ref, computed } from 'vue'
 import apiClient from "@/plugins/axios";
+import { useAuthStore } from "./auth";
 
 export const useAssetsStore = defineStore("assets", () => {
     const assets = ref([]);
+    const liquidation = ref([]);
     const search = ref('');
+    const showAssetsLiquidationModal = ref(false);
     const currentPage = ref(1);
     const itemPage = 12;
+    const authStore = useAuthStore();
+
+    const user = computed(() => authStore.user);
+
+    const openAssetsLiquidationModal = (id) => {
+        fetchLiquidationById(id);
+        showAssetsLiquidationModal.value = true;
+    }
+
+    const closeAssetsLiquidationModal = () => {
+        showAssetsLiquidationModal.value = false;
+    }
 
     const searchAssets = computed(() => {
         if (!search.value.trim()) {
@@ -103,6 +118,23 @@ export const useAssetsStore = defineStore("assets", () => {
         return `${formattedAmount} VNĐ`;
     }
 
+    const submitLiquidation = async () => {
+        const payload = {
+            amount: liquidation.value.price,
+            id_collateral: liquidation.value.id,
+            id_contract: liquidation.value.id_contract,
+            id_staff: user.value.id
+        }
+        console.log(payload)
+        try {
+            await apiClient.post(`transaction/liquidation`,payload)
+            await fetchAssets()
+            closeAssetsLiquidationModal()
+        } catch (error) {
+            console.error('Error fetching liquidation:', error)
+        }
+    }
+
     const fetchAssets = async () => {
         try {
             const response = await apiClient.get('collateral')
@@ -112,12 +144,23 @@ export const useAssetsStore = defineStore("assets", () => {
         }
     }
 
+    const fetchLiquidationById = async (id) => {
+        try {
+            const response = await apiClient.get(`collateral/liquidation/${id}`)
+            liquidation.value = response.data
+            console.log(liquidation.value)
+        } catch (error) {
+            console.error('Error fetching liquidation:', error)
+        }
+    }
+
     return {
         //state
-        assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets,
+        assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, liquidation, user,
         //computed
         searchAssets, sortedAssets, 
         //action
-        fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage
+        fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
+        openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation
     }
 });

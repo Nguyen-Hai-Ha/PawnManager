@@ -3,9 +3,15 @@ import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAssetsStore } from '@/stores/assets'
 
+import AssetsLiquidation from '@/components/assets/AssetsLiquidation.vue'
+
 const assetsStore = useAssetsStore()
-const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig } = storeToRefs(assetsStore)
-const { fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage } = assetsStore
+const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, showAssetsLiquidationModal } = storeToRefs(assetsStore)
+const { 
+        fetchAssets, formatCurrency, handleSort, changePage, 
+        goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
+        openAssetsLiquidationModal, closeAssetsLiquidationModal
+    } = assetsStore
 
 onMounted(() => {
     fetchAssets()
@@ -24,8 +30,9 @@ onMounted(() => {
                     <label for="filter">Trạng thái</label>
                     <select id="filter">
                         <option value="">Tất cả</option>
-                        <option value="">Đang cầm</option>
-                        <option value="">Đã thanh lý</option>
+                        <option value="">Đang Cầm</option>
+                        <option value="">Đã Chuộc</option>
+                        <option value="">Đã Thanh Lý</option>
                     </select>
                 </div>
             </div>
@@ -82,11 +89,14 @@ onMounted(() => {
                                     <p>{{ asset.customer_phone }}</p>
                                 </td>
                                 <td><span class="text-danger fw-bold">{{ formatCurrency(asset.loan_amount) }}</span></td>
-                                <td><span class="badge rounded-pill bg-warning text-warning-emphasis">{{ asset.status }}</span>
+                                <td>
+                                    <span class="badge rounded-pill bg-warning text-warning-emphasis" v-if="asset.status === 'Đang cầm'">{{ asset.status }}</span>
+                                    <span class="badge rounded-pill bg-success" v-if="asset.status === 'Đã Thanh Lý'">{{ asset.status }}</span>
+                                    <span class="badge rounded-pill bg-success" v-if="asset.status === 'Đã Chuộc'">{{ asset.status }}</span>
                                 </td>
                                 <td>
                                     <div class="action-cell">
-                                        <button class="btn-action text-success" data-tooltip="Thanh lý">
+                                        <button class="btn-action text-success" data-tooltip="Thanh lý" @click="openAssetsLiquidationModal(asset.id)">
                                             <font-awesome-icon icon="fa-solid fa-gavel" />
                                         </button>
                                     </div>
@@ -109,5 +119,8 @@ onMounted(() => {
                     </div>
                 </div>
         </div>
+    </div>
+    <div class="modal-overlay" v-if="showAssetsLiquidationModal">
+        <AssetsLiquidation @close="closeAssetsLiquidationModal" />
     </div>
 </template>

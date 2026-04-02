@@ -1,4 +1,4 @@
-const { Transactions, PaymentSchedules, Contract } = require('../models');
+const { Transactions, PaymentSchedules, Contract, Collaterals } = require('../models');
 const db = require('../config/database');
 
 const TransactionsController = {
@@ -86,6 +86,7 @@ const TransactionsController = {
             if (contract.id_contract_type === 1 || contract.id_contract_type === 2) {
                 if (contract.total_periods < paymentSchedule.period_number) {
                     Contract.updateStatus({ status: 'Đã Hoàn Tất' }, data.id_contract);
+                    Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);
                 }
             }
 
@@ -281,6 +282,11 @@ const TransactionsController = {
             // Cập nhật trạng thái của hợp đồng
             Contract.updateStatus({ status: 'Đã Hoàn Tất' }, id_contract);
 
+            const collateral = Collaterals.getById(contract.id_collateral);
+            if (collateral) {
+                Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);
+            }
+
             // Cập nhật trạng thái của tất cả các kỳ
             schedules.forEach(schedule => {
                 PaymentSchedules.updateStatus({ is_paid: 1 }, schedule.id);
@@ -290,6 +296,48 @@ const TransactionsController = {
         });
         try {
             const result = final(req.body);
+            if (result.error) {
+                return res.status(400).json(result);
+            }
+            res.json(result);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    liquidation: (req, res) => {
+        const liquidation = db.transaction((data) => {
+            const amount = data.amount;
+            const id_contract = data.id_contract;
+            const id_collateral = data.id_collateral;
+            const id_staff = data.id_staff
+
+            const contract = Contract.getById(id_contract);
+            if (!contract) return { error: "Hợp đồng không tồn tại" };
+
+            // Tạo giao dịch loại 5 (thanh lý)
+            const transaction = Transactions.create({
+                amount: amount,
+                other_fees: 0,
+                id_contract: id_contract,
+                id_transaction_type: 5,
+                id_staff: id_staff
+            });
+
+            // Cập nhật trạng thái của hợp đồng
+            Contract.updateStatus({ status: 'Đã Thanh Lý' }, id_contract);
+
+            // Cập nhật trạng thái của tài sản
+            const collateral = Collaterals.getById(id_collateral);
+            if (collateral) {
+                Collaterals.updateStatus({ status: 'Đã Thanh Lý' }, collateral.id);
+            } else {
+                return { error: "Tài sản không tồn tại" };
+            }
+
+            return { transaction, msg: "Tài sản đã được thanh lý" };
+        });
+        try {
+            const result = liquidation(req.body);
             if (result.error) {
                 return res.status(400).json(result);
             }

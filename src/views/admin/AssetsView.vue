@@ -1,3 +1,17 @@
+<script setup>
+import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useAssetsStore } from '@/stores/assets'
+
+const assetsStore = useAssetsStore()
+const { assets } = storeToRefs(assetsStore)
+const { fetchAssets, formatCurrency } = assetsStore
+
+onMounted(() => {
+    fetchAssets()
+})
+</script>
+
 <template>
     <div class="assets">
         <div class="group-function">
@@ -32,63 +46,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
+                            <tr v-for="asset, index in assets" :key="asset.id">
+                                <td>{{ index + 1 }}</td>
                                 <td>
-                                    <span class="fw-bold">TS00001</span>
+                                    <span class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
                                 </td>
-                                <td>Wave 110</td>
-                                <td><span class="text-success fw-bold">HD0001</span></td>
+                                <td>{{ asset.name }}</td>
+                                <td><span class="text-success fw-bold">{{ asset.contract_code }}</span></td>
                                 <td>
-                                    <span>Nguyễn Văn A</span>
-                                    <p>0123456789</p>
+                                    <span>{{ asset.customer_name }}</span>
+                                    <p>{{ asset.customer_phone }}</p>
                                 </td>
-                                <td><span class="text-danger fw-bold">10.500.000</span></td>
-                                <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
-                                </td>
-                                <td>
-                                    <div class="action-cell">
-                                        <button class="btn-action text-success" data-tooltip="Thanh lý">
-                                            <font-awesome-icon icon="fa-solid fa-gavel" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <span class="fw-bold">TS00001</span>
-                                </td>
-                                <td>SH 350i</td>
-                                <td><span class="text-success fw-bold">HS0001</span></td>
-                                <td>
-                                    <span>Nguyễn Văn B</span>
-                                    <p>0123456789</p>
-                                </td>
-                                <td><span class="text-danger fw-bold">40.000.000</span></td>
-                                <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
-                                </td>
-                                <td>
-                                    <div class="action-cell">
-                                        <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
-                                            <font-awesome-icon icon="fa-solid fa-eye" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>
-                                    <span class="fw-bold">TS00001</span>
-                                </td>
-                                <td>VF3</td>
-                                <td><span class="text-success fw-bold">HD0001</span></td>
-                                <td>
-                                    <span>Nguyễn Văn C</span>
-                                    <p>0123456789</p>
-                                </td>
-                                <td><span class="text-danger fw-bold">50.000.000</span></td>
-                                <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
+                                <td><span class="text-danger fw-bold">{{ formatCurrency(asset.loan_amount) }}</span></td>
+                                <td><span class="badge rounded-pill bg-warning text-warning-emphasis">{{ asset.status }}</span>
                                 </td>
                                 <td>
                                     <div class="action-cell">
@@ -98,28 +68,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>
-                                    <span class="fw-bold">TS00001</span>
-                                </td>
-                                <td>iPhone 16</td>
-                                <td><span class="text-success fw-bold">HD0001</span></td>
-                                <td>
-                                    <span>Nguyễn Văn D</span>
-                                    <p>0123456789</p>
-                                </td>
-                                <td><span class="text-danger fw-bold">8.000.000</span></td>
-                                <td><span class="badge rounded-pill bg-warning text-warning-emphasis">Đang cầm</span>
-                                </td>
-                                <td>
-                                    <div class="action-cell">
-                                        <button class="btn-action text-success" data-tooltip="Thanh lý">
-                                            <font-awesome-icon icon="fa-solid fa-gavel" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>

@@ -11,6 +11,7 @@ router.get('/history/reduce-principal/:id', TransactionsController.getHistoryRed
 router.post('/', TransactionsController.create);
 router.post('/reduce-principal', TransactionsController.reducePrincipal);
 router.post('/final-settlement', TransactionsController.finalsettlement);
+router.post('/liquidation', TransactionsController.liquidation);
 
 router.delete('/:id', TransactionsController.delete);
 

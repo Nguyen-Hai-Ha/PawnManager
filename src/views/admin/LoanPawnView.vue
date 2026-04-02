@@ -133,12 +133,12 @@ onMounted(async() => {
                                 <span class="badge rounded-pill bg-danger text-danger-emphasis fw-bold" v-if="loan.status === 'Cần thanh lý' || loan.status === 'Quá hạn'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-primary fw-bold" v-if="loan.status === 'Đã thanh lý'">
+                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Thanh Lý'">
                                     {{ loan.status }}
                                 </span>
                             </td>
                             <td>
-                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất'">
+                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
                                     <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
                                         <font-awesome-icon icon="fa-solid fa-eye" />
                                     </button>

@@ -103,14 +103,14 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         const nextNumber = lastNumber + 1;
         return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
     });
-    
+
     const checkRelative = computed(() => {
         const findCustomer = customers.value.find((customer) => customer.id === loan.value.id_customer);
         let relative = []
         if (findCustomer?.relatives) {
-            relative = typeof findCustomer.relatives === 'string' 
-            ? JSON.parse(findCustomer.relatives) 
-            : findCustomer.relatives;
+            relative = typeof findCustomer.relatives === 'string'
+                ? JSON.parse(findCustomer.relatives)
+                : findCustomer.relatives;
         }
         return relative.length >= 2 ? false : true;
     })

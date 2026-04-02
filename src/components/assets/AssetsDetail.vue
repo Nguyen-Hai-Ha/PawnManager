@@ -3,27 +3,7 @@ import { storeToRefs } from 'pinia';
 import { useAssetsStore } from '@/stores/assets';
 const assetsStore = useAssetsStore();
 const { assetDetail, parseMetadata, parseImages } = storeToRefs(assetsStore);
-const props = defineProps({
-    asset: {
-        type: Object,
-        required: true,
-        default: () => ({
-            code: 'SH01_20261802',
-            name: 'SH 125i',
-            customer_name: 'Nguyễn Văn C',
-            type_name: 'Xe máy',
-            description: 'Trắng',
-            note: '',
-            license_plate: '36A1-04953',
-            chassis_number: 'IUHANX478612VGE',
-            engine_number: 'BSUWFDBF46781',
-            status: 'Đang cầm',
-            images: []
-        })
-    }
-});
-
-const emit = defineEmits(['close']);
+const { closeAssetsDetailModal, triggerFileInput, handleFileChange } = assetsStore;
 </script>
 
 <template>
@@ -33,11 +13,15 @@ const emit = defineEmits(['close']);
                 <h2>Tài sản {{ assetDetail.code }}</h2>
                 <span class="status-badge">{{ assetDetail.status }}</span>
             </div>
-            <button class="close-icon" @click="emit('close')">&times;</button>
+            <button class="close-icon" @click="closeAssetsDetailModal">&times;</button>
         </div>
 
         <div class="modal-body">
             <div class="form-grid">
+                <div class="form-group">
+                    <label>Khách hàng</label>
+                    <div class="read-only-field">{{ assetDetail.customer_name }}</div>
+                </div>
                 <div class="form-group">
                     <label>Mã tài sản</label>
                     <div class="read-only-field">{{ assetDetail.code }}</div>
@@ -48,15 +32,11 @@ const emit = defineEmits(['close']);
                 </div>
                 <div class="form-group">
                     <label>Tên tài sản</label>
-                    <div class="read-only-field">{{ assetDetail.name }}</div>
-                </div>
-                <div class="form-group">
-                    <label>Khách hàng</label>
-                    <div class="read-only-field">{{ assetDetail.customer_name }}</div>
+                    <input type="text" v-model="assetDetail.name">
                 </div>
                 <div class="form-group" v-for="(value, key) in parseMetadata" :key="key">
                     <label>{{ key }}</label>
-                    <div class="read-only-field">{{ value }}</div>
+                    <input type="text" v-model="parseMetadata[key]">
                 </div>
             </div>
 
@@ -64,14 +44,28 @@ const emit = defineEmits(['close']);
                 <p class="section-title">Hình ảnh:</p>
                 <div class="image-list">
                     <div v-for="(img, index) in parseImages" :key="index" class="image-wrapper">
-                        <img :src="`http://localhost:3000/${img.url}`" :alt="'Ảnh ' + (index + 1)">
+                        <img :src="`http://localhost:3000${img.url}`" :alt="'Ảnh ' + (index + 1)">
+                        <div class="image-upload-overlay d-flex align-items-center justify-content-center rounded" @click="triggerFileInput(img.id)">
+                            <div class="text-white text-center">
+                                <i class="bi bi-camera-fill fs-3"></i>
+                                <div class="small fw-bold">Đổi ảnh</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add new images button -->
+                    <div class="image-wrapper add-image-btn" @click="triggerFileInput(null)">
+                        <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                            <i class="bi bi-plus-circle fs-2 text-muted"></i>
+                            <span class="small fw-bold text-muted mt-1">Thêm ảnh</span>
+                        </div>
                     </div>
                 </div>
+                <input type="file" class="image-upload" multiple accept="image/*" hidden="true" ref="fileInputRef" @change="handleFileChange">
             </div>
         </div>
 
         <div class="modal-footer">
-            <button class="cancel-btn" >Đóng</button>
+            <button class="cancel-btn" @click="closeAssetsDetailModal">Đóng</button>
         </div>
     </div>
 </template>
@@ -142,6 +136,17 @@ const emit = defineEmits(['close']);
     color: #000;
 }
 
+.form-group input {
+    border: 1px solid #D0D0D0;
+    color: #000;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+}
+
 .read-only-field {
     background-color: #F0F0F0;
     border: 1px solid #D0D0D0;
@@ -169,14 +174,38 @@ const emit = defineEmits(['close']);
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    padding: 10px;
+    border: 1px dashed #1a7a6e;
+    border-radius: 10px;
 }
 
-.image-wrapper, .placeholder-box {
-    width: 130px;
-    height: 130px;
-    border-radius: 4px;
+.image-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
     background-color: #f5f5f5;
+    cursor: pointer;
     overflow: hidden;
+}
+
+.add-image-btn {
+    border: 2px dashed #ccc;
+    background-color: #fbfbfb;
+    transition: all 0.2s;
+}
+
+.add-image-btn:hover {
+    border-color: #1a7a6e;
+    background-color: #f0f7f6;
+}
+
+.add-image-btn i {
+    transition: color 0.2s;
+}
+
+.add-image-btn:hover i, .add-image-btn:hover span {
+    color: #1a7a6e !important;
 }
 
 .image-wrapper img {
@@ -244,5 +273,20 @@ const emit = defineEmits(['close']);
 
 .cancel-btn {
     background-color: #ccc;
+}
+
+.image-upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Màn đen 60% */
+  opacity: 0; /* Mặc định ẩn */
+  transition: opacity 0.3s ease;
+}
+
+.image-wrapper:hover .image-upload-overlay {
+  opacity: 1; /* Hiện khi hover */
 }
 </style>

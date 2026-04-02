@@ -6,6 +6,9 @@ import { useAuthStore } from "./auth";
 export const useAssetsStore = defineStore("assets", () => {
     const assets = ref([]);
     const assetDetail = ref([]);
+    const fileInputRef = ref(null);
+    const selectedImage = ref(null);
+    const editingImageId = ref(null);
     const liquidation = ref([]);
     const search = ref('');
     const showAssetsDetailModal = ref(false);
@@ -15,6 +18,44 @@ export const useAssetsStore = defineStore("assets", () => {
     const authStore = useAuthStore();
 
     const user = computed(() => authStore.user);
+
+    const triggerFileInput = (id) => {
+        editingImageId.value = id;
+        if (fileInputRef.value) {
+            fileInputRef.value.click();
+        }
+    };
+
+    const handleFileChange = async (event) => {
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
+
+        try {
+            if (editingImageId.value) {
+                const file = files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+                await apiClient.put(`image/${editingImageId.value}`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            } else {
+                for (const file of files) {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('id_collateral', assetDetail.value.id);
+                    await apiClient.post(`image`, formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    });
+                }
+            }
+            await fetchAssetDetail(assetDetail.value.id);
+        } catch (error) {
+            console.error('Error handling image upload:', error);
+        } finally {
+            editingImageId.value = null; 
+            event.target.value = ''; 
+        }
+    };
 
     const openAssetsDetailModal = (id) => {
         fetchAssetDetail(id);
@@ -194,12 +235,12 @@ export const useAssetsStore = defineStore("assets", () => {
     return {
         //state
         assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, 
-        liquidation, user, showAssetsDetailModal, assetDetail,
+        liquidation, user, showAssetsDetailModal, assetDetail, selectedImage, fileInputRef, editingImageId,
         //computed
         searchAssets, sortedAssets, parseMetadata, parseImages,
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,
-        openAssetsDetailModal, closeAssetsDetailModal, fetchAssetDetail
+        openAssetsDetailModal, closeAssetsDetailModal, fetchAssetDetail, triggerFileInput, handleFileChange
     }
 });

@@ -18,7 +18,7 @@ const Images = {
         return result.lastInsertRowid;
     },
     update: (id, data) => {
-        const sql = `UPDATE images SET url = @url, id_collateral = @id_collateral WHERE id = @id`;
+        const sql = `UPDATE images SET url = @url WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;

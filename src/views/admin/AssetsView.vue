@@ -98,6 +98,8 @@ onMounted(() => {
                                 </td>
                                 <td>
                                     <div class="action-cell">
+                                        <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa" @click="openAssetsDetailModal(asset.id)"><font-awesome-icon
+                                            icon="pen-to-square" /></button>
                                         <button class="btn-action text-success" data-tooltip="Thanh lý" @click="openAssetsLiquidationModal(asset.id)">
                                             <font-awesome-icon icon="fa-solid fa-gavel" />
                                         </button>

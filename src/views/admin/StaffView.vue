@@ -5,8 +5,8 @@ import { onMounted } from 'vue'
 import AddNewStaff from '@/components/staff/AddNewStaff.vue'
 
 const staffStore = useStaffStore()
-const { staff, showAddStaffModal, role } = storeToRefs(staffStore)
-const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole } = staffStore
+const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig } = storeToRefs(staffStore)
+const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort } = staffStore
 
 onMounted(() => {
     const promise = []
@@ -27,7 +27,7 @@ onMounted(() => {
             <div class="search">
                 <div class="search-input">
                     <label for="search">Tìm kiếm</label>
-                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT">
+                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT" v-model="search">
                 </div>
             </div>
             <div class="button-group">
@@ -40,17 +40,35 @@ onMounted(() => {
                 <table>
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Tên NV</th>
-                            <th>Email đăng nhập</th>
+                            <th @click="handleSort('id')">STT
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'id' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'id' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th @click="handleSort('name')">Tên NV
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'name' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'name' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th @click="handleSort('email')">Email đăng nhập
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'email' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'email' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
                             <th>Số điện thoại</th>
-                            <th>Quyền</th>
+                            <th >Quyền</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in staff" :key="item.id">
-                            <td>{{ item.id }}</td>
+                        <tr v-for="(item, index) in sortedStaff" :key="item.id">
+                            <td>{{ index + 1 }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.email }}</td>
                             <td>{{ item.phone }}</td>
@@ -67,7 +85,7 @@ onMounted(() => {
                     </tbody>
                 </table>
             </div>
-            <div class="pagination">
+            <!-- <div class="pagination">
                 <div class="pagination-info">
                     <span class="page-info">Trang 1/1 (2)</span>
                 </div>
@@ -78,7 +96,7 @@ onMounted(() => {
                     <button class="page-btn"><font-awesome-icon icon="angle-right" /></button>
                     <button class="page-btn"><font-awesome-icon icon="angles-right" /></button>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="modal-overlay" v-if="showAddStaffModal">

@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS collaterals_type(
 
 CREATE TABLE IF NOT EXISTS collaterals(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT NULL,
     name TEXT NOT NULL,
     metadata TEXT DEFAULT '{}',
     status TEXT DEFAULT 'Đang cầm',

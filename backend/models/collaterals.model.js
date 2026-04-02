@@ -3,6 +3,7 @@ const db = require('../config/database');
 const Collaterals = {
     getAll: () => {
         const sql = `SELECT 
+            c.id,
             c.code,
             c.name,
             c.status,

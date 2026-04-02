@@ -4,8 +4,8 @@ import { storeToRefs } from 'pinia'
 import { useAssetsStore } from '@/stores/assets'
 
 const assetsStore = useAssetsStore()
-const { assets } = storeToRefs(assetsStore)
-const { fetchAssets, formatCurrency } = assetsStore
+const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig } = storeToRefs(assetsStore)
+const { fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage } = assetsStore
 
 onMounted(() => {
     fetchAssets()
@@ -18,7 +18,7 @@ onMounted(() => {
             <div class="search">
                 <div class="search-input">
                     <label for="search">Tìm kiếm</label>
-                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT">
+                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT" v-model="search">
                 </div>
                 <div class="filter">
                     <label for="filter">Trạng thái</label>
@@ -35,10 +35,34 @@ onMounted(() => {
                     <table>
                         <thead>
                             <tr>
-                                <th>STT</th>
-                                <th>Mã TS</th>
-                                <th>Tên tài sản</th>
-                                <th>Hợp đồng</th>
+                                <th @click="handleSort('id')">STT
+                                    <span class="sort-icon">
+                                        <font-awesome-icon v-if="sortConfig.key === 'id' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                        <font-awesome-icon v-else-if="sortConfig.key === 'id' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                        <font-awesome-icon v-else icon="sort" />
+                                    </span>
+                                </th>
+                                <th @click="handleSort('code')">Mã TS
+                                    <span class="sort-icon">
+                                        <font-awesome-icon v-if="sortConfig.key === 'code' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                        <font-awesome-icon v-else-if="sortConfig.key === 'code' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                        <font-awesome-icon v-else icon="sort" />
+                                    </span>
+                                </th>
+                                <th @click="handleSort('name')">Tên tài sản
+                                    <span class="sort-icon">
+                                        <font-awesome-icon v-if="sortConfig.key === 'name' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                        <font-awesome-icon v-else-if="sortConfig.key === 'name' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                        <font-awesome-icon v-else icon="sort" />
+                                    </span>
+                                </th>
+                                <th @click="handleSort('contract_code')">Hợp đồng
+                                    <span class="sort-icon">
+                                        <font-awesome-icon v-if="sortConfig.key === 'contract_code' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                        <font-awesome-icon v-else-if="sortConfig.key === 'contract_code' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                        <font-awesome-icon v-else icon="sort" />
+                                    </span>
+                                </th>
                                 <th>Tên khách hàng</th>
                                 <th>Số tiền vay</th>
                                 <th>Trạng thái</th>
@@ -46,8 +70,8 @@ onMounted(() => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="asset, index in assets" :key="asset.id">
-                                <td>{{ index + 1 }}</td>
+                            <tr v-for="asset in paginatedAssets" :key="asset.id">
+                                <td>{{ asset.id }}</td>
                                 <td>
                                     <span class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
                                 </td>
@@ -74,17 +98,14 @@ onMounted(() => {
                 </div>
                 <div class="pagination">
                     <div class="pagination-info">
-                        <span class="page-info">Trang 1/1 (4)</span>
+                        <span class="page-info">Trang {{ currentPage }}/{{ totalPage }} ({{ assets.length }})</span>
                     </div>
                     <div class="pagination-controls">
-                        <button class="page-btn"><font-awesome-icon icon="angles-left" /></button>
-                        <button class="page-btn"><font-awesome-icon icon="angle-left" /></button>
-                        <button class="page-btn">1</button>
-                        <button class="page-btn">2</button>
-                        <button class="page-btn">3</button>
-                        <button class="page-btn">4</button>
-                        <button class="page-btn"><font-awesome-icon icon="angle-right" /></button>
-                        <button class="page-btn"><font-awesome-icon icon="angles-right" /></button>
+                        <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
+                        <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
+                        <button class="page-btn" v-for="page in totalPage" :key="page" @click="changePage(page)">{{ page }}</button>
+                        <button class="page-btn" @click="goToNextPage"><font-awesome-icon icon="angle-right" /></button>
+                        <button class="page-btn" @click="goToLastPage"><font-awesome-icon icon="angles-right" /></button>
                     </div>
                 </div>
         </div>

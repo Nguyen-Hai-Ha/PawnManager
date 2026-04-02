@@ -82,7 +82,7 @@ onMounted(() => {
                             <tr v-for="asset in paginatedAssets" :key="asset.id">
                                 <td>{{ asset.id }}</td>
                                 <td>
-                                    <span @click="openAssetsDetailModal" class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
+                                    <span @click="openAssetsDetailModal(asset.id)" class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
                                 </td>
                                 <td>{{ asset.name }}</td>
                                 <td><span class="text-success fw-bold">{{ asset.contract_code }}</span></td>

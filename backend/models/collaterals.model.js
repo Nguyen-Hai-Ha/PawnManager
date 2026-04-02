@@ -27,11 +27,18 @@ const Collaterals = {
         const sql = `SELECT 
             c.*, 
             ct.name as type_name, 
-            i.id as image_id, 
-            i.url as image_url 
+            (SELECT JSON_GROUP_ARRAY(
+                JSON_OBJECT(
+                    'id', i.id,
+                    'url', i.url
+                )
+            ) as images
+            FROM images i WHERE i.id_collateral = c.id) as images,
+            cu.name as customer_name
         FROM collaterals c
         LEFT JOIN collaterals_type ct ON c.id_collateral_type = ct.id
-        LEFT JOIN images i ON c.id = i.id_collateral
+        LEFT JOIN contracts co ON c.id_contract = co.id
+        LEFT JOIN customers cu ON co.id_customer = cu.id
         WHERE c.id = ?`;
         const stmt = db.prepare(sql);
         return stmt.get(id);

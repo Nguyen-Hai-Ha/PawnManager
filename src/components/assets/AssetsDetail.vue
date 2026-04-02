@@ -1,4 +1,8 @@
 <script setup>
+import { storeToRefs } from 'pinia';
+import { useAssetsStore } from '@/stores/assets';
+const assetsStore = useAssetsStore();
+const { assetDetail, parseMetadata, parseImages } = storeToRefs(assetsStore);
 const props = defineProps({
     asset: {
         type: Object,
@@ -26,70 +30,42 @@ const emit = defineEmits(['close']);
     <div class="assets-detail">
         <div class="modal-header">
             <div class="title-section">
-                <h2>Tài sản {{ asset.code }}</h2>
-                <span class="status-badge">{{ asset.status }}</span>
+                <h2>Tài sản {{ assetDetail.code }}</h2>
+                <span class="status-badge">{{ assetDetail.status }}</span>
             </div>
             <button class="close-icon" @click="emit('close')">&times;</button>
         </div>
 
         <div class="modal-body">
-            <!-- Information Grid -->
             <div class="form-grid">
-                <!-- Column 1 -->
                 <div class="form-group">
                     <label>Mã tài sản</label>
-                    <div class="read-only-field">{{ asset.code }}</div>
+                    <div class="read-only-field">{{ assetDetail.code }}</div>
                 </div>
                 <div class="form-group">
                     <label>Loại tài sản</label>
-                    <div class="read-only-field">{{ asset.type_name }}</div>
+                    <div class="read-only-field">{{ assetDetail.type_name }}</div>
                 </div>
-                <div class="form-group">
-                    <label>Biển kiểm soát</label>
-                    <div class="read-only-field">{{ asset.license_plate }}</div>
-                </div>
-
-                <!-- Column 2 -->
                 <div class="form-group">
                     <label>Tên tài sản</label>
-                    <div class="read-only-field">{{ asset.name }}</div>
+                    <div class="read-only-field">{{ assetDetail.name }}</div>
                 </div>
-                <div class="form-group">
-                    <label>Đặc điểm nhận dạng</label>
-                    <div class="read-only-field">{{ asset.description }}</div>
-                </div>
-                <div class="form-group">
-                    <label>Số khung</label>
-                    <div class="read-only-field">{{ asset.chassis_number }}</div>
-                </div>
-
-                <!-- Column 3 -->
                 <div class="form-group">
                     <label>Khách hàng</label>
-                    <div class="read-only-field">{{ asset.customer_name }}</div>
+                    <div class="read-only-field">{{ assetDetail.customer_name }}</div>
                 </div>
-                <div class="form-group">
-                    <label>Ghi chú</label>
-                    <div class="read-only-field">{{ asset.note || '&nbsp;' }}</div>
-                </div>
-                <div class="form-group">
-                    <label>Số máy</label>
-                    <div class="read-only-field">{{ asset.engine_number }}</div>
+                <div class="form-group" v-for="(value, key) in parseMetadata" :key="key">
+                    <label>{{ key }}</label>
+                    <div class="read-only-field">{{ value }}</div>
                 </div>
             </div>
 
             <div class="image-section">
                 <p class="section-title">Hình ảnh:</p>
                 <div class="image-list">
-                    <div v-for="(img, index) in asset.images" :key="index" class="image-wrapper">
-                        <img :src="img.url" :alt="'Ảnh ' + (index + 1)">
+                    <div v-for="(img, index) in parseImages" :key="index" class="image-wrapper">
+                        <img :src="`http://localhost:3000/${img.url}`" :alt="'Ảnh ' + (index + 1)">
                     </div>
-                    <!-- Placeholder placeholders to match mockup -->
-                    <!-- <div v-if="!asset.images || asset.images.length === 0" class="no-images">
-                        <div v-for="i in 6" :key="i" class="placeholder-box">
-                             <div class="inner-placeholder"></div>
-                        </div>
-                    </div> -->
                 </div>
             </div>
         </div>

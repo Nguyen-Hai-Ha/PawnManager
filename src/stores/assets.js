@@ -5,6 +5,7 @@ import { useAuthStore } from "./auth";
 
 export const useAssetsStore = defineStore("assets", () => {
     const assets = ref([]);
+    const assetDetail = ref([]);
     const liquidation = ref([]);
     const search = ref('');
     const showAssetsDetailModal = ref(false);
@@ -15,7 +16,8 @@ export const useAssetsStore = defineStore("assets", () => {
 
     const user = computed(() => authStore.user);
 
-    const openAssetsDetailModal = () => {
+    const openAssetsDetailModal = (id) => {
+        fetchAssetDetail(id);
         showAssetsDetailModal.value = true;
     }
 
@@ -127,6 +129,24 @@ export const useAssetsStore = defineStore("assets", () => {
         return `${formattedAmount} VNĐ`;
     }
 
+    const parseMetadata = computed(() => {
+        try {
+            return assetDetail.value?.metadata ? JSON.parse(assetDetail.value.metadata) : [];
+        } catch (e) {
+            console.error("Lỗi parse metadata:", e);
+            return [];
+        }
+    })
+
+    const parseImages = computed(() => {
+        try {
+            return assetDetail.value?.images ? JSON.parse(assetDetail.value.images) : [];
+        } catch (e) {
+            console.error("Lỗi parse images:", e);
+            return [];
+        }
+    })
+
     const submitLiquidation = async () => {
         const payload = {
             amount: liquidation.value.price,
@@ -152,6 +172,14 @@ export const useAssetsStore = defineStore("assets", () => {
             console.error('Error fetching assets:', error)
         }
     }
+    const fetchAssetDetail = async (id) => {
+        try{
+            const response = await apiClient.get(`collateral/${id}`)
+            assetDetail.value = response.data
+        }catch(error){
+            console.error('Error fetching asset detail:', error)
+        }
+    }
 
     const fetchLiquidationById = async (id) => {
         try {
@@ -166,12 +194,12 @@ export const useAssetsStore = defineStore("assets", () => {
     return {
         //state
         assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, 
-        liquidation, user, showAssetsDetailModal,
+        liquidation, user, showAssetsDetailModal, assetDetail,
         //computed
-        searchAssets, sortedAssets, 
+        searchAssets, sortedAssets, parseMetadata, parseImages,
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,
-        openAssetsDetailModal, closeAssetsDetailModal
+        openAssetsDetailModal, closeAssetsDetailModal, fetchAssetDetail
     }
 });

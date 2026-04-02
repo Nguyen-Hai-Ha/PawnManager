@@ -100,7 +100,7 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
     margin: 0;
     font-size: 26px;
     font-weight: 600;
-    color: #000;
+    color: #1a7a6e;
 }
 
 .status-badge {

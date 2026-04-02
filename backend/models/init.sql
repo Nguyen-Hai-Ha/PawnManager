@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS contracts (
 
 CREATE TABLE IF NOT EXISTS contracts_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS customers (
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS relatives (
 
 CREATE TABLE IF NOT EXISTS collaterals_type(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS collaterals(
@@ -87,18 +87,18 @@ CREATE TABLE IF NOT EXISTS payment_schedules(
 
 CREATE TABLE IF NOT EXISTS transactions_types(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS role(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS staff(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    email TEXT NULL,
+    email TEXT UNIQUE NULL,
     password TEXT NOT NULL,
     phone TEXT NOT NULL,
     address TEXT,
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS audit_logs(
 
 CREATE TABLE IF NOT EXISTS permissions(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS role_permissions(
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS role_permissions(
     FOREIGN KEY (id_permission) REFERENCES permissions(id)
 );
 
-INSERT INTO permissions (name) VALUES
+INSERT OR IGNORE INTO permissions (name) VALUES
 ('contract.create'),
 ('contract.read'),
 ('contract.detail'),
@@ -183,23 +183,23 @@ INSERT INTO permissions (name) VALUES
 ('role_permission.update'),
 ('role_permission.delete');
 
-INSERT INTO role (name) VALUES ('admin'), ('manager'), ('staff');
+INSERT OR IGNORE INTO role (name) VALUES ('admin'), ('manager'), ('staff');
 
-INSERT INTO role_permissions (id_role, id_permission) VALUES
+INSERT OR IGNORE INTO role_permissions (id_role, id_permission) VALUES
 (2, 1), (2, 2), (2, 3), (2, 4),
 (2, 6), (2, 7), (2, 8), (2, 9), (2, 10),
 (2, 17), (2, 18), (2, 19), (2, 20);
 
-INSERT INTO transactions_types (name) VALUES 
+INSERT OR IGNORE INTO transactions_types (name) VALUES 
 ('Chi cho Vay'), ('Kỳ lãi'), ('Tất toán'), ('Trả bớt gốc'), ('Thanh lý tài sản');
 
-INSERT INTO contracts_types (name) VALUES 
+INSERT OR IGNORE INTO contracts_types (name) VALUES 
 ('Cầm Đồ'), ('Tín Chấp'), ('Trả Góp');
 
-INSERT INTO collaterals_type (name) VALUES 
+INSERT OR IGNORE INTO collaterals_type (name) VALUES 
 ('Xe máy'), ('Ô tô'), ('Điện thoại'), ('Máy tính'), ('Vàng');
 
-INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES 
+INSERT OR IGNORE INTO staff (name, email, password, phone, address, cccd, id_role) VALUES 
 ('admin', 'pawnadmin@gmail.com', '$2b$10$MzZzlleAClylZEveCMNPvuMe/9ylJj0V3aEa/2lhQxEVoZZ89ZGx2', '0123456789', 'admin', 'admin', 1);
 
 INSERT INTO staff (name, email, password, phone, address, cccd, id_role) VALUES 

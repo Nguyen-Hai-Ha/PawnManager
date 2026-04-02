@@ -74,7 +74,7 @@ const Collaterals = {
         return { id };
     },
     update: (id, data) => {
-        const sql = `UPDATE collaterals SET code = @code, name = @name, metadata = @metadata, status = @status, id_contract = @id_contract, id_collateral_type = @id_collateral_type WHERE id = @id`;
+        const sql = `UPDATE collaterals SET name = @name, metadata = @metadata WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;

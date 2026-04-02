@@ -188,6 +188,20 @@ export const useAssetsStore = defineStore("assets", () => {
         }
     })
 
+    const submitUpdateAsset = async () => {
+        const payload = {
+            name: assetDetail.value.name,
+            metadata: JSON.stringify(parseMetadata.value),
+        }
+        try {
+            await apiClient.put(`collateral/${assetDetail.value.id}`, payload)
+            await fetchAssets()
+            closeAssetsDetailModal()
+        } catch (error) {
+            console.error('Error updating asset:', error)
+        }
+    }
+
     const submitLiquidation = async () => {
         const payload = {
             amount: liquidation.value.price,
@@ -195,7 +209,6 @@ export const useAssetsStore = defineStore("assets", () => {
             id_contract: liquidation.value.id_contract,
             id_staff: user.value.id
         }
-        console.log(payload)
         try {
             await apiClient.post(`transaction/liquidation`,payload)
             await fetchAssets()
@@ -241,6 +254,7 @@ export const useAssetsStore = defineStore("assets", () => {
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,
-        openAssetsDetailModal, closeAssetsDetailModal, fetchAssetDetail, triggerFileInput, handleFileChange
+        openAssetsDetailModal, closeAssetsDetailModal, fetchAssetDetail, triggerFileInput, handleFileChange,
+        submitUpdateAsset
     }
 });

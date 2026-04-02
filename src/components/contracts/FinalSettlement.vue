@@ -147,8 +147,7 @@ const moneyConfig = {
 </template>
 
 <style scoped>
-@import '@/assets/interest.css';
-
+@import url('@/assets/interest.css');
 .row-group{
     display: flex;
     gap: 10px;

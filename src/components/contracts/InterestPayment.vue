@@ -218,7 +218,6 @@ const moneyConfig = {
         </div>
     </div>
 </template>
-
 <style scoped>
-@import '@/assets/interest.css';
+@import url('@/assets/interest.css');
 </style>

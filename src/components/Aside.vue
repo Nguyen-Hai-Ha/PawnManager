@@ -57,7 +57,6 @@
 <script setup>
 </script>
 <style>
-@import '@/assets/main.css';
 
 aside a {
     color: #000000;

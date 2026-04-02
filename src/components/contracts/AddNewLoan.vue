@@ -37,7 +37,7 @@ onMounted(async () => {
     <div class="modal-add-loan">
         <div class="modal-add-loan-content">
             <div class="modal-add-loan-header">
-                <h2>Thêm Hợp Đòng Cầm Đồ Mới</h2>
+                <h2>Thêm Hợp Đồng Mới</h2>
                 <button class="close-modal" @click="closeModal">&times;</button>
             </div>
             <div class="modal-add-loan-body">
@@ -271,7 +271,6 @@ onMounted(async () => {
         </div>
     </div>
 </template>
-
 <style scoped>
-@import '@/assets/main.css';
+@import url('@/assets/main.css');
 </style>

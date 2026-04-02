@@ -92,9 +92,9 @@ onMounted(() => {
                                 </td>
                                 <td><span class="text-danger fw-bold">{{ formatCurrency(asset.loan_amount) }}</span></td>
                                 <td>
-                                    <span class="badge rounded-pill bg-warning text-warning-emphasis" v-if="asset.status === 'Đang cầm'">{{ asset.status }}</span>
-                                    <span class="badge rounded-pill bg-success" v-if="asset.status === 'Đã Thanh Lý'">{{ asset.status }}</span>
-                                    <span class="badge rounded-pill bg-success" v-if="asset.status === 'Đã Chuộc'">{{ asset.status }}</span>
+                                    <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="asset.status === 'Đang cầm'">{{ asset.status }}</span>
+                                    <span class="badge rounded-pill bg-success fw-bold" v-if="asset.status === 'Đã Thanh Lý'">{{ asset.status }}</span>
+                                    <span class="badge rounded-pill bg-success fw-bold" v-if="asset.status === 'Đã Chuộc'">{{ asset.status }}</span>
                                 </td>
                                 <td>
                                     <div class="action-cell">
@@ -131,8 +131,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import '@/assets/main.css';
-
 table td span:hover {
     text-decoration: underline;
     cursor: pointer;

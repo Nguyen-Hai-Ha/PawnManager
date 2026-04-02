@@ -239,10 +239,4 @@
   </div>
 </template>
 
-<script setup>
-// Static data - no fetch needed
-</script>
 
-<style scoped>
-@import '@/assets/main.css';
-</style>

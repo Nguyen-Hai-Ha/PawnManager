@@ -19,9 +19,13 @@ const hasPermission = (requiredPermission) => {
     return (req, res, next) => {
         if (req.userRole === 'admin') return next(); // Admin có toàn quyền
 
-        if (!req.userPermissions || !req.userPermissions.includes(requiredPermission)) {
+        const hasRequired = Array.isArray(requiredPermission)
+            ? requiredPermission.some(p => req.userPermissions?.includes(p))
+            : req.userPermissions?.includes(requiredPermission);
+
+        if (!hasRequired) {
             return res.status(403).json({ 
-                error: `Bạn không có quyền thực hiện hành động: ${requiredPermission}` 
+                error: `Bạn không có quyền thực hiện hành động này. Yêu cầu một trong các quyền: ${Array.isArray(requiredPermission) ? requiredPermission.join(', ') : requiredPermission}` 
             });
         }
         next();

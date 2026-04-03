@@ -146,11 +146,27 @@ CREATE TABLE IF NOT EXISTS role_permissions(
 );
 
 INSERT OR IGNORE INTO permissions (name) VALUES
-('contract.create'),
-('contract.read'),
-('contract.detail'),
-('contract.print'),
-('contract.delete'),
+('loans.create'),
+('loans.read'),
+('loans.detail'),
+('loans.print'),
+('loans.interest_payment'),
+('loans.reduce_principal'),
+('loans.final_settlement'),
+('pledge.create'),
+('pledge.read'),
+('pledge.detail'),
+('pledge.print'),
+('pledge.interest_payment'),
+('pledge.reduce_principal'),
+('pledge.final_settlement'),
+('repayment.create'),
+('repayment.read'),
+('repayment.detail'),
+('repayment.print'),
+('repayment.interest_payment'),
+('repayment.reduce_principal'),
+('repayment.final_settlement'),
 ('customer.create'),
 ('customer.read'),
 ('customer.detail'),
@@ -175,13 +191,15 @@ INSERT OR IGNORE INTO permissions (name) VALUES
 ('transaction.final'),
 ('staff.create'),
 ('staff.read'),
+('staff.detail'),
 ('staff.update'),
 ('staff.delete'),
 ('audit_log.read'),
 ('role_permission.create'),
 ('role_permission.read'),
 ('role_permission.update'),
-('role_permission.delete');
+('role_permission.delete')
+;
 
 INSERT OR IGNORE INTO role (name) VALUES ('admin'), ('manager'), ('staff');
 

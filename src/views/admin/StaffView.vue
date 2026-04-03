@@ -2,12 +2,14 @@
 import { useStaffStore } from '@/stores/staff'
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue'
+
 import AddNewStaff from '@/components/staff/AddNewStaff.vue'
+import EditStaff from '@/components/staff/EditStaff.vue'    
 import AddPermissionFStaff from '@/components/staff/AddPermissionFStaff.vue'
 
 const staffStore = useStaffStore()
-const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal } = storeToRefs(staffStore)
-const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort, openPermissionModal, closePermissionModal } = staffStore
+const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal, showEditStaffModal } = storeToRefs(staffStore)
+const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, closeEditStaffModal } = staffStore
 
 onMounted(() => {
     const promise = []
@@ -76,7 +78,7 @@ onMounted(() => {
                             <td>{{ item.role_name }}</td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa" v-permission="'staff.detail'"><font-awesome-icon
+                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa" v-permission="'staff.detail'" @click="openEditStaffModal(item.id)"><font-awesome-icon
                                             icon="pen-to-square" /></button>
                                     <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'staff.delete'"><font-awesome-icon
                                             icon="circle-xmark" /></button>
@@ -106,6 +108,8 @@ onMounted(() => {
     <div class="modal-overlay" v-if="showPermissionModal">
         <AddPermissionFStaff @close="closePermissionModal" />
     </div>
+    <div class="modal-overlay" v-if="showEditStaffModal">
+        <EditStaff @close="closeEditStaffModal" />
+    </div>
 
 </template>
-

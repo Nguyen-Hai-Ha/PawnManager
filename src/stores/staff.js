@@ -14,9 +14,20 @@ export const useStaffStore = defineStore('staff', () => {
         cccd: '',
         id_role: ''
     })
+    const editStaff = ref({
+        name: '',
+        email: '',
+        password: '',
+        phone: '',
+        address: '',
+        cccd: '',
+        id_role: ''
+    })
+    const editPassword = ref('')
     const role = ref([]);
     const showAddStaffModal = ref(false);
     const showPermissionModal = ref(false);
+    const showEditStaffModal = ref(false);
     const activeCategory = ref('Cầm đồ');
     const selectedPermissionIds = ref([]);
     const categories = ref(Object.keys(PERMISSION));
@@ -102,6 +113,30 @@ export const useStaffStore = defineStore('staff', () => {
         showPermissionModal.value = false;
     }
 
+    const openEditStaffModal = async (id) => {
+        await fetchEditStaff(id);
+        showEditStaffModal.value = true;
+        nextTick(() => {
+            const firstInput = document.getElementById('name');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        })
+    }
+
+    const closeEditStaffModal = () => {
+        editStaff.value = {
+            name: '',
+            email: '',
+            password: '',
+            phone: '',
+            address: '',
+            cccd: '',
+            id_role: ''
+        }
+        showEditStaffModal.value = false;
+    }
+
     const currentPermissions = computed(() => {
         return PERMISSION[activeCategory.value] || [];
     });
@@ -142,6 +177,26 @@ export const useStaffStore = defineStore('staff', () => {
             closeAddStaffModal()
         } catch (error) {
             console.error('Error adding staff:', error)
+        }
+    }
+
+    const submitEditStaff = async () => {
+        const data = {
+            name: editStaff.value.name,
+            email: editStaff.value.email,
+            password: editPassword.value,
+            phone: editStaff.value.phone,
+            address: editStaff.value.address,
+            cccd: editStaff.value.cccd,
+            id_role: editStaff.value.id_role
+        }
+        console.log(data)
+        try {
+            const response = await apiClient.put(`/staff/${editStaff.value.id}`, data)
+            fetchStaff()
+            closeEditStaffModal()
+        } catch (error) {
+            console.error('Error editing staff:', error)
         }
     }
 
@@ -191,27 +246,34 @@ export const useStaffStore = defineStore('staff', () => {
         }
     }
 
+    const fetchEditStaff = async (id) => {
+        try {
+            const response = await apiClient.get(`/staff/${id}`)
+            editStaff.value = response.data
+        } catch (error) {
+            console.error('Error fetching staff:', error)
+        }
+    }
+
     watch(() => selectedRole.value, async (newId) => {
         if (newId) {
             await fetchPermissionRole(newId)
         }
     })
 
-    watch(() => selectedPermissionIds.value, (newIds) => {
-        console.log(newIds)
-    })
-
     return {
         //state
         staff, newStaff, role, showAddStaffModal, search, sortConfig, showPermissionModal,
-        activeCategory, selectedPermissionIds, categories, selectedRole,
+        activeCategory, selectedPermissionIds, categories, selectedRole, editStaff, showEditStaffModal,
+        editPassword,
 
         //computed
-        searchStaff, sortedStaff, currentPermissions, isAllSelected,
+        searchStaff, sortedStaff, currentPermissions, isAllSelected, 
         
         //actions
         fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,
         openPermissionModal, closePermissionModal, toggleSelectAll, fetchPermissionRole,
-        submitUpdatePermissionRole
+        submitUpdatePermissionRole, openEditStaffModal, closeEditStaffModal, fetchEditStaff,
+        submitEditStaff
     }
 })

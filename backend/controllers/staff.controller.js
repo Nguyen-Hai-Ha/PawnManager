@@ -32,8 +32,12 @@ const StaffController = {
     update: (req, res) => {
         try {
             const data = req.body;
-            const staff = Staff.update(req.params.id, data);
-            res.json(staff);
+            const password = data.password;
+            if (password && password.length > 0) {
+                Staff.updatePassword(req.params.id, password);
+            }
+            const result = Staff.update(req.params.id, data);
+            res.json(result);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

@@ -3,7 +3,9 @@ const bcrypt = require('bcryptjs');
 
 const Staff = {
     getAll: () => {
-        const sql = `SELECT s.name, 
+        const sql = `SELECT 
+                            s.id,
+                            s.name, 
                             s.email, 
                             s.phone,
                             r.name as role_name 
@@ -26,9 +28,17 @@ const Staff = {
         return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
-        const sql = `UPDATE staff SET name = @name, email = @email, password = @password, phone = @phone, address = @address, cccd = @cccd, id_role = @id_role WHERE id = @id`;
+        const sql = `UPDATE staff SET name = @name, email = @email, phone = @phone, address = @address, cccd = @cccd, id_role = @id_role WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
+        return result.changes;
+    },
+    updatePassword: async (id, password) => {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const sql = `UPDATE staff SET password = @password WHERE id = @id`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run({ password: hashedPassword, id: id });
         return result.changes;
     },
     delete: (id) => {

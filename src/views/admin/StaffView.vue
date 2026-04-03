@@ -3,10 +3,11 @@ import { useStaffStore } from '@/stores/staff'
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue'
 import AddNewStaff from '@/components/staff/AddNewStaff.vue'
+import AddPermissionFStaff from '@/components/staff/AddPermissionFStaff.vue'
 
 const staffStore = useStaffStore()
-const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig } = storeToRefs(staffStore)
-const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort } = staffStore
+const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal } = storeToRefs(staffStore)
+const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort, openPermissionModal, closePermissionModal } = staffStore
 
 onMounted(() => {
     const promise = []
@@ -31,7 +32,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class="button-group">
-                <button>Phân quyền nhóm</button>
+                <button @click="openPermissionModal">Phân quyền nhóm</button>
                 <button @click="openAddStaffModal">Thêm nhân viên</button>
             </div>
         </div>
@@ -101,6 +102,9 @@ onMounted(() => {
     </div>
     <div class="modal-overlay" v-if="showAddStaffModal">
         <AddNewStaff @close="closeAddStaffModal" />
+    </div>
+    <div class="modal-overlay" v-if="showPermissionModal">
+        <AddPermissionFStaff @close="closePermissionModal" />
     </div>
 
 </template>

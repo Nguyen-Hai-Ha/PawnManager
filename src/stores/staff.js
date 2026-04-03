@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import apiClient from "@/plugins/axios";
 import { ref, computed } from 'vue';
+import { PERMISSION } from '@/constants/permission';
 
 export const useStaffStore = defineStore('staff', () => {
     const staff = ref([])
@@ -15,6 +16,9 @@ export const useStaffStore = defineStore('staff', () => {
     })
     const role = ref([]);
     const showAddStaffModal = ref(false);
+    const showPermissionModal = ref(false);
+    const selectedPermission = ref([]);
+    const selectedRole = ref('');
     const search = ref('');
 
     const searchStaff = computed(() => {
@@ -82,6 +86,15 @@ export const useStaffStore = defineStore('staff', () => {
         showAddStaffModal.value = false;
     }
 
+    const openPermissionModal = async () => {
+
+        showPermissionModal.value = true;
+    }
+
+    const closePermissionModal = () => {
+        showPermissionModal.value = false;
+    }
+
     const submitAddStaff = async () => {
         const data = {
             name: newStaff.value.name,
@@ -121,12 +134,13 @@ export const useStaffStore = defineStore('staff', () => {
 
     return {
         //state
-        staff, newStaff, role, showAddStaffModal, search, sortConfig,
+        staff, newStaff, role, showAddStaffModal, search, sortConfig, showPermissionModal,
 
         //computed
         searchStaff, sortedStaff,
         
         //actions
-        fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort
+        fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,
+        openPermissionModal, closePermissionModal
     }
 })

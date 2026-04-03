@@ -8,12 +8,15 @@ import { onMounted } from 'vue';
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
 import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
+import FinalSettlement from '@/components/contracts/FinalSettlement.vue';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
+import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
+const finalSettlementStore = useFinalSettlementStore();
 
 const {loans, paginated, totalPage, currentPage, search, sortConfig} = storeToRefs(loanStore);
 const { getAllLoans, deleteLoan, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
@@ -26,6 +29,9 @@ const { openInterestModal, closeInterestModal } = interestPaymentStore;
 
 const { showReducePrincipalModal } = storeToRefs(reducePrincipalStore);
 const { openReducePrincipalModal, closeReducePrincipalModal } = reducePrincipalStore;
+
+const { showFinalModal } = storeToRefs(finalSettlementStore);
+const { openFinalModal, closeFinalModal } = finalSettlementStore;
 
 onMounted(async() => {
     await getAllLoans();
@@ -60,7 +66,7 @@ onMounted(async() => {
                 </div>
             </div>
             <div class="button-group">
-                <button @click="openModal">Thêm hợp đồng</button>
+                <button v-permission="'pledges.create'" @click="openModal">Thêm hợp đồng</button>
             </div>
         </div>
         <div class="table-wrapper">
@@ -124,14 +130,17 @@ onMounted(async() => {
                             </td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'contract.detail'" @click="openInterestModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'pledges.interest_payment'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
-                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" v-permission="'pledges.reduce_principal'" @click="openReducePrincipalModal(loan.id)">
                                         <font-awesome-icon icon="money-bill-wave" />
                                     </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
+                                    <button class="btn-action text-success" data-tooltip="Tất toán" v-permission="'pledges.final_settlement'" @click="openFinalModal(loan.id)">
+                                        <font-awesome-icon icon="hand-holding-dollar" />
+                                    </button>
+                                    <!-- <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
+                                            icon="circle-xmark" /></button> -->
                                 </div>
                             </td>
                         </tr>
@@ -164,5 +173,8 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showReducePrincipalModal">
         <ReducePrincipal @close="closeReducePrincipalModal" />
+    </div>
+    <div class="modal-overlay" v-if="showFinalModal">
+        <FinalSettlement @close="closeFinalModal" />
     </div>
 </template>

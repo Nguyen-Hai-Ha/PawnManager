@@ -5,7 +5,7 @@ export const permissionDirective = {
   mounted(el, binding) {
     const authStore = useAuthStore();
 
-    // Tạo một watchEffect để có thể phản ứng với thay đổi của store (nếu có delay khi load)
+    // Tạo một watchEffect để có thể phản ứng với thay đổi của store
     watchEffect(() => {
       const { value } = binding;
       const user = authStore.user;
@@ -17,8 +17,11 @@ export const permissionDirective = {
         return;
       }
 
-      if (value && !permissions.includes(value)) {
-        // Thay vì xóa DOM (có thể gây lỗi khi hydrate hoặc cần hiện lại), ta ẩn đi
+      const hasPermission = Array.isArray(value) 
+        ? value.some(p => permissions.includes(p))
+        : permissions.includes(value);
+
+      if (value && !hasPermission) {
         el.style.display = 'none';
       } else {
         el.style.display = '';

@@ -56,7 +56,7 @@ const { closeAddStaffModal, submitAddStaff } = staffStore;
                         </div>
                     </div>
                     <div class="modal-footer-add-staff">
-                        <button type="submit" class="btn-submit">Thêm</button>
+                        <button type="submit" class="btn-submit" v-permission="'staff.create'">Thêm</button>
                         <button type="button" class="btn-cancel" @click="closeAddStaffModal">Hủy</button>
                     </div>
                     

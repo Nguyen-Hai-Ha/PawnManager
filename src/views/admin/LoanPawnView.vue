@@ -69,7 +69,7 @@ onMounted(async() => {
                 </div>
             </div>
             <div class="button-group">
-                <button v-permission="'contract.create'" @click="openModal">Thêm hợp đồng</button>
+                <button v-permission="'loans.create'" @click="openModal">Thêm hợp đồng</button>
             </div>
         </div>
 
@@ -144,17 +144,17 @@ onMounted(async() => {
                                     </button>
                                 </div>
                                 <div class="action-cell" v-else>
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'contract.detail'" @click="openInterestModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'loans.interest_payment'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
-                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" @click="openReducePrincipalModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" v-permission="'loans.reduce_principal'" @click="openReducePrincipalModal(loan.id)">
                                         <font-awesome-icon icon="money-bill-wave" />
                                     </button>
-                                    <button class="btn-action text-success" data-tooltip="Tất toán" @click="openFinalModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Tất toán" v-permission="'loans.final_settlement'" @click="openFinalModal(loan.id)">
                                         <font-awesome-icon icon="hand-holding-dollar" />
                                     </button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
+                                    <!-- <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'loans.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
+                                            icon="circle-xmark" /></button> -->
                                 </div>
                                 
                             </td>

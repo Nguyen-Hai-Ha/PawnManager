@@ -169,10 +169,10 @@ const moneyConfig = {
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <button class="btn-primary" @click="openFinalModal(paymentDetails.contract.id)">
+                    <button class="btn-primary" v-permission="['loans.final_settlement', 'repayment.final_settlement', 'pledge.final_settlement']" @click="openFinalModal(paymentDetails.contract.id)">
                         <font-awesome-icon icon="hand-holding-dollar" /> Tất Toán
                     </button>
-                    <button class="btn-primary" @click="openInterestModal(paymentDetails.contract.id)">
+                    <button class="btn-primary" v-permission="['loans.interest_payment', 'repayment.interest_payment', 'pledge.interest_payment']" @click="openInterestModal(paymentDetails.contract.id)">
                         <font-awesome-icon icon="coins" /> Đóng Lãi
                     </button>
                 </div>

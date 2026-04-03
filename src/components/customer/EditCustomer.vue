@@ -100,7 +100,7 @@ const { closeEditModal, handleImageChange, removeImage,
                     </div>
                     <div class="pm-modal-footer">
                         <button class="btn-submit" @click="addRelative">Thêm người thân </button>
-                        <button type="submit" class="btn-submit">Lưu</button>
+                        <button type="submit" class="btn-submit" v-permission="'customer.update'">Lưu</button>
                         <button type="button" class="btn-cancel" @click="closeEditModal">Hủy</button>
                     </div>
                 </form>

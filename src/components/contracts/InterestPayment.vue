@@ -113,7 +113,7 @@ const moneyConfig = {
                 </div>
             </div>
             
-            <div class="modal-body" v-if="activeTab === 'Thông Tin hợp đồng'">
+            <div class="modal-body" v-permission="['loans.read', 'repayment.read', 'pledge.read']" v-if="activeTab === 'Thông Tin hợp đồng'">
                 <div class="info-contract">
                     <div class="info">
                         <div class="info-item">
@@ -177,7 +177,7 @@ const moneyConfig = {
                 </div>
             </div>
 
-            <div class="modal-body" v-if="activeTab === 'Lịch sử đóng lãi'">
+            <div class="modal-body" v-permission="['loans.read', 'repayment.read', 'pledge.read']" v-if="activeTab === 'Lịch sử đóng lãi'">
                 <div class="table-container">
                     <table>
                         <thead>
@@ -202,10 +202,10 @@ const moneyConfig = {
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <button class="btn-primary" @click="openFinalModal(loanDetails.contract.id)">
+                    <button class="btn-primary" v-permission="['loans.final_settlement', 'repayment.final_settlement', 'pledge.final_settlement']" @click="openFinalModal(loanDetails.contract.id)">
                         <font-awesome-icon icon="hand-holding-dollar" /> Tất Toán
                     </button>
-                    <button class="btn-primary" @click="openReducePrincipalModal(loanDetails.contract.id)">
+                    <button class="btn-primary" v-permission="['loans.reduce_principal', 'repayment.reduce_principal', 'pledge.reduce_principal']" @click="openReducePrincipalModal(loanDetails.contract.id)">
                         <font-awesome-icon icon="money-bill-wave" /> Trả Bớt Gốc
                     </button>
                 </div>

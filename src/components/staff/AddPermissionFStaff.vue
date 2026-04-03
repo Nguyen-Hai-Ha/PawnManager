@@ -92,7 +92,7 @@ const { closePermissionModal, toggleSelectAll, submitUpdatePermissionRole } = st
 
             <div class="permission-footer">
                 <button class="btn-cancel" @click="closePermissionModal">Hủy</button>
-                <button class="btn-save" @click="submitUpdatePermissionRole">Lưu Quyền</button>
+                <button class="btn-save" @click="submitUpdatePermissionRole" v-permission="'staff.permission'">Lưu Quyền</button>
             </div>
         </div>
     </div>

@@ -15,19 +15,19 @@
                     </router-link>
                 </li>
 
-                <li v-permission="'contract.read'">
+                <li v-permission="'loans.read'">
                     <router-link to="/admin/loan-pawn" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Cầm Đồ
                     </router-link>
                 </li>
 
-                <li v-permission="'contract.read'">
+                <li v-permission="'repayment.read'">
                     <router-link to="/admin/repayments" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Trả Góp
                     </router-link>
                 </li>
 
-                <li v-permission="'contract.read'">
+                <li v-permission="'pledge.read'">
                     <router-link to="/admin/pledges" active-class="active">
                         <font-awesome-icon icon="fa-solid fa-file-signature" />Tín Chấp
                     </router-link>

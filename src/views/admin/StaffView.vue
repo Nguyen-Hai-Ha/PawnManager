@@ -32,8 +32,8 @@ onMounted(() => {
                 </div>
             </div>
             <div class="button-group">
-                <button @click="openPermissionModal">Phân quyền nhóm</button>
-                <button @click="openAddStaffModal">Thêm nhân viên</button>
+                <button v-permission="'staff.permission'" @click="openPermissionModal">Phân quyền nhóm</button>
+                <button v-permission="'staff.create'" @click="openAddStaffModal">Thêm nhân viên</button>
             </div>
         </div>
         <div class="table-wrapper">
@@ -76,9 +76,9 @@ onMounted(() => {
                             <td>{{ item.role_name }}</td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa"><font-awesome-icon
+                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa" v-permission="'staff.detail'"><font-awesome-icon
                                             icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa"><font-awesome-icon
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'staff.delete'"><font-awesome-icon
                                             icon="circle-xmark" /></button>
                                 </div>
                             </td>

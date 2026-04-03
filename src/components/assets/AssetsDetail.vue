@@ -64,7 +64,7 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
                     <input type="file" class="image-upload" multiple accept="image/*" hidden="true" ref="fileInputRef" @change="handleFileChange">
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn-submit">Lưu</button>
+                    <button type="submit" class="btn-submit" v-permission="'collateral.update'">Lưu</button>
                     <button type="button" class="cancel-btn" @click="closeAssetsDetailModal">Đóng</button>
                 </div>
             </form>

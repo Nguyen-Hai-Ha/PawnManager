@@ -99,10 +99,10 @@
                             <td class="text-warning fw-bold">0</td>
                             <td class="text-success fw-bold">500.000</td>
                             <td class="special">
-                                <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
+                                <button class="btn-action text-primary" data-tooltip="Xem chi tiết" v-permission="'transaction.detail'">
                                     <font-awesome-icon icon="fa-solid fa-eye" />
                                 </button>
-                                <button class="btn-action text-danger" data-tooltip="Xóa">
+                                <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'transaction.delete'">
                                     <font-awesome-icon icon="fa-solid fa-trash-can" />
                                 </button>
                             </td>

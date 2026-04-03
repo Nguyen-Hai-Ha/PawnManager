@@ -264,7 +264,7 @@ onMounted(async () => {
                     </div>
                     <div class="modal-add-loan-footer">
                         <button class="btn-cancel" @click="closeModal">Hủy</button>
-                        <button class="btn-submit" type="submit">Thêm</button>
+                        <button class="btn-submit" type="submit" v-permission="['loans.create', 'repayment.create', 'pledge.create']">Thêm</button>
                     </div>
                 </form>
             </div>

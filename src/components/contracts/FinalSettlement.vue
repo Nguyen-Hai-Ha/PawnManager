@@ -129,10 +129,10 @@ const moneyConfig = {
 
             <div class="modal-footer">
                 <div class="footer-left">
-                    <button class="btn-primary" @click="openReducePrincipalModal(settlementData?.contract?.id)">
+                    <button class="btn-primary" v-permission="['loans.reduce_principal', 'repayment.reduce_principal', 'pledge.reduce_principal']" @click="openReducePrincipalModal(settlementData?.contract?.id)">
                         <font-awesome-icon icon="money-bill-wave" /> Trả Bớt Gốc
                     </button>
-                    <button class="btn-primary" @click="openInterestModal(settlementData?.contract?.id)">
+                    <button class="btn-primary" v-permission="['loans.interest_payment', 'repayment.interest_payment', 'pledge.interest_payment']" @click="openInterestModal(settlementData?.contract?.id)">
                         <font-awesome-icon icon="coins" /> Đóng Lãi
                     </button>
                 </div>

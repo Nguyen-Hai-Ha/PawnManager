@@ -35,7 +35,7 @@ const moneyConfig = {
                         <label for="liquidation_price">Giá thanh lý</label>
                         <money3 v-bind="moneyConfig" v-model="liquidation.price"></money3>
                     </div>
-                    <button type="submit" class="confirm-btn">Xác nhận</button>
+                    <button type="submit" class="confirm-btn" v-permission="'collateral.liquidation'">Xác nhận</button>
                 </form>
             </div>
             <div class="content">

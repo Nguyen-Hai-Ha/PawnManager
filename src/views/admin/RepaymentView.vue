@@ -8,6 +8,7 @@ import { onMounted } from 'vue';
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
 import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
+import FinalSettlement from '@/components/contracts/FinalSettlement.vue';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 

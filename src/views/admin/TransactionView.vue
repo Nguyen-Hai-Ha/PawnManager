@@ -4,8 +4,8 @@ import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
 const transactionStore = useTransactionStore();
-const { transactions } = storeToRefs(transactionStore);
-const { fetchTransactions, formatCurrency } = transactionStore
+const { transactions, search, paginated, totalPage, currentPage, sortConfig } = storeToRefs(transactionStore);
+const { fetchTransactions, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort } = transactionStore
 
 onMounted( async () => {
     const promise = [];
@@ -22,7 +22,7 @@ onMounted( async () => {
             <div class="search">
                 <div class="search-input">
                     <label for="search">Tìm kiếm</label>
-                    <input type="text" id="search" placeholder="Tìm kiếm theo tên, SĐT">
+                    <input type="text" id="search" placeholder="Tìm kiếm theo Mã HĐ, Khách hàng, CCCD, Nhân viên" v-model="search">
                 </div>
                 <div class="time-range">
                     <div class="time-range-input">
@@ -65,11 +65,41 @@ onMounted( async () => {
                 <table>
                     <thead>
                         <tr>
-                            <th rowspan="2">STT</th>
-                            <th rowspan="2">Thời gian</th>
-                            <th rowspan="2">Nhân viên</th>
-                            <th rowspan="2">Mã hợp đồng</th>
-                            <th rowspan="2">Khách hàng</th>
+                            <th rowspan="2" @click="handleSort('id')">STT
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'id' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'id' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th rowspan="2" @click="handleSort('created_at')">Thời gian
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'created_at' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'created_at' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th rowspan="2" @click="handleSort('staff_name')">Nhân viên
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'staff_name' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'staff_name' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th rowspan="2" @click="handleSort('contract_code')">Mã hợp đồng
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'contract_code' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'contract_code' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
+                            <th rowspan="2" @click="handleSort('customer_name')">Khách hàng
+                                <span class="sort-icon">
+                                    <font-awesome-icon v-if="sortConfig.key === 'customer_name' && sortConfig.direction === 'asc'" icon="sort-up" />
+                                    <font-awesome-icon v-else-if="sortConfig.key === 'customer_name' && sortConfig.direction === 'desc'" icon="sort-down" />
+                                    <font-awesome-icon v-else icon="sort" />
+                                </span>
+                            </th>
                             <th rowspan="2">CCCD</th>
                             <th rowspan="2">Loại</th>
                             <th rowspan="2">Thu</th>
@@ -84,7 +114,7 @@ onMounted( async () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="transaction in transactions" :key="transaction.id">
+                        <tr v-for="transaction in paginated" :key="transaction.id">
                             <td>{{ transaction.id }}</td>
                             <td>{{ transaction.created_at }}</td>
                             <td>{{ transaction.staff_name }}</td>
@@ -117,6 +147,22 @@ onMounted( async () => {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="pagination" v-if="totalPage >= 1">
+            <div class="pagination-info">
+                <span class="page-info">Trang {{ currentPage }}/{{ totalPage }} ({{ transactions.length }})</span>
+            </div>
+            <div class="pagination-controls">
+                <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
+                <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
+                <button class="page-btn" v-for="page in Math.min(5, totalPage)" 
+                    :key="page" @click="changePage(page)"
+                    :class="{ 'active': page === currentPage ? 'btb-primary' : ''}">
+                    {{ page }}
+                </button>
+                <button class="page-btn" @click="goToNextPage"><font-awesome-icon icon="angle-right" /></button>
+                <button class="page-btn" @click="goToLastPage"><font-awesome-icon icon="angles-right" /></button>
             </div>
         </div>
     </div>

@@ -1,3 +1,21 @@
+<script setup>
+import { useTransactionStore } from '@/stores/transaction';
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
+
+const transactionStore = useTransactionStore();
+const { transactions } = storeToRefs(transactionStore);
+const { fetchTransactions, formatCurrency } = transactionStore
+
+onMounted( async () => {
+    const promise = [];
+    if (!transactions.value.length) {
+        promise.push(fetchTransactions());
+    }
+    await Promise.all(promise);
+});
+</script>
+
 <template>
     <div class="transaction">
         <div class="group-function">
@@ -56,53 +74,43 @@
                             <th rowspan="2">Loại</th>
                             <th rowspan="2">Thu</th>
                             <th rowspan="2">Chi</th>
-                            <th colspan="2" class="special">Thu lãi</th>
+                            <th colspan="3" class="special">Thu lãi</th>
                             <th rowspan="2" class="special">Thao tác</th>
                         </tr>
                         <tr>
                             <th class="special">Tiền gốc</th>
                             <th class="special">Tiền lãi</th>
+                            <th class="special">Phí khác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>26/03/2026</td>
-                            <td>Tôn Ngộ Không</td>
-                            <td class="text-success fw-bold">HD0001</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>123456789</td>
-                            <td class="fw-bold">Chi cho vay</td>
-                            <td class="text-success fw-bold">0</td>
-                            <td class="text-danger fw-bold">-10.000.000</td>
-                            <td class="text-warning fw-bold">0</td>
-                            <td class="text-success fw-bold">0</td>
+                        <tr v-for="transaction in transactions" :key="transaction.id">
+                            <td>{{ transaction.id }}</td>
+                            <td>{{ transaction.created_at }}</td>
+                            <td>{{ transaction.staff_name }}</td>
+                            <td class="text-success fw-bold">{{ transaction.contract_code }}</td>
+                            <td>{{ transaction.customer_name }}</td>
+                            <td>{{ transaction.customer_cccd }}</td>
+                            <td class="fw-bold">{{ transaction.transaction_type_name }}</td>
+                            <td class="text-success fw-bold" >
+                                {{ transaction.id_transaction_type != 1 ? formatCurrency(transaction.amount) : 0 }}
+                            </td>
+                            <td class="text-danger fw-bold" >
+                                -{{ transaction.id_transaction_type === 1 ? formatCurrency(transaction.amount) : 0 }}
+                            </td>
+                            <td class="text-warning fw-bold" v-if="transaction.id_transaction_type === 4">
+                                {{ formatCurrency(transaction.amount) || 0 }}
+                            </td>
+                            <td class="text-warning fw-bold" v-else>
+                                {{ formatCurrency(transaction.principal_amount) || 0 }}
+                            </td>
+                            <td class="text-success fw-bold">{{ formatCurrency(transaction.interest_amount) || 0 }}</td>
+                            <td class="text-success fw-bold">{{ formatCurrency(transaction.other_fees) || 0 }}</td>
                             <td class="special">
                                 <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
                                     <font-awesome-icon icon="fa-solid fa-eye" />
                                 </button>
                                 <button class="btn-action text-danger" data-tooltip="Xóa">
-                                    <font-awesome-icon icon="fa-solid fa-trash-can" />
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>26/03/2026</td>
-                            <td>Sugar Tank</td>
-                            <td class="text-success fw-bold">HD0002</td>
-                            <td>Nguyễn Văn B</td>
-                            <td>987654321</td>
-                            <td class="fw-bold">Kỳ lãi</td>
-                            <td class="text-success fw-bold">500.000</td>
-                            <td class="text-danger fw-bold">0</td>
-                            <td class="text-warning fw-bold">0</td>
-                            <td class="text-success fw-bold">500.000</td>
-                            <td class="special">
-                                <button class="btn-action text-primary" data-tooltip="Xem chi tiết" v-permission="'transaction.detail'">
-                                    <font-awesome-icon icon="fa-solid fa-eye" />
-                                </button>
-                                <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'transaction.delete'">
                                     <font-awesome-icon icon="fa-solid fa-trash-can" />
                                 </button>
                             </td>

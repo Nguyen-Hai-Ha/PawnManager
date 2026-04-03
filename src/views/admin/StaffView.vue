@@ -11,7 +11,7 @@ const staffStore = useStaffStore()
 const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal, showEditStaffModal } = storeToRefs(staffStore)
 const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, closeEditStaffModal } = staffStore
 
-onMounted(() => {
+onMounted( async () => {
     const promise = []
     if (staff.value.length === 0) {
         promise.push(fetchStaff())
@@ -19,7 +19,7 @@ onMounted(() => {
     if (role.value.length === 0) {
         promise.push(fetchRole())
     }
-    Promise.all(promise)
+    await Promise.all(promise)
 })
 </script>
 

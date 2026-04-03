@@ -2,7 +2,26 @@ const db = require('../config/database');
 
 const Transactions = {
     getAll: () => {
-        const sql = `SELECT * FROM transactions`;
+        const sql = `
+        SELECT 
+            t.id,
+            t.amount,
+            t.other_fees,
+            t.created_at,
+            t.id_transaction_type,
+            tt.name as transaction_type_name,
+            c.code as contract_code,
+            cu.name as customer_name,
+            cu.cccd as customer_cccd,
+            s.name as staff_name,
+            ps.principal_amount as principal_amount,
+            ps.interest_amount as interest_amount
+        FROM transactions t
+        LEFT JOIN payment_schedules ps ON t.id_schedule = ps.id
+        LEFT JOIN transactions_types tt ON t.id_transaction_type = tt.id
+        LEFT JOIN contracts c ON t.id_contract = c.id
+        LEFT JOIN customers cu ON c.id_customer = cu.id
+        LEFT JOIN staff s ON t.id_staff = s.id`;
         const stmt = db.prepare(sql);
         return stmt.all()
     },

@@ -1,40 +1,18 @@
 <script setup>
-import { ref, computed } from 'vue'
 import { useStaffStore } from '@/stores/staff'
 import { storeToRefs } from 'pinia'
-import { PERMISSION } from '@/constants/permission'
 
 const staffStore = useStaffStore()
-const { role, selectedRole } = storeToRefs(staffStore)
-const { closePermissionModal } = staffStore
-
-const activeCategory = ref('Cầm đồ');
-const selectedPermissionIds = ref([]); // This should ideally come from store or fetch
-const categories = Object.keys(PERMISSION);
-
-const currentPermissions = computed(() => {
-    return PERMISSION[activeCategory.value] || [];
-});
-
-const isAllSelected = computed(() => {
-    const currentIds = currentPermissions.value.map(p => p.id);
-    return currentIds.length > 0 && currentIds.every(id => selectedPermissionIds.value.includes(id));
-});
-
-const toggleSelectAll = (event) => {
-    const isChecked = event.target.checked;
-    const currentIds = currentPermissions.value.map(p => p.id);
-    
-    if (isChecked) {
-        currentIds.forEach(id => {
-            if (!selectedPermissionIds.value.includes(id)) {
-                selectedPermissionIds.value.push(id);
-            }
-        });
-    } else {
-        selectedPermissionIds.value = selectedPermissionIds.value.filter(id => !currentIds.includes(id));
-    }
-};
+const { 
+    role, 
+    selectedRole,
+    activeCategory, 
+    selectedPermissionIds, 
+    categories, 
+    currentPermissions, 
+    isAllSelected 
+} = storeToRefs(staffStore)
+const { closePermissionModal, toggleSelectAll, submitUpdatePermissionRole } = staffStore
 </script>
 
 <template>
@@ -50,7 +28,9 @@ const toggleSelectAll = (event) => {
                     <label>Chọn chức vụ:</label>
                     <select v-model="selectedRole">
                         <option value="" disabled>-- Chọn chức vụ --</option>
-                        <option v-for="r in role" :key="r.id" :value="r.id">{{ r.name }}</option>
+                        <template v-for="r in role" :key="r.id">
+                            <option v-if="r.id !== 1" :value="r.id">{{ r.name }}</option>
+                        </template>
                     </select>
                 </div>
             </div>
@@ -112,7 +92,7 @@ const toggleSelectAll = (event) => {
 
             <div class="permission-footer">
                 <button class="btn-cancel" @click="closePermissionModal">Hủy</button>
-                <button class="btn-save">Lưu Quyền</button>
+                <button class="btn-save" @click="submitUpdatePermissionRole">Lưu Quyền</button>
             </div>
         </div>
     </div>

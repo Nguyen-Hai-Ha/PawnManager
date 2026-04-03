@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import apiClient from "@/plugins/axios";
-import { ref, computed } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { PERMISSION } from '@/constants/permission';
 
 export const useStaffStore = defineStore('staff', () => {
@@ -17,9 +17,11 @@ export const useStaffStore = defineStore('staff', () => {
     const role = ref([]);
     const showAddStaffModal = ref(false);
     const showPermissionModal = ref(false);
-    const selectedPermission = ref([]);
-    const selectedRole = ref('');
+    const activeCategory = ref('Cầm đồ');
+    const selectedPermissionIds = ref([]);
+    const categories = ref(Object.keys(PERMISSION));
     const search = ref('');
+    const selectedRole = ref('');
 
     const searchStaff = computed(() => {
         if (!search.value.trim()) {
@@ -71,6 +73,12 @@ export const useStaffStore = defineStore('staff', () => {
 
     const openAddStaffModal = () => {
         showAddStaffModal.value = true;
+        nextTick(() => {
+            const firstInput = document.getElementById('name');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        })
     }
 
     const closeAddStaffModal = () => {
@@ -87,13 +95,36 @@ export const useStaffStore = defineStore('staff', () => {
     }
 
     const openPermissionModal = async () => {
-
         showPermissionModal.value = true;
     }
 
     const closePermissionModal = () => {
         showPermissionModal.value = false;
     }
+
+    const currentPermissions = computed(() => {
+        return PERMISSION[activeCategory.value] || [];
+    });
+
+    const isAllSelected = computed(() => {
+        const currentIds = currentPermissions.value.map(p => p.id);
+        return currentIds.length > 0 && currentIds.every(id => selectedPermissionIds.value.includes(id));
+    });
+
+    const toggleSelectAll = (event) => {
+        const isChecked = event.target.checked;
+        const currentIds = currentPermissions.value.map(p => p.id);
+        
+        if (isChecked) {
+            currentIds.forEach(id => {
+                if (!selectedPermissionIds.value.includes(id)) {
+                    selectedPermissionIds.value.push(id);
+                }
+            });
+        } else {
+            selectedPermissionIds.value = selectedPermissionIds.value.filter(id => !currentIds.includes(id));
+        }
+    };
 
     const submitAddStaff = async () => {
         const data = {
@@ -111,6 +142,24 @@ export const useStaffStore = defineStore('staff', () => {
             closeAddStaffModal()
         } catch (error) {
             console.error('Error adding staff:', error)
+        }
+    }
+
+    const submitUpdatePermissionRole = async () => {
+        if (!selectedRole.value) {
+            console.error('Không xác định được nhóm chức vụ');
+            alert('Không xác định được nhóm chức vụ');
+            return;
+        }
+        const data = {
+            permissionIds: selectedPermissionIds.value
+        }
+        try {
+            const response = await apiClient.put(`/role/permission-role/${selectedRole.value}`, data)
+            fetchPermissionRole(selectedRole.value)
+            closePermissionModal()
+        } catch (error) {
+            console.error('Error updating permission role:', error)
         }
     }
 
@@ -132,15 +181,37 @@ export const useStaffStore = defineStore('staff', () => {
         }
     }
 
+    const fetchPermissionRole = async (id) => {
+        try {
+            const response = await apiClient.get(`/role/permission-role/${id}`)
+            selectedPermissionIds.value = response.data.map(p => p.id)
+            console.log(selectedPermissionIds.value)
+        } catch (error) {
+            console.error('Error fetching permission role:', error)
+        }
+    }
+
+    watch(() => selectedRole.value, async (newId) => {
+        if (newId) {
+            await fetchPermissionRole(newId)
+        }
+    })
+
+    watch(() => selectedPermissionIds.value, (newIds) => {
+        console.log(newIds)
+    })
+
     return {
         //state
         staff, newStaff, role, showAddStaffModal, search, sortConfig, showPermissionModal,
+        activeCategory, selectedPermissionIds, categories, selectedRole,
 
         //computed
-        searchStaff, sortedStaff,
+        searchStaff, sortedStaff, currentPermissions, isAllSelected,
         
         //actions
         fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,
-        openPermissionModal, closePermissionModal
+        openPermissionModal, closePermissionModal, toggleSelectAll, fetchPermissionRole,
+        submitUpdatePermissionRole
     }
 })

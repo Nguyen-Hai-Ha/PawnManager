@@ -4,13 +4,24 @@ import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
 const transactionStore = useTransactionStore();
-const { transactions, search, paginated, totalPage, currentPage, sortConfig } = storeToRefs(transactionStore);
-const { fetchTransactions, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort } = transactionStore
+const { transactions, search, paginated, totalPage, currentPage, sortConfig,
+        filterDate, Staff, TransactionType, ContractType, staffs, transactionTypes, contractTypes } = storeToRefs(transactionStore);
+const { fetchTransactions, formatCurrency, changePage, goToFirstPage, 
+        goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchStaffs, fetchTransactionTypes, fetchContractTypes } = transactionStore
 
 onMounted( async () => {
     const promise = [];
     if (!transactions.value.length) {
         promise.push(fetchTransactions());
+    }
+    if (!staffs.value.length) {
+        promise.push(fetchStaffs());
+    }
+    if (!transactionTypes.value.length) {
+        promise.push(fetchTransactionTypes());
+    }
+    if (!contractTypes.value.length) {
+        promise.push(fetchContractTypes());
     }
     await Promise.all(promise);
 });
@@ -27,35 +38,28 @@ onMounted( async () => {
                 <div class="time-range">
                     <div class="time-range-input">
                         <label for="">Thời gian</label>
-                        <input type="date" id="start-date">
+                        <input type="date" id="start-date" v-model="filterDate">
                     </div>
                 </div>
                 <div class="filter">
                     <label for="filter">Nhân viên</label>
-                    <select id="filter">
+                    <select id="filter" v-model="Staff">
                         <option value="">Tất cả</option>
-                        <option value="">Đang vay</option>
-                        <option value="">Đã thanh toán</option>
-                        <option value="">Quá hạn</option>
+                        <option v-for="staff in staffs" :key="staff.id" :value="staff.name">{{ staff.name }}</option>
                     </select>
                 </div>
                 <div class="filter">
                     <label for="filter">Kiểu vay</label>
-                    <select id="filter">
+                    <select id="filter" v-model="ContractType">
                         <option value="">Tất cả</option>
-                        <option value="">Cầm đồ</option>
-                        <option value="">Trả góp</option>
-                        <option value="">Tín chấp</option>
+                        <option v-for="contractType in contractTypes" :key="contractType.id" :value="contractType.id">{{ contractType.name }}</option>
                     </select>
                 </div>
                 <div class="filter">
                     <label for="filter">Loại thu chi</label>
-                    <select id="filter">
+                    <select id="filter" v-model="TransactionType">
                         <option value="">Tất cả</option>
-                        <option value="">Chi cho vay</option>
-                        <option value="">Kỳ lãi</option>
-                        <option value="">Trả bớt gốc</option>
-                        <option value="">Tất toán</option>
+                        <option v-for="transactionType in transactionTypes" :key="transactionType.id" :value="transactionType.id">{{ transactionType.name }}</option>
                     </select>
                 </div>
             </div>

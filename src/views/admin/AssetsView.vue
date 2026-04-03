@@ -7,7 +7,8 @@ import AssetsLiquidation from '@/components/assets/AssetsLiquidation.vue'
 import AssetsDetail from '@/components/assets/AssetsDetail.vue'
 
 const assetsStore = useAssetsStore()
-const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, showAssetsLiquidationModal, showAssetsDetailModal } = storeToRefs(assetsStore)
+const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, 
+        showAssetsLiquidationModal, showAssetsDetailModal, filterStatus } = storeToRefs(assetsStore)
 const { 
         fetchAssets, formatCurrency, handleSort, changePage, 
         goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
@@ -30,11 +31,11 @@ onMounted(() => {
                 </div>
                 <div class="filter">
                     <label for="filter">Trạng thái</label>
-                    <select id="filter">
+                    <select id="filter" v-model="filterStatus">
                         <option value="">Tất cả</option>
-                        <option value="">Đang Cầm</option>
-                        <option value="">Đã Chuộc</option>
-                        <option value="">Đã Thanh Lý</option>
+                        <option value="Đang Cầm">Đang Cầm</option>
+                        <option value="Đã Chuộc">Đã Chuộc</option>
+                        <option value="Đã Thanh Lý">Đã Thanh Lý</option>
                     </select>
                 </div>
             </div>

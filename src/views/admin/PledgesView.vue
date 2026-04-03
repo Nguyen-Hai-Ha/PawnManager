@@ -18,7 +18,7 @@ const interestPaymentStore = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
 const finalSettlementStore = useFinalSettlementStore();
 
-const {loans, paginated, totalPage, currentPage, search, sortConfig} = storeToRefs(loanStore);
+const {loans, paginated, totalPage, currentPage, search, sortConfig, filterStatus, startDate, endDate} = storeToRefs(loanStore);
 const { getAllLoans, deleteLoan, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
 
 const { showModal } = storeToRefs(addNewLoanStore);
@@ -49,19 +49,19 @@ onMounted(async() => {
                 </div>
                 <div class="filter">
                     <label for="filter">Trạng thái</label>
-                    <select id="filter">
+                    <select id="filter" v-model="filterStatus">
                         <option value="">Tất cả</option>
-                        <option value="">Đang vay</option>
-                        <option value="">Đã thanh toán</option>
-                        <option value="">Quá hạn</option>
+                        <option value="Đang vay">Đang vay</option>
+                        <option value="Đã thanh toán">Đã thanh toán</option>
+                        <option value="Quá hạn">Quá hạn</option>
                     </select>
                 </div>
                 <div class="time-range">
                     <div class="time-range-input">
-                        <label for="">Thời gian</label>
-                        <input type="date" id="start-date">
+                        <label for="start-date">Thời gian</label>
+                        <input type="date" id="start-date" v-model="startDate">
                         <span>-</span>
-                        <input type="date" id="end-date">
+                        <input type="date" id="end-date" v-model="endDate">
                     </div>
                 </div>
             </div>

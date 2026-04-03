@@ -84,14 +84,13 @@ export const useInterestPayment = defineStore('interestPayment', () => {
     const submitInterestPayment = async () => {
         const payload = {
             amount: parseInt(formDetails.value.payment_amount),
-            other_fee: parseInt(formDetails.value.other_fees),
+            other_fees: parseInt(formDetails.value.other_fees),
             description: formDetails.value.note,
             id_contract: formDetails.value.id_contract,
             id_transaction_type: 2,
             id_staff: staffId.value,
             id_schedule: schedule.value.id
         }
-        console.log(payload);
         try {
             const response = await apiClient.post('/transaction', payload);
             await loanStore.getAllLoans();

@@ -1,15 +1,22 @@
 import { defineStore } from 'pinia';
 import apiClient from '@/plugins/axios';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 export const useTransactionStore = defineStore('transaction', () => {
     const transactions = ref([]);
+    const staffs = ref([]);
+    const transactionTypes = ref([]);
+    const contractTypes = ref([]);
     const itemPage = 12;
     const currentPage = ref(1);
     const search = ref('');
+    const filterDate = ref('');
+    const Staff = ref('');
+    const TransactionType = ref('');
+    const ContractType = ref('');
 
     const changePage = ( page) => {
-        if (page >= 1 && page < totalPage){
+        if (page >= 1 && page <= totalPage.value) {
             currentPage.value = page;
         }
     };
@@ -41,28 +48,50 @@ export const useTransactionStore = defineStore('transaction', () => {
     });
 
     const totalPage = computed(() => {
-        return Math.ceil(searchTransactions.value.length / itemPage);
+        return Math.ceil(filtedTransaction.value.length / itemPage);
     });
 
-    const searchTransactions = computed(() => {
-        if (!search.value.trim()) {
-            return transactions.value;
-        }
-        const searchTerm = search.value.trim().toLowerCase();
+    const filtedTransaction = computed(() => {
+        let result = transactions.value;
+        if (search.value.trim()) {
+            const searchTerm = search.value.trim().toLowerCase();
 
-        return transactions.value.filter(transaction => {
-            const searchFields = [
-                transaction.contract_code,
-                transaction.customer_name,
-                transaction.customer_cccd,
-                transaction.staff_name,
-            ];
-            return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
-        });
+            result = result.filter(transaction => {
+                const searchFields = [
+                    transaction.contract_code,
+                    transaction.customer_name,
+                    transaction.customer_cccd,
+                    transaction.staff_name,
+                ];
+                return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
+            });
+        }
+        
+        if (filterDate.value) {
+            const startDate = new Date(filterDate.value);
+            startDate.setHours(0, 0, 0, 0);
+            const endDate = new Date(filterDate.value);
+            endDate.setHours(23, 59, 59, 999);
+            
+            result = result.filter(transaction => {
+                const txDate = new Date(transaction.created_at);
+                return txDate >= startDate && txDate <= endDate;
+            });
+        }
+        if (Staff.value) {
+            result = result.filter(transaction => String(transaction.staff_name).toLowerCase() === String(Staff.value).toLowerCase());
+        }
+        if (TransactionType.value) {
+            result = result.filter(transaction => String(transaction.id_transaction_type).toLowerCase() === String(TransactionType.value).toLowerCase());
+        }
+        if (ContractType.value) {
+            result = result.filter(transaction => String(transaction.contract_type_id).toLowerCase() === String(ContractType.value).toLowerCase());
+        }
+        return result;
     });
 
     const sortConfig = ref({
-        key: 'created_at',
+        key: 'id',
         direction: 'desc'   
     });
 
@@ -76,7 +105,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
 
     const sortedTransactions = computed(() => {
-        const list = [...searchTransactions.value];
+        const list = [...filtedTransaction.value];
         const { key, direction } = sortConfig.value;
         list.sort((a, b) => {
             let valA = a[key];
@@ -107,9 +136,33 @@ export const useTransactionStore = defineStore('transaction', () => {
         transactions.value = response.data;
     };
 
+    const fetchStaffs = async () => {
+        const response = await apiClient.get('/staff');
+        staffs.value = response.data;
+    };
+
+    const fetchTransactionTypes = async () => {
+        const response = await apiClient.get('/transaction_type');
+        transactionTypes.value = response.data;
+    };
+
+    const fetchContractTypes = async () => {
+        const response = await apiClient.get('/contracts_type');
+        contractTypes.value = response.data;
+    };
+
+    watch([search, filterDate, Staff, TransactionType, ContractType], () => {
+        currentPage.value = 1;
+    });
+
     return {
-        transactions, sortConfig, totalPage, currentPage, itemPage, search,
-        sortedTransactions, paginated, searchTransactions,
-        formatCurrency, fetchTransactions, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage
+        //state
+        transactions, sortConfig, totalPage, currentPage, itemPage, search, filterDate, Staff, TransactionType, ContractType,
+        staffs, transactionTypes, contractTypes,
+        //computed
+        sortedTransactions, paginated, filtedTransaction,
+        //function
+        formatCurrency, fetchTransactions, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
+        fetchStaffs, fetchTransactionTypes, fetchContractTypes
     }
 });

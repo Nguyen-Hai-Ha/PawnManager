@@ -10,6 +10,7 @@ const Transactions = {
             t.created_at,
             t.id_transaction_type,
             tt.name as transaction_type_name,
+            c.id_contract_type as contract_type_id,
             c.code as contract_code,
             cu.name as customer_name,
             cu.cccd as customer_cccd,

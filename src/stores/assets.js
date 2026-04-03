@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import apiClient from "@/plugins/axios";
 import { useAuthStore } from "./auth";
 
@@ -8,6 +8,7 @@ export const useAssetsStore = defineStore("assets", () => {
     const assetDetail = ref([]);
     const fileInputRef = ref(null);
     const selectedImage = ref(null);
+    const filterStatus = ref('');
     const editingImageId = ref(null);
     const liquidation = ref([]);
     const search = ref('');
@@ -75,22 +76,27 @@ export const useAssetsStore = defineStore("assets", () => {
         showAssetsLiquidationModal.value = false;
     }
 
-    const searchAssets = computed(() => {
-        if (!search.value.trim()) {
-            return assets.value;
+    const filteredAssets = computed(() => {
+        let result = assets.value;
+        
+        if (search.value.trim()) {
+            const searchTerm = search.value.trim().toLowerCase();
+            result = result.filter(asset => {
+                const searchFields = [
+                    asset.code,
+                    asset.name,
+                    asset.contract_code,
+                    asset.customer_name,
+                    asset.customer_phone,
+                ];
+                return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
+            });
         }
-        const searchTerm = search.value.trim().toLowerCase();
 
-        return assets.value.filter(asset => {
-            const searchFields = [
-                asset.code,
-                asset.name,
-                asset.contract_code,
-                asset.customer_name,
-                asset.customer_phone,
-            ];
-            return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
-        });
+        if (filterStatus.value) {
+            result = result.filter(asset => String(asset.status).toLocaleLowerCase() === String(filterStatus.value).toLocaleLowerCase());
+        }
+        return result;
     })
 
     const paginatedAssets = computed(() => {
@@ -100,7 +106,7 @@ export const useAssetsStore = defineStore("assets", () => {
     })
 
     const totalPage = computed(() => {
-        return Math.ceil(searchAssets.value.length / itemPage);
+        return Math.ceil(filteredAssets.value.length / itemPage);
     })
 
     const sortConfig = ref({
@@ -118,7 +124,7 @@ export const useAssetsStore = defineStore("assets", () => {
     }
 
     const sortedAssets = computed(() => {
-        const list = [...searchAssets.value];
+        const list = [...filteredAssets.value];
         const { key, direction } = sortConfig.value;
         list.sort((a, b) => {
             let valA = a[key];
@@ -137,7 +143,7 @@ export const useAssetsStore = defineStore("assets", () => {
     });
 
     const changePage = ( page) => {
-        if (page >= 1 && page < totalPage){
+        if (page >= 1 && page <= totalPage){
             currentPage.value = page;
         }
     };
@@ -245,12 +251,16 @@ export const useAssetsStore = defineStore("assets", () => {
         }
     }
 
+    watch([search, filterStatus], () => {
+        currentPage.value = 1;
+    });
+
     return {
         //state
         assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, 
-        liquidation, user, showAssetsDetailModal, assetDetail, selectedImage, fileInputRef, editingImageId,
+        liquidation, user, showAssetsDetailModal, assetDetail, selectedImage, fileInputRef, editingImageId, filterStatus,
         //computed
-        searchAssets, sortedAssets, parseMetadata, parseImages,
+        filteredAssets, sortedAssets, parseMetadata, parseImages,
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,

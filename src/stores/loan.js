@@ -1,13 +1,20 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 
 export const useLoanStore = defineStore("loan", () => {
     const itemPage = 8;
     const currentPage = ref(1);
     const search = ref('');
+    const filterStatus = ref('');
+    const startDate = ref('');
+    const endDate = ref('');
     const route = useRoute();
+
+    watch([search, filterStatus, startDate, endDate], () => {
+        currentPage.value = 1;
+    });
     const pageTitles = {
         'AdminLoanPawn': 1,
         'AdminPledges': 2,
@@ -27,7 +34,7 @@ export const useLoanStore = defineStore("loan", () => {
     });
 
     const changePage = ( page) => {
-        if (page >= 1 && page < totalPage){
+        if (page >= 1 && page <= totalPage){
             currentPage.value = page;
         }
     };
@@ -52,24 +59,40 @@ export const useLoanStore = defineStore("loan", () => {
         currentPage.value = totalPage.value;
     };
 
-    const searchLoans = computed (() => {
-        if (!search.value.trim()) {
-            return loans.value;
-        }
-        const searchTerm = search.value.trim().toLowerCase();
+    const filteredLoans = computed (() => {
+        let result = loans.value;
 
-        return loans.value.filter(loan => {
-            const searchFields = [
-                loan.code,
-                loan.customer_name,
-                loan.collateral_name,
-            ];
-            return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
-        });
+        if (search.value.trim()) {
+            const searchTerm = search.value.trim().toLowerCase();
+            result = result.filter(loan => {
+                const searchFields = [
+                    loan.code,
+                    loan.customer_name,
+                    loan.collateral_name,
+                ];
+                return searchFields.some(field => field && String(field).toLowerCase().includes(searchTerm));
+            });
+        }
+
+        if (filterStatus.value) {
+            result = result.filter(loan => String(loan.status).toLowerCase() === String(filterStatus.value).toLowerCase());
+        }
+
+        if (startDate.value) {
+            result = result.filter(loan => new Date(loan.start_date) >= new Date(startDate.value));
+        }
+
+        if (endDate.value) {
+            const eDate = new Date(endDate.value);
+            eDate.setHours(23, 59, 59, 999);
+            result = result.filter(loan => new Date(loan.end_date) <= eDate);
+        }
+
+        return result;
     })
 
     const sortedLoans = computed(() => {
-        const list = [...searchLoans.value];
+        const list = [...filteredLoans.value];
         const { key, direction } = sortConfig.value;
         list.sort((a, b) => {
             let valA = a[key];
@@ -156,11 +179,11 @@ export const useLoanStore = defineStore("loan", () => {
 
     return {
         //state
-        loans, customers, assetTypes, assets, search, paginated, totalPage, currentPage, pageTitles,
+        loans, customers, assetTypes, assets, search, filterStatus, startDate, endDate, paginated, totalPage, currentPage, pageTitles,
         
 
         //computed
-        searchLoans, sortConfig, id_contract_type,
+        filteredLoans, sortConfig, id_contract_type,
 
         //actions
         formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort,

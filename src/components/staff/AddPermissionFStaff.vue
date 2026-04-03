@@ -1,111 +1,117 @@
+<script setup>
+import { ref, computed } from 'vue'
+import { useStaffStore } from '@/stores/staff'
+import { storeToRefs } from 'pinia'
+import { PERMISSION } from '@/constants/permission'
+
+const staffStore = useStaffStore()
+const { role, selectedRole } = storeToRefs(staffStore)
+const { closePermissionModal } = staffStore
+
+const activeCategory = ref('Cầm đồ');
+const selectedPermissionIds = ref([]); // This should ideally come from store or fetch
+const categories = Object.keys(PERMISSION);
+
+const currentPermissions = computed(() => {
+    return PERMISSION[activeCategory.value] || [];
+});
+
+const isAllSelected = computed(() => {
+    const currentIds = currentPermissions.value.map(p => p.id);
+    return currentIds.length > 0 && currentIds.every(id => selectedPermissionIds.value.includes(id));
+});
+
+const toggleSelectAll = (event) => {
+    const isChecked = event.target.checked;
+    const currentIds = currentPermissions.value.map(p => p.id);
+    
+    if (isChecked) {
+        currentIds.forEach(id => {
+            if (!selectedPermissionIds.value.includes(id)) {
+                selectedPermissionIds.value.push(id);
+            }
+        });
+    } else {
+        selectedPermissionIds.value = selectedPermissionIds.value.filter(id => !currentIds.includes(id));
+    }
+};
+</script>
+
 <template>
     <div class="permission-modal">
         <div class="permission-content">
             <div class="permission-header">
-                <h3>Phân Quyền Nhân Viên</h3>
-                <button class="close-btn">&times;</button>
+                <h3>Phân Quyền Nhóm Chức Vụ</h3>
+                <button class="close-btn" @click="closePermissionModal">&times;</button>
             </div>
-            
+
+            <div class="role-selection-wrapper">
+                <div class="role-selection">
+                    <label>Chọn chức vụ:</label>
+                    <select v-model="selectedRole">
+                        <option value="" disabled>-- Chọn chức vụ --</option>
+                        <option v-for="r in role" :key="r.id" :value="r.id">{{ r.name }}</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="permission-main">
                 <!-- Sidebar -->
                 <div class="permission-sidebar">
-                    <div class="category-item active">Cầm đồ</div>
-                    <div class="category-item">Tín chấp</div>
-                    <div class="category-item">Trả góp</div>
-                    <div class="category-item">Quản lý khách hàng</div>
-                    <div class="category-item">Quản lý tài sản</div>
-                    <div class="category-item">Quản lý nhân viên</div>
-                    <div class="category-item">Quản lý thu chi</div>
+                    <div 
+                        v-for="cat in categories" 
+                        :key="cat"
+                        class="category-item" 
+                        :class="{ active: activeCategory === cat }"
+                        @click="activeCategory = cat"
+                    >
+                        {{ cat }}
+                    </div>
                 </div>
 
                 <!-- Main Content -->
                 <div class="permission-grid-container">
                     <div class="permission-grid-header">
                         <label class="checkbox-container">
-                            <input type="checkbox">
+                            <input type="checkbox" :checked="isAllSelected" @change="toggleSelectAll">
                             <span class="checkmark"></span>
-                            Tất cả
+                            Tất cả ({{ activeCategory }})
                         </label>
                     </div>
                     <div class="permission-grid-body">
-                        <div class="permission-row">
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Danh sách Cầm Đồ
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Thêm mới Cầm Đồ
-                            </label>
-                        </div>
-                        <div class="permission-row">
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Sửa Cầm Đồ
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Xóa Cầm Đồ
-                            </label>
-                        </div>
-                        <div class="permission-row">
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Đóng lãi Cầm Đồ
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Tất toán Cầm Đồ
-                            </label>
-                        </div>
-                        <div class="permission-row">
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Thông tin chi tiết hợp đồng
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Thông tin chi tiết khách hàng
-                            </label>
-                        </div>
-                        <div class="permission-row">
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Thay đổi kỳ lãi
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Thay đổi lãi suất
-                            </label>
-                        </div>
-                        <div class="permission-row">
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                In phiếu thu
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                In hợp đồng
-                            </label>
+                        <template v-if="currentPermissions.length > 0">
+                            <div 
+                                v-for="i in Math.ceil(currentPermissions.length / 2)" 
+                                :key="i" 
+                                class="permission-row"
+                            >
+                                <label 
+                                    v-for="idx in [2*(i-1), 2*(i-1)+1]" 
+                                    :key="idx"
+                                    class="checkbox-container"
+                                    v-show="currentPermissions[idx]"
+                                >
+                                    <template v-if="currentPermissions[idx]">
+                                        <input 
+                                            type="checkbox" 
+                                            :value="currentPermissions[idx].id" 
+                                            v-model="selectedPermissionIds"
+                                        >
+                                        <span class="checkmark"></span>
+                                        {{ currentPermissions[idx].name }}
+                                    </template>
+                                </label>
+                            </div>
+                        </template>
+                        <div v-else style="padding: 20px; text-align: center; color: #888;">
+                            Chưa cấu hình quyền cho mục này.
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="permission-footer">
-                <button class="btn-cancel">Hủy</button>
+                <button class="btn-cancel" @click="closePermissionModal">Hủy</button>
                 <button class="btn-save">Lưu Quyền</button>
             </div>
         </div>
@@ -166,6 +172,43 @@
     color: #333;
 }
 
+.role-selection-wrapper {
+    padding: 15px 25px;
+    background: #f8faf9;
+    border-bottom: 1px solid #eee;
+}
+
+.role-selection {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.role-selection label {
+    font-weight: 600;
+    color: #444;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.role-selection select {
+    flex: 1;
+    max-width: 250px;
+    padding: 8px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.2s;
+    background: white;
+    cursor: pointer;
+}
+
+.role-selection select:focus {
+    border-color: #1a7a6e;
+    box-shadow: 0 0 0 3px rgba(26, 122, 110, 0.1);
+}
+
 .permission-main {
     display: flex;
     height: 480px;
@@ -193,14 +236,14 @@
 
 .category-item:hover {
     background: #fff;
-    border-color: #3498db66;
-    color: #3498db;
+    border-color: #289487;
+    color: #1a7a6e;
 }
 
 .category-item.active {
-    background: #e3f2fd;
-    color: #1976d2;
-    border-color: #bbdefb;
+    background: #c7e7e4;
+    color: #1a7a6e;
+    border-color: #289487;
     font-weight: 600;
 }
 
@@ -261,7 +304,8 @@
     display: flex;
     align-items: center;
     position: relative;
-    padding-left: 28px !important; /* Overriding common label padding */
+    padding-left: 28px !important;
+    /* Overriding common label padding */
     cursor: pointer;
     user-select: none;
 }
@@ -277,7 +321,7 @@
 .checkmark {
     position: absolute;
     top: 50%;
-    left: 0;
+    left: 5PX;
     transform: translateY(-50%);
     height: 18px;
     width: 18px;
@@ -287,13 +331,13 @@
     transition: all 0.2s;
 }
 
-.checkbox-container:hover input ~ .checkmark {
-    border-color: #3498db;
+.checkbox-container:hover input~.checkmark {
+    border-color: #1a7a6e;
 }
 
-.checkbox-container input:checked ~ .checkmark {
-    background-color: #3498db;
-    border-color: #3498db;
+.checkbox-container input:checked~.checkmark {
+    background-color: #1a7a6e;
+    border-color: #1a7a6e;
 }
 
 .checkmark:after {
@@ -302,7 +346,7 @@
     display: none;
 }
 
-.checkbox-container input:checked ~ .checkmark:after {
+.checkbox-container input:checked~.checkmark:after {
     display: block;
 }
 
@@ -344,16 +388,16 @@
     padding: 10px 24px;
     border-radius: 8px;
     border: none;
-    background: #3498db;
+    background: #1a7a6e;
     color: #fff;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    box-shadow: 0 4px 10px rgba(65, 201, 189, 0.3);
 }
 
 .btn-save:hover {
-    background: #2980b9;
+    background: #289487;
     transform: translateY(-1px);
     box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
 }

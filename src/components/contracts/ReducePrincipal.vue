@@ -148,6 +148,10 @@ const moneyConfig = {
                                     <th>Tên khách hàng</th>
                                     <th>Ngày thanh toán</th>
                                     <th>Tiền trả bớt gốc</th>
+                                    <th>Gốc cũ</th>
+                                    <th>Gốc mới</th>
+                                    <th>Lãi suất cũ</th>
+                                    <th>Lãi suất mới</th>
                                     <th>Phí khác</th>
                                     <th>Ghi chú</th>
                                 </tr>
@@ -158,6 +162,12 @@ const moneyConfig = {
                                     <td>{{ item.customer_name }}</td>
                                     <td>{{ item.created_at }}</td>
                                     <td>{{formatCurrency(item.amount)}}</td>
+                                    <td>{{formatCurrency(item.old_principal)}}</td>
+                                    <td>{{formatCurrency(item.new_principal)}}</td>
+
+                                    <td v-if="paymentDetails.contract.interest_type === 'daily_amount'">{{ item.old_interest_rate > 0 ? formatCurrency(item.old_interest_rate) : 'Không thay đổi'}}</td>
+                                    <td v-else>{{ item.old_interest_rate > 0 ? item.old_interest_rate + '%' : 'Không thay đổi'}}</td>
+
                                     <td>{{formatCurrency(item.other_fees)}}</td>
                                     <td>{{ item.description }}</td>
                                 </tr>

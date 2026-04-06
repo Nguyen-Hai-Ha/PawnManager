@@ -115,7 +115,7 @@ export const useInterestPayment = defineStore('interestPayment', () => {
                         historyArr = Array.isArray(historyArr) ? historyArr.filter(p => p && p.amount > 0) : [];
                     } catch (e) { historyArr = []; }
                     item.display_history = historyArr
-                        .map(p => `${formatCurrency(p.amount)} (${p.created_at})`)
+                        .map(p => `${formatCurrency(p.amount)} - (${p.created_at})`)
                         .join(', ');
 
                     return item;

@@ -1,22 +1,26 @@
 <script setup>
 import { useLoanStore } from '@/stores/loan';
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
+
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
-import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { useDetailContractStore } from '@/stores/contract/detailContract';
 
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
 import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
 import FinalSettlement from '@/components/contracts/FinalSettlement.vue';
+import DetailContract from '@/components/contracts/DetailContract.vue'
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
 const finalSettlementStore = useFinalSettlementStore();
+const detailContractStore = useDetailContractStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig, filterStatus, startDate, endDate } = storeToRefs(loanStore);
 const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, deleteLoan } = loanStore;
@@ -32,6 +36,9 @@ const { openReducePrincipalModal, closeReducePrincipalModal } = reducePrincipalS
 
 const { showFinalModal } = storeToRefs(finalSettlementStore);
 const { openFinalModal, closeFinalModal } = finalSettlementStore;
+
+const { showDetailContract } = storeToRefs(detailContractStore);
+const { openDetailContract, closeDetailContract } = detailContractStore;
 
 onMounted(async() => {
     await getAllLoans();
@@ -114,7 +121,7 @@ onMounted(async() => {
                         <tr v-for = " loan, index in paginated" :key = "loan.id">
                             <td>{{ index + 1 }}</td>
                             <td>
-                                <span class="text-success fw-bold">{{ loan.code }}</span>
+                                <span class="text-success fw-bold" id="detailContract" @click="openDetailContract(loan.id)">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>
@@ -139,7 +146,7 @@ onMounted(async() => {
                             </td>
                             <td>
                                 <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
-                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
+                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)">
                                         <font-awesome-icon icon="fa-solid fa-eye" />
                                     </button>
                                 </div>
@@ -191,6 +198,9 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showFinalModal">
         <FinalSettlement @close="closeFinalModal" />
+    </div>
+    <div class="modal-overlay" v-if="showDetailContract">
+        <DetailContract @close="closeDetailContract" />
     </div>
 </template>
 

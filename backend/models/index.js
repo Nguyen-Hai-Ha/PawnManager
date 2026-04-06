@@ -14,6 +14,7 @@ const Staff = require('./staff.model');
 const AuditLogs = require('./audit_logs.model');
 const Permissions = require('./permissions.model');
 const RolePermission = require('./role_permission.model');
+const ContractHistory = require('./contract_history.model');
 
 module.exports = {
     db,
@@ -31,5 +32,6 @@ module.exports = {
     Staff,
     AuditLogs,
     Permissions,
-    RolePermission
+    RolePermission,
+    ContractHistory
 };

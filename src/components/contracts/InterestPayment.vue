@@ -18,7 +18,6 @@ const { openReducePrincipalModal } = reducePrincipalStore;
 const { openFinalModal } = finalSettlementStore;
 
 
-const emit = defineEmits(['close']);
 const activeTab = ref('Chi tiết đóng lãi');
 const tabs = ['Chi tiết đóng lãi', 'Thông Tin hợp đồng', 'Lịch sử đóng lãi'];
 

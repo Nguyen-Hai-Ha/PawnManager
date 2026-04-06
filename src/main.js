@@ -14,15 +14,18 @@ import {
     faRotate, faSort, faSortUp, faSortDown, faPenToSquare, faCircleXmark,
     faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight,
     faCoins, faEye, faGavel, faUserLock, faTrashCan,
-    faLock, faEyeSlash, faCircleExclamation, faHandHoldingDollar, faMoneyBillWave
+    faLock, faEyeSlash, faCircleExclamation, faHandHoldingDollar, faMoneyBillWave,
+    faUserTie, faTimes, faFileInvoice
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faUser, faChartLine, faFileSignature,
+library.add(
+    faUser, faChartLine, faFileSignature,
     faCarSide, faUsersGear, faFileInvoiceDollar,
     faRotate, faSort, faSortUp, faSortDown, faPenToSquare, faCircleXmark,
     faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight,
     faCoins, faEye, faGavel, faUserLock, faTrashCan,
-    faLock, faEyeSlash, faCircleExclamation, faHandHoldingDollar, faMoneyBillWave
+    faLock, faEyeSlash, faCircleExclamation, faHandHoldingDollar, faMoneyBillWave,
+    faUserTie, faTimes, faFileInvoice
 )
 
 const app = createApp(App)

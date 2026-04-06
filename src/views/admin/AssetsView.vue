@@ -2,11 +2,15 @@
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAssetsStore } from '@/stores/assets'
+import { useDetailContractStore } from '@/stores/contract/detailContract';
 
 import AssetsLiquidation from '@/components/assets/AssetsLiquidation.vue'
 import AssetsDetail from '@/components/assets/AssetsDetail.vue'
+import DetailContract from '@/components/contracts/DetailContract.vue';
 
 const assetsStore = useAssetsStore()
+const detailContractStore = useDetailContractStore();
+
 const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, 
         showAssetsLiquidationModal, showAssetsDetailModal, filterStatus } = storeToRefs(assetsStore)
 const { 
@@ -15,6 +19,9 @@ const {
         openAssetsLiquidationModal, closeAssetsLiquidationModal,
         openAssetsDetailModal, closeAssetsDetailModal
     } = assetsStore
+    
+const { showDetailContract } = storeToRefs(detailContractStore);
+const { openDetailContract, closeDetailContract } = detailContractStore;
 
 onMounted(() => {
     fetchAssets()
@@ -83,10 +90,10 @@ onMounted(() => {
                             <tr v-for="asset in paginatedAssets" :key="asset.id">
                                 <td>{{ asset.id }}</td>
                                 <td>
-                                    <span @click="openAssetsDetailModal(asset.id)" class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
+                                    <span  @click="openAssetsDetailModal(asset.id)" class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
                                 </td>
                                 <td>{{ asset.name }}</td>
-                                <td><span class="text-success fw-bold">{{ asset.contract_code }}</span></td>
+                                <td><span class="text-success fw-bold" @click="openDetailContract(asset.contract_id)" v-permission="['loans.detail', 'pledge.detail', 'repayment.detail']">{{ asset.contract_code }}</span></td>
                                 <td>
                                     <span>{{ asset.customer_name }}</span>
                                     <p>{{ asset.customer_phone }}</p>
@@ -130,6 +137,9 @@ onMounted(() => {
     </div>
     <div class="modal-overlay" v-if="showAssetsDetailModal">
         <AssetsDetail @close="closeAssetsDetailModal" />
+    </div>
+    <div class="modal-overlay" v-if="showDetailContract">
+        <DetailContract @close="closeDetailContract" />
     </div>
 </template>
 

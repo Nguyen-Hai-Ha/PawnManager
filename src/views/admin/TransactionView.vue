@@ -1,13 +1,22 @@
 <script setup>
-import { useTransactionStore } from '@/stores/transaction';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
+import DetailContract from '@/components/contracts/DetailContract.vue';
+
+import { useTransactionStore } from '@/stores/transaction';
+import { useDetailContractStore } from '@/stores/contract/detailContract';
+
 const transactionStore = useTransactionStore();
+const detailContractStore = useDetailContractStore();
+
 const { transactions, search, paginated, totalPage, currentPage, sortConfig,
         filterDate, Staff, TransactionType, ContractType, staffs, transactionTypes, contractTypes } = storeToRefs(transactionStore);
 const { fetchTransactions, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchStaffs, fetchTransactionTypes, fetchContractTypes } = transactionStore
+
+const { showDetailContract } = storeToRefs(detailContractStore);
+const { openDetailContract, closeDetailContract } = detailContractStore;
 
 onMounted( async () => {
     const promise = [];
@@ -122,7 +131,9 @@ onMounted( async () => {
                             <td>{{ transaction.id }}</td>
                             <td>{{ transaction.created_at }}</td>
                             <td>{{ transaction.staff_name }}</td>
-                            <td class="text-success fw-bold">{{ transaction.contract_code }}</td>
+                            <td class="text-success fw-bold" v-permission="['loans.detail', 'pledge.detail', 'repayment.detail']" id="detailContract" @click="openDetailContract(transaction.contract_id)">
+                                {{ transaction.contract_code }}
+                            </td>
                             <td>{{ transaction.customer_name }}</td>
                             <td>{{ transaction.customer_cccd }}</td>
                             <td class="fw-bold">{{ transaction.transaction_type_name }}</td>
@@ -169,5 +180,8 @@ onMounted( async () => {
                 <button class="page-btn" @click="goToLastPage"><font-awesome-icon icon="angles-right" /></button>
             </div>
         </div>
+    </div>
+    <div class="modal-overlay" v-if="showDetailContract">
+        <DetailContract @close="closeDetailContract" />
     </div>
 </template>

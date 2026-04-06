@@ -117,7 +117,7 @@ onMounted(async() => {
                         <tr v-for="loan, index in paginated" :key="loan.id">
                             <td>{{ index + 1 }}</td>
                             <td>
-                                <span class="text-success fw-bold" @click="openDetailContract(loan.id)">{{ loan.code }}</span>
+                                <span class="text-success fw-bold" id="detailContract" @click="openDetailContract(loan.id)" v-permission="'repayment.detail'">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>
@@ -139,7 +139,7 @@ onMounted(async() => {
                             </td>
                             <td>
                                 <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
-                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)">
+                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)" v-permission="'repayment.detail'">
                                         <font-awesome-icon icon="fa-solid fa-eye" />
                                     </button>
                                 </div>

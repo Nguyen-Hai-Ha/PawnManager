@@ -1,7 +1,4 @@
 <script setup>
-import { useLoanStore } from '@/stores/loan';
-import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
-import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
@@ -9,14 +6,21 @@ import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
 import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
 import FinalSettlement from '@/components/contracts/FinalSettlement.vue';
+import DetailContract from '@/components/contracts/DetailContract.vue';
+
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
+import { useDetailContractStore } from '@/stores/contract/detailContract';
+import { useLoanStore } from '@/stores/loan';
+import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
+import { useInterestPayment } from '@/stores/contract/interestPayment';
 
 const loanStore = useLoanStore();
 const addNewLoanStore = useAddNewLoanStore();
 const interestPaymentStore = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
 const finalSettlementStore = useFinalSettlementStore();
+const detailContractStore = useDetailContractStore();
 
 const {loans, paginated, totalPage, currentPage, search, sortConfig, filterStatus, startDate, endDate} = storeToRefs(loanStore);
 const { getAllLoans, deleteLoan, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer } = loanStore;
@@ -32,6 +36,9 @@ const { openReducePrincipalModal, closeReducePrincipalModal } = reducePrincipalS
 
 const { showFinalModal } = storeToRefs(finalSettlementStore);
 const { openFinalModal, closeFinalModal } = finalSettlementStore;
+
+const { showDetailContract } = storeToRefs(detailContractStore);
+const { openDetailContract, closeDetailContract } = detailContractStore;
 
 onMounted(async() => {
     await getAllLoans();
@@ -109,7 +116,7 @@ onMounted(async() => {
                         <tr v-for="loan, index in paginated" :key="loan.id">
                             <td>{{ index + 1 }}</td>
                             <td>
-                                <span class="text-success fw-bold">{{ loan.code }}</span>
+                                <span class="text-success fw-bold" @click="openDetailContract(loan.id)">{{ loan.code }}</span>
                                 <p>{{ loan.start_date }}</p>
                                 <p>{{ loan.end_date }}</p>
                             </td>
@@ -129,17 +136,22 @@ onMounted(async() => {
                                 </span>
                             </td>
                             <td>
-                                <div class="action-cell">
-                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'pledges.interest_payment'" @click="openInterestModal(loan.id)">
+                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
+                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)">
+                                        <font-awesome-icon icon="fa-solid fa-eye" />
+                                    </button>
+                                </div>
+                                <div class="action-cell" v-else>
+                                    <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'loans.interest_payment'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />
                                     </button>
-                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" v-permission="'pledges.reduce_principal'" @click="openReducePrincipalModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Trả bớt gốc" v-permission="'loans.reduce_principal'" @click="openReducePrincipalModal(loan.id)">
                                         <font-awesome-icon icon="money-bill-wave" />
                                     </button>
-                                    <button class="btn-action text-success" data-tooltip="Tất toán" v-permission="'pledges.final_settlement'" @click="openFinalModal(loan.id)">
+                                    <button class="btn-action text-success" data-tooltip="Tất toán" v-permission="'loans.final_settlement'" @click="openFinalModal(loan.id)">
                                         <font-awesome-icon icon="hand-holding-dollar" />
                                     </button>
-                                    <!-- <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'contract.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
+                                    <!-- <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'loans.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
                                             icon="circle-xmark" /></button> -->
                                 </div>
                             </td>
@@ -176,5 +188,8 @@ onMounted(async() => {
     </div>
     <div class="modal-overlay" v-if="showFinalModal">
         <FinalSettlement @close="closeFinalModal" />
+    </div>
+    <div class="modal-overlay" v-if="showDetailContract">
+        <DetailContract @close="closeDetailContract" />
     </div>
 </template>

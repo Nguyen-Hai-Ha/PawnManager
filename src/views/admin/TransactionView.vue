@@ -152,10 +152,10 @@ onMounted( async () => {
                             <td class="text-success fw-bold">{{ formatCurrency(transaction.interest_amount) || 0 }}</td>
                             <td class="text-success fw-bold">{{ formatCurrency(transaction.other_fees) || 0 }}</td>
                             <td class="special">
-                                <button class="btn-action text-primary" data-tooltip="Xem chi tiết">
+                                <button class="btn-action text-primary" data-tooltip="Xem chi tiết" v-permission="['loans.detail', 'pledge.detail', 'repayment.detail']" @click="openDetailContract(transaction.contract_id)">
                                     <font-awesome-icon icon="fa-solid fa-eye" />
                                 </button>
-                                <button class="btn-action text-danger" data-tooltip="Xóa">
+                                <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'transaction.delete'">
                                     <font-awesome-icon icon="fa-solid fa-trash-can" />
                                 </button>
                             </td>

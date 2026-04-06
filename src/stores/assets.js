@@ -13,6 +13,7 @@ export const useAssetsStore = defineStore("assets", () => {
     const liquidation = ref([]);
     const search = ref('');
     const showAssetsDetailModal = ref(false);
+    const showAssetsEditModal = ref(false);
     const showAssetsLiquidationModal = ref(false);
     const currentPage = ref(1);
     const itemPage = 12;
@@ -65,6 +66,15 @@ export const useAssetsStore = defineStore("assets", () => {
 
     const closeAssetsDetailModal = () => {
         showAssetsDetailModal.value = false;
+    }
+
+    const openAssetsEditModal = (id) => {
+        fetchAssetDetail(id);
+        showAssetsEditModal.value = true;
+    }
+
+    const closeAssetsEditModal = () => {
+        showAssetsEditModal.value = false;
     }
 
     const openAssetsLiquidationModal = (id) => {
@@ -259,12 +269,13 @@ export const useAssetsStore = defineStore("assets", () => {
         //state
         assets, search, sortConfig, currentPage, itemPage, totalPage, paginatedAssets, showAssetsLiquidationModal, 
         liquidation, user, showAssetsDetailModal, assetDetail, selectedImage, fileInputRef, editingImageId, filterStatus,
+        showAssetsEditModal,
         //computed
         filteredAssets, sortedAssets, parseMetadata, parseImages,
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,
         openAssetsDetailModal, closeAssetsDetailModal, fetchAssetDetail, triggerFileInput, handleFileChange,
-        submitUpdateAsset
+        submitUpdateAsset, openAssetsEditModal, closeAssetsEditModal
     }
 });

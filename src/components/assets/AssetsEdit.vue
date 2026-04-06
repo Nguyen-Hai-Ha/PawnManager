@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia';
 import { useAssetsStore } from '@/stores/assets';
 const assetsStore = useAssetsStore();
 const { assetDetail, parseMetadata, parseImages, fileInputRef } = storeToRefs(assetsStore);
-const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdateAsset } = assetsStore;
+const { closeAssetsEditModal, triggerFileInput, handleFileChange, submitUpdateAsset } = assetsStore;
 </script>
 
 <template>
@@ -13,44 +13,61 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
                 <h2>Tài sản {{ assetDetail.code }}</h2>
                 <span class="status-badge">{{ assetDetail.status }}</span>
             </div>
-            <button class="close-icon" @click="closeAssetsDetailModal">&times;</button>
+            <button class="close-icon" @click="closeAssetsEditModal">&times;</button>
         </div>
 
         <div class="modal-body">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Khách hàng</label>
-                    <div class="read-only-field">{{ assetDetail.customer_name }}</div>
-                </div>
-                <div class="form-group">
-                    <label>Mã tài sản</label>
-                    <div class="read-only-field">{{ assetDetail.code }}</div>
-                </div>
-                <div class="form-group">
-                    <label>Loại tài sản</label>
-                    <div class="read-only-field">{{ assetDetail.type_name }}</div>
-                </div>
-                <div class="form-group">
-                    <label>Tên tài sản</label>
-                    <div class="read-only-field">{{assetDetail.name}}</div>
-                </div>
-                <div class="form-group" v-for="(value, key) in parseMetadata" :key="key">
-                    <label>{{ key }}</label>
-                    <div class="read-only-field">{{value}}</div>
-                </div>
-            </div>
-
-            <div class="image-section">
-                <p class="section-title">Hình ảnh:</p>
-                <div class="image-list">
-                    <div v-for="(img, index) in parseImages" :key="index" class="image-wrapper">
-                        <img :src="`http://localhost:3000${img.url}`" :alt="'Ảnh ' + (index + 1)">
+            <form @submit.prevent="submitUpdateAsset">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Khách hàng</label>
+                        <div class="read-only-field">{{ assetDetail.customer_name }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mã tài sản</label>
+                        <div class="read-only-field">{{ assetDetail.code }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Loại tài sản</label>
+                        <div class="read-only-field">{{ assetDetail.type_name }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên tài sản</label>
+                        <input type="text" v-model="assetDetail.name">
+                    </div>
+                    <div class="form-group" v-for="(value, key) in parseMetadata" :key="key">
+                        <label>{{ key }}</label>
+                        <input type="text" v-model="parseMetadata[key]">
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="cancel-btn" @click="closeAssetsDetailModal">Đóng</button>
-            </div>
+
+                <div class="image-section">
+                    <p class="section-title">Hình ảnh:</p>
+                    <div class="image-list">
+                        <div v-for="(img, index) in parseImages" :key="index" class="image-wrapper">
+                            <img :src="`http://localhost:3000${img.url}`" :alt="'Ảnh ' + (index + 1)">
+                            <div class="image-upload-overlay d-flex align-items-center justify-content-center rounded" @click="triggerFileInput(img.id)">
+                                <div class="text-white text-center">
+                                    <i class="bi bi-camera-fill fs-3"></i>
+                                    <div class="small fw-bold">Đổi ảnh</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add new images button -->
+                        <div class="image-wrapper add-image-btn" @click="triggerFileInput(null)">
+                            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                <i class="bi bi-plus-circle fs-2 text-muted"></i>
+                                <span class="small fw-bold text-muted mt-1">Thêm ảnh</span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" class="image-upload" multiple accept="image/*" hidden="true" ref="fileInputRef" @change="handleFileChange">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-submit" v-permission="'collateral.update'">Lưu</button>
+                    <button type="button" class="cancel-btn" @click="closeAssetsEditModal">Đóng</button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -160,6 +177,8 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
     gap: 15px;
     flex-wrap: wrap;
     padding: 10px;
+    border: 1px dashed #1a7a6e;
+    border-radius: 10px;
 }
 
 .image-wrapper {

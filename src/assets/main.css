@@ -1526,3 +1526,8 @@ nav a {
 .btn-cancel:hover {
   background: #e5e7eb;
 }
+
+#detailContract:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -1,29 +1,34 @@
 <script setup>
 import { useDetailContractStore } from '@/stores/contract/detailContract';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-
-const activetabs = ref('Thông tin vay')
-const tabs = [
-    { name: 'Thông tin vay', badge: null, icon: 'file-invoice' },
-    { name: 'Chi tiết đóng lãi', badge: 4, icon: 'coins' },
-    { name: 'Lịch sử trả bớt gốc', badge: 1, icon: 'history' },
-    { name: 'Tài sản cầm cố', badge: 1, icon: 'motorcycle' },
-    { name: 'Lịch sử gia hạn', badge: 0, icon: 'calendar-plus' }
-]
+import { ref, computed } from 'vue';
 
 const detailContractStore = useDetailContractStore();
-const { closeDetailContract } = detailContractStore;
+
+const { detailContract, collateralmetadata, collateralImages } = storeToRefs(detailContractStore);
+const { closeDetailContract, formatCurrency } = detailContractStore;
+
+const activetabs = ref('Thông tin vay')
+const tabs = computed(() => [ 
+    { name: 'Thông tin vay', badge: null, icon: 'file-invoice' },
+    { name: 'Chi tiết đóng lãi', badge: detailContract.value?.paymentSchedules?.length || 0, icon: 'coins' },
+    { name: 'Lịch sử trả bớt gốc', badge: detailContract.value?.transactions?.length || 0, icon: 'history' },
+    { name: 'Tài sản cầm cố', badge: detailContract.value?.collateral?.length || 0, icon: 'motorcycle' },
+])
+
+const detail = computed(() => {
+    return detailContract.value;
+})
 
 </script>
 
 <template>
     <div class="detail-contract">
-        <div class="modal-detail-contract-content">
+        <div class="modal-detail-contract-content" v-if="detail">
             <!-- Header -->
             <div class="modal-header">
                 <div class="header-title">
-                    <h2>Chi tiết hợp đồng: <span class="contract-code">CD0056</span></h2>
+                    <h2>Chi tiết hợp đồng: <span class="contract-code">{{ detail.contract?.code }}</span></h2>
                 </div>
                 <button class="btn-close" @click="closeDetailContract">
                     <font-awesome-icon icon="times" />
@@ -37,19 +42,21 @@ const { closeDetailContract } = detailContractStore;
                 </div>
                 <div class="customer-info-card">
                     <div class="customer-avatar">
-                        <!-- Placeholder for avatar icon if needed -->
+                        <div class="customer-image">
+                            <img v-if="detail.customer?.images_cccd" :src="`http://localhost:3000/uploads/` + detail.customer.images_cccd" alt="Customer Image" class="customer-image-cccd">
+                        </div>
                     </div>
                     <div class="customer-details">
-                        <h3 class="customer-name">Kim Jong En</h3>
+                        <h3 class="customer-name">{{ detail.customer?.name }}</h3>
                         <div class="info-grid">
                             <div class="info-item">
-                                24/03/1999
+                                {{ detail.customer?.birth_date }}
                             </div>
                             <div class="info-item">
-                                0123456789
+                                {{ detail.customer?.phone }}
                             </div>
                             <div class="info-item">
-                                Bắc Triều Tiên
+                                {{ detail.customer?.address }}
                             </div>
                         </div>
                     </div>
@@ -63,7 +70,6 @@ const { closeDetailContract } = detailContractStore;
                     <span v-if="tab.badge !== null" class="tab-badge" :class="{ 'badge-zero': tab.badge === 0 }">
                         {{ tab.badge }}
                     </span>
-                    <font-awesome-icon :icon="tab.icon" v-if="tab.icon && tab.badge === null" class="tab-icon-small" />
                     {{ tab.name }}
                 </div>
             </div>
@@ -75,67 +81,152 @@ const { closeDetailContract } = detailContractStore;
                     <div class="info-column">
                         <div class="detail-row">
                             <span class="label">Số tiền vay:</span>
-                            <span class="value text-danger">29,000,000 (vnđ)</span>
+                            <span class="value text-danger fw-bold">{{ formatCurrency(detail.contract?.loan_amount) }} (vnđ)</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Ngày vay:</span>
-                            <span class="value">14/03/2026</span>
+                            <span class="value">{{ detail.contract?.start_date }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Kiểu vay:</span>
-                            <span class="value">Cầm đồ</span>
+                            <span class="value">{{ detail.contract?.contract_name }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Thời gian tạo:</span>
-                            <span class="value">14/03/2026 16:28:59</span>
+                            <span class="value">{{ detail.contract?.created_at }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Người tạo hợp đồng:</span>
-                            <span class="value">hanguyen032325@gmail.com</span>
+                            <span class="value">{{ detail.contract?.staff_name }}</span>
                         </div>
                     </div>
 
                     <!-- Column 2 -->
                     <div class="info-column">
                         <div class="detail-row">
-                            <span class="label">Ngày bắt đầu trả lãi:</span>
-                            <span class="value">14/03/2026</span>
+                            <span class="label">Ngày bắt đầu:</span>
+                            <span class="value">{{ detail.contract?.start_date }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Ngày kết thúc:</span>
+                            <span class="value">{{ detail.contract?.end_date }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Kiểu đóng lãi:</span>
-                            <span class="value">Sau</span>
+                            <span class="value">{{ detail.contract?.interest_type }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Kỳ đóng lãi:</span>
-                            <span class="value">1 tháng đóng một lần | trả theo tháng</span>
+                            <span class="value">{{ detail.contract?.payment_term }} {{ detail.contract?.term_unit }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Lãi suất:</span>
-                            <span class="value text-warning">Lãi tháng: 3%</span>
+                            <span class="value text-success">Lãi tháng: {{ detail.contract?.interest_rate }}%</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Số lần trả:</span>
-                            <span class="value text-warning">2 Lần</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="label">Ngày tất toán:</span>
-                            <span class="value">13/05/2026</span>
-                        </div>
-                    </div>
-
-                    <!-- Column 3 (Notes) -->
-                    <div class="info-column">
-                        <div class="detail-row note-row">
-                            <span class="label"><font-awesome-icon icon="sticky-note" class="text-success" /> Ghi chú:</span>
-                            <div class="note-box"></div>
+                            <span class="value text-success">{{ detail.contract?.total_periods }} Lần</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Other tabs placeholders -->
-                <div v-else class="placeholder-content">
-                    Đang hiển thị nội dung của: {{ activetabs }}
+                <div class="payment-schedules" v-if="activetabs === 'Chi tiết đóng lãi'">
+                    <div class="table-wapper"v-if="detail.paymentSchedules.length > 0">
+                        <table >
+                            <thead>
+                                <tr>
+                                    <th>Số kỳ thứ</th>
+                                    <th>Ngày thanh toán</th>
+                                    <th>Tiền lãi</th>
+                                    <th>Tiền gốc</th>
+                                    <th>Phí khác</th>
+                                    <th>Đã thanh toán</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="schedule in detail.paymentSchedules" :key="schedule.id">
+                                    <td>{{ schedule.period_number}}</td>
+                                    <td>{{ schedule.created_at }}</td>
+                                    <td class="text-success fw-bold">{{ formatCurrency(schedule.interest_amount) }}</td>
+                                    <td class="text-danger fw-bold">{{ formatCurrency(schedule.principal_amount) }}</td>
+                                    <td>{{ formatCurrency(schedule.other_fees) || 0 }}</td>
+                                    <td>{{ schedule.display_history || 0 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-else class="placeholder-content">
+                        Chưa đóng kỳ nào
+                    </div>
                 </div>
+
+                <div class="history-reduce" v-if="activetabs === 'Lịch sử trả bớt gốc'">
+                    <div class="table-wapper"v-if="detail.transactions.length > 0">
+                        <table >
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Ngày trả bớt gốc</th>
+                                    <th>Số tiền</th>
+                                    <th>Gốc cũ</th>
+                                    <th>Gốc mới</th>
+                                    <th>Lãi suất cũ</th>
+                                    <th>Lãi suất mới</th>
+                                    <th>Phí khác</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in detail.transactions" :key="item.id">
+                                    <td>{{ index + 1}}</td>
+                                    <td>{{ item.created_at }}</td>
+                                    <td class="text-success fw-bold">{{ formatCurrency(item.amount) }}</td>
+                                    <td>{{ formatCurrency(item.old_principal) }}</td>
+                                    <td>{{ formatCurrency(item.new_principal) }}</td>
+                                    <!-- Lãi suất cũ -->
+                                    <td v-if="detail.contract.interest_type === 'daily_amount'">{{ item.old_interest_rate > 0 ? formatCurrency(item.old_interest_rate) : 'Không đổi'}}</td>
+                                    <td v-else>{{ item.old_interest_rate > 0 ? item.old_interest_rate + '%' : 'Không đổi'}}</td>
+                                    <!-- Lãi suất mới -->
+                                    <td v-if="detail.contract.interest_type === 'daily_amount'">{{ item.new_interest_rate > 0 ? formatCurrency(item.new_interest_rate) : 'Không đổi'}}</td>
+                                    <td v-else>{{ item.new_interest_rate > 0 ? item.new_interest_rate + '%' : 'Không đổi'}}</td>
+                                    <td>{{ formatCurrency(item.other_fees) || 0}}</td>
+                                    <td>{{ item.note }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-else class="placeholder-content">
+                        Chưa trả bớt gốc lần nào
+                    </div>
+                </div>
+
+                <div class="assets" v-if="activetabs === 'Tài sản cầm cố'">
+                    <div class="assets-item">
+                        <div class="assets-item-header">
+                            <div class="asset-main-info">
+                                <h3 class="asset-name">{{ detail.collateral[0].name }}</h3>
+                                <span class="asset-type-badge">{{ detail.collateral[0].type_name }}</span>
+                            </div>
+                            <div class="asset-description">
+                                <div class="metadata-grid" v-if="Object.keys(collateralmetadata).length > 0">
+                                    <div v-for="(value, key) in collateralmetadata" :key="key" class="metadata-item">
+                                        <span class="m-label">{{ key }}:</span>
+                                        <span class="m-value">{{ value }}</span>
+                                    </div>
+                                </div>
+                                <div v-else class="no-metadata">
+                                    <font-awesome-icon icon="info-circle" /> Chưa có thông tin chi tiết
+                                </div>
+                            </div>
+                        </div>
+                        <div class="assets-gallery">
+                            <div class="gallery-item" v-for="(img, idx) in collateralImages" :key="idx">
+                                <img :src="`http://localhost:3000${img.url}`" alt="Hình ảnh tài sản">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Footer -->
@@ -144,6 +235,10 @@ const { closeDetailContract } = detailContractStore;
                     <font-awesome-icon icon="times" /> Đóng
                 </button>
             </div>
+        </div>
+        <div v-else class="loading-overlay">
+            <div class="loader"></div>
+            <p>Đang tải dữ liệu...</p>
         </div>
     </div>
 </template>

@@ -65,14 +65,19 @@ const Transactions = {
         transactions.description,
         transactions.created_at,
         transactions_types.name as transaction_type_name,
+        contract_history.old_principal,
+        contract_history.new_principal,
+        contract_history.old_interest_rate,
+        contract_history.new_interest_rate,
         contracts.code as contract_code,
         customers.name as customer_name,
         customers.phone as customer_phone
         FROM transactions 
-        INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
-        INNER JOIN contracts ON transactions.id_contract = contracts.id
-        INNER JOIN customers ON contracts.id_customer = customers.id
-        WHERE id_contract = ? AND id_transaction_type = 4`;
+        LEFT JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
+        LEFT JOIN contracts ON transactions.id_contract = contracts.id
+        LEFT JOIN customers ON contracts.id_customer = customers.id
+        LEFT JOIN contract_history ON transactions.id = contract_history.id_transaction
+        WHERE transactions.id_contract = ? AND transactions.id_transaction_type = 4`;
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },

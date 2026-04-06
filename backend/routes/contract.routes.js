@@ -6,7 +6,7 @@ const upload = require('../middlewares/upload.middleware');
 
 router.get('/', verifyToken, hasPermission(['loans.read', 'pledge.read', 'repayment.read']), ContractController.getAll);
 router.get('/type/:id', verifyToken, hasPermission(['loans.read', 'pledge.read', 'repayment.read']), ContractController.getByIdContractType);
-router.get('/:id', verifyToken, hasPermission(['loans.read', 'pledge.read', 'repayment.read']), ContractController.getById);
+router.get('/:id', verifyToken, hasPermission(['loans.detail', 'pledge.detail', 'repayment.detail']), ContractController.getById);
 router.get('/:id/payment-details', verifyToken, hasPermission(['loans.detail', 'pledge.detail', 'repayment.detail']), ContractController.getPaymentDetails);
 router.post('/', verifyToken, hasPermission(['loans.create', 'pledge.create', 'repayment.create']), upload.array('images', 10), ContractController.create);
 // router.delete('/:id', verifyToken, hasPermission('contract.delete'), ContractController.delete);

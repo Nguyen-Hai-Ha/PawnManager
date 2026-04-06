@@ -9,7 +9,7 @@ const { detailContract, collateralmetadata, collateralImages } = storeToRefs(det
 const { closeDetailContract, formatCurrency } = detailContractStore;
 
 const activetabs = ref('Thông tin vay')
-const tabs = computed(() => [ 
+const tabs = computed(() => [
     { name: 'Thông tin vay', badge: null, icon: 'file-invoice' },
     { name: 'Chi tiết đóng lãi', badge: detailContract.value?.paymentSchedules?.length || 0, icon: 'coins' },
     { name: 'Lịch sử trả bớt gốc', badge: detailContract.value?.transactions?.length || 0, icon: 'history' },
@@ -41,22 +41,54 @@ const detail = computed(() => {
                     <font-awesome-icon icon="user-tie" /> Thông tin khách vay
                 </div>
                 <div class="customer-info-card">
-                    <div class="customer-avatar">
-                        <div class="customer-image">
-                            <img v-if="detail.customer?.images_cccd" :src="`http://localhost:3000/uploads/` + detail.customer.images_cccd" alt="Customer Image" class="customer-image-cccd">
+                    <div class="customer-info-grid">
+                        <div class="customer-avatar">
+                            <div class="customer-image">
+                                <img v-if="detail.customer?.images_cccd"
+                                    :src="`http://localhost:3000/uploads/` + detail.customer.images_cccd"
+                                    alt="Customer Image" class="customer-image-cccd">
+                            </div>
+                        </div>
+                        <div class="customer-details">
+                            <h3 class="customer-name">Tên khách hàng: {{ detail.customer?.name }}</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    Ngày sinh: {{ detail.customer?.birth_date }}
+                                </div>
+                                <div class="info-item">
+                                    Số điện thoại: {{ detail.customer?.phone }}
+                                </div>
+                                <div class="info-item">
+                                    Địa chỉ: {{ detail.customer?.address }}
+                                </div>
+                                <div class="info-item">
+                                    Số CCCD: {{ detail.customer?.cccd }}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="customer-details">
-                        <h3 class="customer-name">{{ detail.customer?.name }}</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                {{ detail.customer?.birth_date }}
-                            </div>
-                            <div class="info-item">
-                                {{ detail.customer?.phone }}
-                            </div>
-                            <div class="info-item">
-                                {{ detail.customer?.address }}
+                    <div class="customer-info-grid" v-for="(relative, index) in detail.relative" :key="relative.id">
+                        <div class="customer-details">
+                            <h3 class="customer-name">Người thân {{ index + 1 }}</h3>
+                            <div class="info-grid">
+                                <div class="info-item">Họ và tên: 
+                                    {{ relative.name }}
+                                </div>
+                                <div class="info-item">Số điện thoại: 
+                                    {{ relative.phone }}
+                                </div>
+                                <div class="info-item">Địa chỉ: 
+                                    {{ relative.address }}
+                                </div>
+                                <div class="info-item">Số CCCD: 
+                                    {{ relative.cccd }}
+                                </div>
+                                <div class="info-item">Nghề nghiệp: 
+                                    {{ relative.job }}
+                                </div>
+                                <div class="info-item">Nơi làm việc: 
+                                    {{ relative.workplace }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -81,15 +113,47 @@ const detail = computed(() => {
                     <div class="info-column">
                         <div class="detail-row">
                             <span class="label">Số tiền vay:</span>
-                            <span class="value text-danger fw-bold">{{ formatCurrency(detail.contract?.loan_amount) }} (vnđ)</span>
+                            <span class="value text-danger fw-bold">{{ formatCurrency(detail.contract?.loan_amount) }}
+                                (vnđ)</span>
                         </div>
                         <div class="detail-row">
-                            <span class="label">Ngày vay:</span>
-                            <span class="value">{{ detail.contract?.start_date }}</span>
+                            <span class="label">Lãi suất:</span>
+                            <span class="value text-success">{{ detail.contract?.interest_rate }}% / {{
+                                detail.contract?.total_periods }} {{ detail.contract?.term_unit }}</span>
                         </div>
+
                         <div class="detail-row">
                             <span class="label">Kiểu vay:</span>
                             <span class="value">{{ detail.contract?.contract_name }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Ngày bắt đầu:</span>
+                            <span class="value">{{ detail.contract?.start_date }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Ngày kết thúc:</span>
+                            <span class="value">{{ detail.contract?.end_date }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="info-column">
+
+                        <!-- <div class="detail-row">
+                            <span class="label">Kiểu đóng lãi:</span>
+                            <span class="value" v-if="detail.contract?.interest_type === 'percent*term'">% x Số kỳ</span>
+                            <span class="value" v-else-if="detail.contract?.interest_type === 'percent/term'">% / Số kỳ</span>
+                            <span class="value" v-else-if="detail.contract?.interest_type === 'daily_amount'">Số tiền cố định</span>
+                        </div> -->
+                        <div class="detail-row">
+                            <span class="label">Kỳ đóng lãi:</span>
+                            <span class="value">{{ detail.contract?.payment_term }} {{ detail.contract?.term_unit
+                                }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">Số lần trả:</span>
+                            <span class="value text-success">{{ detail.contract?.total_periods }} Lần</span>
                         </div>
                         <div class="detail-row">
                             <span class="label">Thời gian tạo:</span>
@@ -100,39 +164,11 @@ const detail = computed(() => {
                             <span class="value">{{ detail.contract?.staff_name }}</span>
                         </div>
                     </div>
-
-                    <!-- Column 2 -->
-                    <div class="info-column">
-                        <div class="detail-row">
-                            <span class="label">Ngày bắt đầu:</span>
-                            <span class="value">{{ detail.contract?.start_date }}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="label">Ngày kết thúc:</span>
-                            <span class="value">{{ detail.contract?.end_date }}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="label">Kiểu đóng lãi:</span>
-                            <span class="value">{{ detail.contract?.interest_type }}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="label">Kỳ đóng lãi:</span>
-                            <span class="value">{{ detail.contract?.payment_term }} {{ detail.contract?.term_unit }}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="label">Lãi suất:</span>
-                            <span class="value text-success">Lãi tháng: {{ detail.contract?.interest_rate }}%</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="label">Số lần trả:</span>
-                            <span class="value text-success">{{ detail.contract?.total_periods }} Lần</span>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="payment-schedules" v-if="activetabs === 'Chi tiết đóng lãi'">
-                    <div class="table-wapper"v-if="detail.paymentSchedules.length > 0">
-                        <table >
+                    <div class="table-wapper" v-if="detail.paymentSchedules.length > 0">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>Số kỳ thứ</th>
@@ -145,7 +181,7 @@ const detail = computed(() => {
                             </thead>
                             <tbody>
                                 <tr v-for="schedule in detail.paymentSchedules" :key="schedule.id">
-                                    <td>{{ schedule.period_number}}</td>
+                                    <td>{{ schedule.period_number }}</td>
                                     <td>{{ schedule.created_at }}</td>
                                     <td class="text-success fw-bold">{{ formatCurrency(schedule.interest_amount) }}</td>
                                     <td class="text-danger fw-bold">{{ formatCurrency(schedule.principal_amount) }}</td>
@@ -161,8 +197,8 @@ const detail = computed(() => {
                 </div>
 
                 <div class="history-reduce" v-if="activetabs === 'Lịch sử trả bớt gốc'">
-                    <div class="table-wapper"v-if="detail.transactions.length > 0">
-                        <table >
+                    <div class="table-wapper" v-if="detail.transactions.length > 0">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>STT</th>
@@ -178,18 +214,20 @@ const detail = computed(() => {
                             </thead>
                             <tbody>
                                 <tr v-for="(item, index) in detail.transactions" :key="item.id">
-                                    <td>{{ index + 1}}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ item.created_at }}</td>
                                     <td class="text-success fw-bold">{{ formatCurrency(item.amount) }}</td>
                                     <td>{{ formatCurrency(item.old_principal) }}</td>
                                     <td>{{ formatCurrency(item.new_principal) }}</td>
                                     <!-- Lãi suất cũ -->
-                                    <td v-if="detail.contract.interest_type === 'daily_amount'">{{ item.old_interest_rate > 0 ? formatCurrency(item.old_interest_rate) : 'Không đổi'}}</td>
+                                    <td v-if="detail.contract.interest_type === 'daily_amount'">{{
+                                        item.old_interest_rate > 0 ? formatCurrency(item.old_interest_rate) : 'Không đổi'}}</td>
                                     <td v-else>{{ item.old_interest_rate > 0 ? item.old_interest_rate + '%' : 'Không đổi'}}</td>
                                     <!-- Lãi suất mới -->
-                                    <td v-if="detail.contract.interest_type === 'daily_amount'">{{ item.new_interest_rate > 0 ? formatCurrency(item.new_interest_rate) : 'Không đổi'}}</td>
+                                    <td v-if="detail.contract.interest_type === 'daily_amount'">{{
+                                        item.new_interest_rate > 0 ? formatCurrency(item.new_interest_rate) : 'Không đổi'}}</td>
                                     <td v-else>{{ item.new_interest_rate > 0 ? item.new_interest_rate + '%' : 'Không đổi'}}</td>
-                                    <td>{{ formatCurrency(item.other_fees) || 0}}</td>
+                                    <td>{{ formatCurrency(item.other_fees) || 0 }}</td>
                                     <td>{{ item.note }}</td>
                                 </tr>
                             </tbody>
@@ -201,7 +239,7 @@ const detail = computed(() => {
                 </div>
 
                 <div class="assets" v-if="activetabs === 'Tài sản cầm cố'">
-                    <div class="assets-item">
+                    <div class="assets-item" v-if="detail.collateral.length > 0">
                         <div class="assets-item-header">
                             <div class="asset-main-info">
                                 <h3 class="asset-name">{{ detail.collateral[0].name }}</h3>
@@ -224,6 +262,9 @@ const detail = computed(() => {
                                 <img :src="`http://localhost:3000${img.url}`" alt="Hình ảnh tài sản">
                             </div>
                         </div>
+                    </div>
+                    <div v-else class="placeholder-content">
+                        Chưa có tài sản cầm cố
                     </div>
                 </div>
 

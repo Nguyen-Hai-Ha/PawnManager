@@ -10,9 +10,11 @@ CREATE TABLE IF NOT EXISTS contracts (
     total_periods INTEGER,
     interest_type TEXT,
     status TEXT DEFAULT 'active',
+    id_staff INTEGER NOT NULL,
     id_customer INTEGER NOT NULL,
     id_contract_type INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_staff) REFERENCES staff(id),
     FOREIGN KEY (id_customer) REFERENCES customers(id),
     FOREIGN KEY (id_contract_type) REFERENCES contracts_types(id)
 );
@@ -143,6 +145,22 @@ CREATE TABLE IF NOT EXISTS role_permissions(
     PRIMARY KEY (id_role, id_permission),
     FOREIGN KEY (id_role) REFERENCES role(id),
     FOREIGN KEY (id_permission) REFERENCES permissions(id)
+);
+
+CREATE TABLE IF NOT EXISTS contract_history(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    old_principal REAL NULL,
+    new_principal REAL NULL,
+    old_interest_rate REAL NULL,
+    new_interest_rate REAL NULL,
+    type TEXT NOT NULL,
+    id_contract INTEGER NOT NULL,
+    id_staff INTEGER NOT NULL,
+    id_transaction INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_contract) REFERENCES contracts(id),
+    FOREIGN KEY (id_staff) REFERENCES staff(id),
+    FOREIGN KEY (id_transaction) REFERENCES transactions(id)
 );
 
 INSERT OR IGNORE INTO permissions (name) VALUES

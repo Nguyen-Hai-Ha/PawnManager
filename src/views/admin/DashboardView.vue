@@ -1,5 +1,61 @@
+<script setup>
+import { onMounted, computed } from 'vue';
+import { useDashboardStore } from '@/stores/dashboard';
+import { storeToRefs } from 'pinia';
+
+const dashboardStore = useDashboardStore();
+const { summary, loading, todayDateStr, currentMonthYearStr } = storeToRefs(dashboardStore);
+const { fetchSummary, formatCurrency } = dashboardStore;
+
+onMounted(() => {
+  fetchSummary();
+});
+
+const totalLoanSummary = computed(() => {
+  const initial = { count: 0, loan: 0, interest: 0, month: 0 };
+  return summary.value.loanSummary.reduce((acc, curr) => ({
+    count: acc.count + (curr.count || 0),
+    loan: acc.loan + (curr.total_loan || 0),
+    interest: acc.interest + (curr.total_interest || 0),
+    month: acc.month + (curr.month_interest || 0)
+  }), initial);
+});
+
+// Pie Chart 1: Projected Interest
+const projectedDashArray = computed(() => {
+  const p = parseFloat(summary.value.projected.percent) || 0;
+  const dash = (p * 251.2) / 100;
+  return `${dash} ${251.2 - dash}`;
+});
+
+// Pie Chart 2: Profit Ratio
+const profitRatios = computed(() => {
+  const total = totalLoanSummary.value.interest || 1;
+  const ratios = summary.value.loanSummary.map(item => ({
+    name: item.name,
+    percent: ((item.total_interest || 0) / total * 100).toFixed(2),
+    raw: (item.total_interest || 0) / total
+  }));
+  
+  // Calculate dash offsets
+  let currentOffset = 62.8; // Start at top
+  return ratios.map(r => {
+    const dash = r.raw * 251.2;
+    const offset = currentOffset;
+    currentOffset -= dash;
+    return { ...r, dash: `${dash} ${251.2 - dash}`, offset };
+  });
+});
+
+const getProfitRatioByTypeName = (name) => {
+  const r = profitRatios.value.find(item => item.name.toLowerCase() === name.toLowerCase());
+  return r ? r.percent + '%' : '0%';
+};
+
+</script>
+
 <template>
-  <div class="dashboard">
+  <div class="dashboard" v-if="!loading">
     <!-- Stat Cards -->
     <div class="stat-cards">
       <!-- Giao dịch -->
@@ -7,10 +63,12 @@
         <div class="stat-card-inner">
           <div class="stat-info">
             <div class="stat-label">Giao dịch</div>
-            <div class="stat-sub">Hôm nay 18/3</div>
-            <div class="stat-value teal">4</div>
+            <div class="stat-sub">Hôm nay {{ todayDateStr }}</div>
+            <div class="stat-value teal">{{ summary.stats.transactions.today }}</div>
             <div class="stat-compare">
-              <span class="badge-green">0%</span>
+              <span :class="summary.stats.transactions.compare >= 0 ? 'badge-green' : 'badge-red'">
+                {{ summary.stats.transactions.compare }}%
+              </span>
               <span class="compare-text"> So với ngày hôm qua</span>
             </div>
           </div>
@@ -26,9 +84,9 @@
           <div class="stat-info">
             <div class="stat-label">Cho vay</div>
             <div class="stat-sub">Hợp đồng</div>
-            <div class="stat-value teal">1</div>
+            <div class="stat-value teal">{{ summary.stats.loans.count }}</div>
             <div class="stat-compare">
-              <span class="muted">( 10,000,000 vnđ)</span>
+              <span class="muted">( {{ formatCurrency(summary.stats.loans.amount) }} vnđ)</span>
             </div>
           </div>
           <div class="stat-icon icon-purple">
@@ -43,12 +101,12 @@
           <div class="stat-info">
             <div class="stat-label">Đã thu</div>
             <div class="stat-sub">Hợp đồng</div>
-            <div class="stat-value teal">2</div>
+            <div class="stat-value teal">{{ summary.stats.collected.count }}</div>
             <div class="stat-compare">
-              <span class="muted">| (9,733,110)</span>
+              <span class="muted">| ({{ formatCurrency(summary.stats.collected.amount) }})</span>
             </div>
             <div class="stat-compare">
-              <span class="muted">Dự thu: 0 &nbsp; HĐI (0)</span>
+              <span class="muted">Dự thu: {{ formatCurrency(summary.projected.unpaid) }}</span>
             </div>
           </div>
           <div class="stat-icon icon-teal">
@@ -62,7 +120,9 @@
         <div class="stat-card-inner">
           <div class="stat-info">
             <div class="stat-label white">Quỹ tiền</div>
-            <div class="stat-value-large negative">-67,136,890</div>
+            <div class="stat-value-large" :class="summary.stats.fund >= 0 ? 'positive' : 'negative'">
+              {{ formatCurrency(summary.stats.fund) }}
+            </div>
           </div>
           <div class="stat-icon icon-teal-light">
             <span>🐷</span>
@@ -79,61 +139,40 @@
             <th></th>
             <th>
               Số hợp đồng đang vay
-              <div class="th-value">3</div>
+              <div class="th-value">{{ totalLoanSummary.count }}</div>
             </th>
             <th>
               Tổng đang cho vay
-              <div class="th-value teal">79,000,000</div>
+              <div class="th-value teal">{{ formatCurrency(totalLoanSummary.loan) }}</div>
             </th>
             <th>
               Tổng lãi đã thu
-              <div class="th-value orange">2,974,222</div>
+              <div class="th-value orange">{{ formatCurrency(totalLoanSummary.interest) }}</div>
             </th>
             <th>
-              Lãi tháng 3/2026
-              <div class="th-value red">2,974,222</div>
+              Lãi tháng {{ currentMonthYearStr }}
+              <div class="th-value red">{{ formatCurrency(totalLoanSummary.month) }}</div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><span class="loan-icon">🖐️</span> Cầm đồ</td>
-            <td>1</td>
+          <tr v-for="item in summary.loanSummary" :key="item.id">
             <td>
-              <div class="teal bold">29,000,000</div>
-              <div class="muted small">37%</div>
+              <span class="loan-icon" v-if="item.name === 'Cầm Đồ'">🖐️</span>
+              <span class="loan-icon" v-else-if="item.name === 'Tín Chấp'">🏦</span>
+              <span class="loan-icon" v-else-if="item.name === 'Trả Góp'">💰</span>
+              {{ item.name }}
+            </td>
+            <td>{{ item.count || 0 }}</td>
+            <td>
+              <div class="teal bold">{{ formatCurrency(item.total_loan) }}</div>
+              <div class="muted small">{{ totalLoanSummary.loan > 0 ? (item.total_loan / totalLoanSummary.loan * 100).toFixed(0) : 0 }}%</div>
             </td>
             <td>
-              <div class="orange bold">1,772,000</div>
-              <div class="muted small">60%</div>
+              <div class="orange bold">{{ formatCurrency(item.total_interest) }}</div>
+              <div class="muted small">{{ totalLoanSummary.interest > 0 ? (item.total_interest / totalLoanSummary.interest * 100).toFixed(0) : 0 }}%</div>
             </td>
-            <td class="red bold">1,772,000</td>
-          </tr>
-          <tr>
-            <td><span class="loan-icon">🏦</span> Tín chấp</td>
-            <td>1</td>
-            <td>
-              <div class="teal bold">10,000,000</div>
-              <div class="muted small">13%</div>
-            </td>
-            <td>
-              <div class="orange bold">300,000</div>
-              <div class="muted small">10%</div>
-            </td>
-            <td class="red bold">300,000</td>
-          </tr>
-          <tr>
-            <td><span class="loan-icon">💰</span> Trả góp</td>
-            <td>1</td>
-            <td>
-              <div class="teal bold">40,000,000</div>
-              <div class="muted small">51%</div>
-            </td>
-            <td>
-              <div class="orange bold">902,222</div>
-              <div class="muted small">30%</div>
-            </td>
-            <td class="red bold">902,222</td>
+            <td class="red bold">{{ formatCurrency(item.month_interest) }}</td>
           </tr>
         </tbody>
       </table>
@@ -147,18 +186,23 @@
         <div class="chart-body">
           <div class="pie-wrapper">
             <svg viewBox="0 0 100 100" class="pie-chart">
-              <!-- 100% teal = full circle (Đã thu 100%) -->
+              <circle
+                cx="50" cy="50" r="40"
+                fill="none"
+                stroke="#E05C2E"
+                stroke-width="20"
+              />
               <circle
                 cx="50" cy="50" r="40"
                 fill="none"
                 stroke="#1a7a6e"
                 stroke-width="20"
-                stroke-dasharray="251.2 0"
+                :stroke-dasharray="projectedDashArray"
                 stroke-dashoffset="62.8"
               />
             </svg>
-            <div class="pie-label-left">100%</div>
-            <div class="pie-label-right">0%</div>
+            <div class="pie-label-left">{{ summary.projected.percent }}%</div>
+            <div class="pie-label-right">{{ (100 - summary.projected.percent).toFixed(1) }}%</div>
           </div>
           <div class="chart-legend">
             <div class="legend-item">
@@ -170,8 +214,8 @@
           </div>
         </div>
         <div class="chart-footer">
-          <span class="trial">Trial Version</span>
-          <span class="brand">Canvess.com</span>
+          <span class="trial">Version 1.0</span>
+          <span class="brand">PawnManager</span>
         </div>
       </div>
 
@@ -181,62 +225,51 @@
         <div class="chart-body">
           <div class="pie-wrapper">
             <svg viewBox="0 0 100 100" class="pie-chart">
-              <!-- Cầm đồ 30.33% -->
               <circle
+                v-for="(r, i) in profitRatios"
+                :key="i"
                 cx="50" cy="50" r="40"
                 fill="none"
-                stroke="#3480E4"
+                :stroke="i === 0 ? '#3480E4' : (i === 1 ? '#1a7a6e' : '#e05c2e')"
                 stroke-width="20"
-                stroke-dasharray="76.15 175.05"
-                stroke-dashoffset="62.8"
-              />
-              <!-- Tín chấp 10.09% -->
-              <circle
-                cx="50" cy="50" r="40"
-                fill="none"
-                stroke="#1a7a6e"
-                stroke-width="20"
-                stroke-dasharray="25.33 225.87"
-                stroke-dashoffset="-13.35"
-              />
-              <!-- Trả góp 59.58% -->
-              <circle
-                cx="50" cy="50" r="40"
-                fill="none"
-                stroke="#e05c2e"
-                stroke-width="20"
-                stroke-dasharray="149.62 101.58"
-                stroke-dashoffset="-38.68"
+                :stroke-dasharray="r.dash"
+                :stroke-dashoffset="r.offset"
               />
             </svg>
             <div class="pie-labels-profit">
-              <div class="pl-label" style="top:15%;left:72%">30.33%</div>
-              <div class="pl-label" style="top:60%;left:5%">10.09%</div>
-              <div class="pl-label" style="top:75%;left:40%">59.58%</div>
+              <div class="pl-label" style="top:15%;left:72%">{{ getProfitRatioByTypeName('Cầm Đồ') }}</div>
+              <div class="pl-label" style="top:60%;left:5%">{{ getProfitRatioByTypeName('Tín Chấp') }}</div>
+              <div class="pl-label" style="top:75%;left:40%">{{ getProfitRatioByTypeName('Trả Góp') }}</div>
             </div>
           </div>
           <div class="chart-legend">
-            <div class="legend-item"><span class="dot dot-teal"></span> Cầm đồ</div>
-            <div class="legend-item"><span class="dot dot-green"></span> Tín chấp</div>
+            <div class="legend-item"><span class="dot dot-blue"></span> Cầm đồ</div>
+            <div class="legend-item"><span class="dot dot-teal"></span> Tín chấp</div>
             <div class="legend-item"><span class="dot dot-orange"></span> Trả góp</div>
           </div>
         </div>
         <div class="chart-footer">
-          <span class="trial">Trial Version</span>
-          <span class="brand">Canvess.com</span>
-        </div>
-      </div>
-
-      <!-- Hợp đồng chờ duyệt -->
-      <div class="chart-card pending-card">
-        <div class="chart-title">Hợp đồng chờ duyệt</div>
-        <div class="pending-body">
-          <div class="pending-icon">🪙</div>
-          <div class="pending-count">0</div>
+          <span class="trial">Version 1.0</span>
+          <span class="brand">PawnManager</span>
         </div>
       </div>
     </div>
   </div>
+  <div v-else class="loading-container">
+    Đang tải dữ liệu...
+  </div>
 </template>
 
-
+<style scoped>
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #1a7a6e;
+}
+.dot-blue { background-color: #3480E4; }
+.positive { color: white; }
+.negative { color: #ff5252; }
+</style>

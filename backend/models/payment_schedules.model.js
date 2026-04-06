@@ -16,6 +16,28 @@ const PaymentSchedules = {
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },
+    getPaymentHasPaid: (id) => {
+        const sql = `
+            SELECT 
+                ps.id,
+                ps.period_number,
+                ps.interest_amount,
+                ps.principal_amount,
+                t.created_at,
+                JSON_GROUP_ARRAY(
+                    JSON_OBJECT(
+                        'amount', CAST(t.amount AS INTEGER),
+                        'created_at', DATE(t.created_at)
+                    )
+                ) as payment_history
+            FROM payment_schedules ps
+            LEFT JOIN transactions t ON ps.id = t.id_schedule
+            WHERE ps.id_contract = ? AND ps.is_paid = 1
+            GROUP BY ps.id
+            ORDER BY ps.period_number ASC`;
+        const stmt = db.prepare(sql);
+        return stmt.all(id);
+    },
     create: (data) => {
         const sql = `INSERT INTO payment_schedules (id_contract, period_number, from_date, expected_date, is_paid, interest_amount, principal_amount) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);

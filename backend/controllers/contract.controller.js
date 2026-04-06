@@ -24,11 +24,11 @@ const ContractController = {
         try {
             const contract = Contract.getById(req.params.id);
             const collateral = Collaterals.getByContractId(req.params.id);
-            // const relative = Relative.getById(req.params.id);
-            const paymentSchedules = PaymentSchedules.getByContractId(req.params.id);
-            const transactions = Transactions.getByContractId(req.params.id);
+            const relative = Relative.getByIdCustomer(contract.id_customer);
+            const paymentSchedules = PaymentSchedules.getPaymentHasPaid(req.params.id);
+            const transactions = Transactions.getHistoryReducePrincipal(req.params.id);
             const customer = Customer.getById(contract.id_customer);
-            res.json({ contract, collateral, paymentSchedules, transactions, customer });
+            res.json({ contract, collateral, relative, paymentSchedules, transactions, customer });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -101,6 +101,7 @@ const ContractController = {
                 return res.status(400).json({ error: 'Data is required' });
             }
 
+            dataContract.id_staff = dataStaff.id;
             const contract = Contract.create(dataContract);
             let dataCollateral = null;
             let dataRelatives = null;

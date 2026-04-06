@@ -25,7 +25,24 @@ const Contract = {
         return stmt.all();
     },
     getById: (id) => {
-        const sql = `SELECT * FROM contracts WHERE id = ?`;
+        const sql = `
+        SELECT c.code, 
+        c.loan_amount, 
+        c.interest_rate, 
+        c.start_date, 
+        c.end_date, 
+        c.payment_term, 
+        c.term_unit, 
+        c.total_periods, 
+        c.interest_type, 
+        c.id_customer,
+        c.created_at,
+        ct.name as contract_name,
+        s.name as staff_name
+        FROM contracts c
+        LEFT JOIN contracts_types ct ON c.id_contract_type = ct.id
+        LEFT JOIN staff s ON c.id_staff = s.id
+        WHERE c.id = ?`;
         const stmt = db.prepare(sql);
         return stmt.get(id);
     },
@@ -50,9 +67,9 @@ const Contract = {
         return stmt.all(id);
     },
     create: (data) => {
-        const sql = `INSERT INTO contracts (code, loan_amount, interest_rate, start_date, end_date, payment_term, term_unit,total_periods, interest_type, status, id_customer, id_contract_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO contracts (code, loan_amount, interest_rate, start_date, end_date, payment_term, term_unit,total_periods, interest_type, status, id_customer, id_contract_type, id_staff) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);
-        const resuilt = stmt.run(data.code, data.loan_amount, data.interest_rate, data.start_date, data.end_date, data.payment_term, data.term_unit, data.total_periods, data.interest_type, data.status, data.id_customer, data.id_contract_type);
+        const resuilt = stmt.run(data.code, data.loan_amount, data.interest_rate, data.start_date, data.end_date, data.payment_term, data.term_unit, data.total_periods, data.interest_type, data.status, data.id_customer, data.id_contract_type, data.id_staff);
         const id = resuilt.lastInsertRowid;
         return { id };
     },

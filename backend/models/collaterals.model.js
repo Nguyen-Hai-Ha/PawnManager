@@ -19,7 +19,7 @@ const Collaterals = {
             LEFT JOIN customers cu ON co.id_customer = cu.id
             LEFT JOIN images i ON c.id = i.id_collateral
             GROUP BY c.id`;
-            
+
         const stmt = db.prepare(sql);
         return stmt.all();
     },
@@ -59,9 +59,22 @@ const Collaterals = {
         return stmt.get(id);
     },
     getByContractId: (id) => {
-        const sql = `SELECT collaterals.*, collaterals_type.name as type_name, images.id as image_id, images.url as image_url FROM collaterals 
+        const sql = `
+        SELECT 
+        collaterals.code as code,
+        collaterals.name as name, 
+        collaterals.status as status,
+        collaterals.metadata as metadata,
+        collaterals_type.name as type_name,
+        (SELECT JSON_GROUP_ARRAY(
+            JSON_OBJECT(
+                'id', i.id,
+                'url', i.url
+            )
+        ) as images
+        FROM images i WHERE i.id_collateral = collaterals.id) as images
+        FROM collaterals 
         LEFT JOIN collaterals_type ON collaterals.id_collateral_type = collaterals_type.id
-        LEFT JOIN images ON collaterals.id = images.id_collateral
         WHERE id_contract = ?`;
         const stmt = db.prepare(sql);
         return stmt.all(id);

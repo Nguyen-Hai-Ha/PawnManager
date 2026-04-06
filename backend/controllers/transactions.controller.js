@@ -1,4 +1,4 @@
-const { Transactions, PaymentSchedules, Contract, Collaterals } = require('../models');
+const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory } = require('../models');
 const db = require('../config/database');
 
 const TransactionsController = {
@@ -135,6 +135,26 @@ const TransactionsController = {
                 id_staff: data.id_staff
             });
 
+            let oldHistoryInterestRate = null;
+            let newHistoryInterestRate = null;
+
+            if (newInterestRate > 0) {
+                oldHistoryInterestRate = contract.interest_rate;
+                newHistoryInterestRate = newInterestRate;
+            }
+
+            // Tạo lịch sử thay đổi
+            const contractHistory = ContractHistory.create({
+                id_transaction: transaction.id,
+                id_contract: id_contract,
+                old_principal: contract.loan_amount,
+                new_principal: contract.loan_amount - amount,
+                old_interest_rate: oldHistoryInterestRate,
+                new_interest_rate: newHistoryInterestRate,
+                other_fees: other_fees,
+                note: note
+            });
+
             // Tính Tỷ lệ giảm gốc
             const oldLoanAmount = contract.loan_amount;
             const newLoanAmount = oldLoanAmount - amount;
@@ -241,7 +261,7 @@ const TransactionsController = {
             // Cập nhật lại số tiền gốc của hợp đồng
             Contract.updateLoanAmount({ loan_amount: newLoanAmount, interest_rate: newInterestRate }, id_contract);
 
-            res.json({ transaction, current_schedule, msg: "Cập nhật gốc và lãi thành công" });
+            res.json({ transaction, current_schedule, contractHistory, msg: "Cập nhật gốc và lãi thành công" });
         });
 
         try {
@@ -280,7 +300,7 @@ const TransactionsController = {
             });
 
             // Cập nhật trạng thái của hợp đồng
-            Contract.updateStatus({ status: 'Đã Hoàn Tất' }, id_contract);
+            Contract.updateStatus({ status: 'Đã Tất Toán' }, id_contract);
 
             const collateral = Collaterals.getById(contract.id_collateral);
             if (collateral) {

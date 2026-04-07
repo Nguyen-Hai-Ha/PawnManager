@@ -91,6 +91,7 @@ const generateReceiptDoc = (data) => {
         collateral_metadata: formatCollateralMetadata(data.collateral_metadata),
         total_days: data.total_days,
         interest: data.interest.toLocaleString('vi-VN'),
+        interest_text: data.interest_text
     });
 
     const buf = doc.getZip().generate({
@@ -102,4 +103,34 @@ const generateReceiptDoc = (data) => {
     return { buf, fileName };
 };
 
-module.exports = { generateContractDoc, generateReceiptDoc };
+const generatePaymentReceiptDoc = (data) => {
+    const content = fs.readFileSync(
+        path.resolve(__dirname, "../templates/mau-phieu-thu-2026.doc"),
+        "binary"
+    );
+
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    });
+
+    doc.render({
+        full_name: data.Full_name,
+        phone: data.phone,
+        Address: data.Address,
+        Code: data.Code,
+        amount: (data.amount || 0).toLocaleString('vi-VN'),
+        amount_text: data.amount_text
+    });
+
+    const buf = doc.getZip().generate({
+        type: "nodebuffer",
+        compression: "DEFLATE",
+    });
+
+    const fileName = `BienLai_HĐ_${data.full_name}.docx`;
+    return { buf, fileName };
+};
+
+module.exports = { generateContractDoc, generateReceiptDoc, generatePaymentReceiptDoc };

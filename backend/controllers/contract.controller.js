@@ -1,6 +1,6 @@
 const { json } = require('express');
 const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer } = require('../models');
-const generateContractDoc = require('../services/DocumentService');
+const { generateContractDoc, generateReceiptDoc } = require('../services/DocumentService');
 const dayjs = require('dayjs');
 
 const ContractController = {
@@ -315,6 +315,38 @@ const ContractController = {
             const { id } = req.params;
             const contract = Contract.getDetailForPrint(id);
             const { buf, fileName } = generateContractDoc(contract);
+            res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+                'Content-Length': buf.length
+            });
+            res.send(buf);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    printReceipt: (req, res) => {
+        try {
+            const { id } = req.params;
+            const contract = Contract.getDetailForPrint(id);
+            const countDaysBetween = (startDate, endDate) => {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+
+                // Tính khoảng cách
+                const diffInMs = end - start;
+
+                // Đổi sang ngày (1 ngày = 24h * 60p * 60s * 1000ms)
+                return Math.round(diffInMs / (1000 * 60 * 60 * 24));
+            };
+
+            const total_days = countDaysBetween(contract.Start_date, contract.End_date);
+            contract.total_days = total_days;
+
+            const paymentSchedules = PaymentSchedules.getByContractId(id);
+            contract.interest = paymentSchedules.reduce((acc, item) => acc + item.interest_amount, 0);
+
+            const { buf, fileName } = generateReceiptDoc(contract);
             res.set({
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,

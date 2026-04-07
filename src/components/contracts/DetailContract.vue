@@ -10,10 +10,11 @@ const { closeDetailContract, formatCurrency } = detailContractStore;
 
 const activetabs = ref('Thông tin vay')
 const tabs = computed(() => [
-    { name: 'Thông tin vay', badge: null, icon: 'file-invoice' },
-    { name: 'Chi tiết đóng lãi', badge: detailContract.value?.paymentSchedules?.length || 0, icon: 'coins' },
-    { name: 'Lịch sử trả bớt gốc', badge: detailContract.value?.transactions?.length || 0, icon: 'history' },
-    { name: 'Tài sản cầm cố', badge: detailContract.value?.collateral?.length || 0, icon: 'motorcycle' },
+    { name: 'Thông tin vay', badge: null },
+    { name: 'Chi tiết đóng lãi', badge: detailContract.value?.paymentSchedules?.length || 0 },
+    { name: 'Lịch sử trả bớt gốc', badge: detailContract.value?.transactions?.length || 0 },
+    { name: 'Tài sản cầm cố', badge: detailContract.value?.collateral?.length || 0 },
+    { name: 'In hợp đồng', badge: null }
 ])
 
 const detail = computed(() => {
@@ -265,6 +266,27 @@ const detail = computed(() => {
                     </div>
                     <div v-else class="placeholder-content">
                         Chưa có tài sản cầm cố
+                    </div>
+                </div>
+
+                <div class="print-section" v-if="activetabs === 'In hợp đồng'">
+                    <div class="customer-subtitle">
+                        <font-awesome-icon icon="print" /> Tùy chọn in
+                    </div>
+                    <div class="print-section-content">
+                        <!-- Card 1 -->
+                        <div class="print-card">
+                            <font-awesome-icon class="icon-print" icon="file-contract" style="color: #1a7a6e;" />
+                            <h4>In hợp đồng chính</h4>
+                            <p>In hợp đồng cầm đồ tiêu chuẩn kèm điều khoản.</p>
+                        </div>
+                        
+                        <!-- Card 2 -->
+                        <div class="print-card">
+                            <font-awesome-icon class="icon-print" icon="receipt" style="color: #3498db;" />
+                            <h4>In biên nhận</h4>
+                            <p>In phiếu biên nhận giao nhận tiền và tài sản.</p>
+                        </div>
                     </div>
                 </div>
 

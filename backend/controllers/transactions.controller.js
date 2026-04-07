@@ -1,5 +1,7 @@
 const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory } = require('../models');
 const db = require('../config/database');
+const { RSVN } = require('read-vietnamese-number');
+const { generatePaymentReceiptDoc } = require('../services/DocumentService');
 
 const TransactionsController = {
     getAll: (req, res) => {
@@ -362,6 +364,26 @@ const TransactionsController = {
                 return res.status(400).json(result);
             }
             res.json(result);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    getReceiptToPrint: (req, res) => {
+        try {
+            const { id } = req.params;
+            const transaction = Transactions.getReceipToPrint(id);
+            const rsvn = new RSVN();
+            const amount_text = rsvn.read(transaction.amount) + " đồng";
+
+            transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
+
+            const { buf, fileName } = generatePaymentReceiptDoc(transaction);
+            res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+                'Content-Length': buf.length
+            });
+            res.send(buf);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

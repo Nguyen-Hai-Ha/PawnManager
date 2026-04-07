@@ -151,6 +151,36 @@ export const useInterestPayment = defineStore('interestPayment', () => {
         }
     };
 
+    const getReceiptToPrint = async (id) => {
+        try {
+            const response = await apiClient.get(`/transaction/receipt/${id}`);
+            // Xử lý file blob và buộc trình duyệt tải xuống
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
+            let fileName = 'Phieu_Thu_Lai_HĐ_'+detailContract.value?.customer?.name+'.doc';
+            const contentDisposition = response.headers['content-disposition'];
+            if (contentDisposition) {
+                const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (fileNameMatch && fileNameMatch.length === 2) {
+                    fileName = decodeURIComponent(fileNameMatch[1]);
+                }
+            }
+            
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            
+            // Dọn dẹp
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error fetching receipt:', error);
+        }
+    };
+
     return {
         //state
         paymentDetails, formDetails, loanDetails, historyPayment, showInterestModal,
@@ -162,6 +192,6 @@ export const useInterestPayment = defineStore('interestPayment', () => {
         openInterestModal, closeInterestModal, submitInterestPayment, formatCurrency,
 
         //fetch
-        fetchPaymentDetails, fetchContractDetails, fetchHistoryPayment,
+        fetchPaymentDetails, fetchContractDetails, fetchHistoryPayment, getReceiptToPrint
     }
 })

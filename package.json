@@ -21,6 +21,7 @@
     "bootstrap": "^5.3.8",
     "dayjs": "^1.11.20",
     "pinia": "^3.0.4",
+    "read-vietnamese-number": "^2.3.1",
     "v-money3": "^3.24.1",
     "vue": "^3.5.29",
     "vue-router": "^4.6.4"

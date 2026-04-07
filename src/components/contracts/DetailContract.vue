@@ -6,7 +6,7 @@ import { ref, computed } from 'vue';
 const detailContractStore = useDetailContractStore();
 
 const { detailContract, collateralmetadata, collateralImages } = storeToRefs(detailContractStore);
-const { closeDetailContract, formatCurrency, getContractPrint } = detailContractStore;
+const { closeDetailContract, formatCurrency, getContractPrint, getContractReceipt } = detailContractStore;
 
 const activetabs = ref('Thông tin vay')
 const tabs = computed(() => [
@@ -280,7 +280,7 @@ const detail = computed(() => {
                             <p>In hợp đồng cầm đồ tiêu chuẩn kèm điều khoản.</p>
                         </div>
                         
-                        <div class="print-card">
+                        <div class="print-card" v-if="detail.collateral.length > 0" @click="getContractReceipt(detail.contract?.id)">
                             <font-awesome-icon class="icon-print" icon="receipt" style="color: #3498db;" />
                             <h4>In biên nhận</h4>
                             <p>In phiếu biên nhận giao nhận tiền và tài sản.</p>

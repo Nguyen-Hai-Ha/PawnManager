@@ -66,4 +66,40 @@ const generateContractDoc = (data) => {
     return { buf, fileName };
 };
 
-module.exports = generateContractDoc;
+const generateReceiptDoc = (data) => {
+    const content = fs.readFileSync(
+        path.resolve(__dirname, "../templates/bien-ban-giao-nhan-tai-san.docx"),
+        "binary"
+    );
+
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    });
+
+    doc.render({
+        contract_code: data.Code,
+        full_name: data.full_name,
+        phone: data.phone,
+        loan_amount: (data.Loan_amount || 0).toLocaleString('vi-VN'),
+        start_date: data.Start_date,
+        end_date: data.End_date,
+        payment_term: data.Payment_term,
+        term_unit: data.Term_unit,
+        collateral_name: data.collateral_name,
+        collateral_metadata: formatCollateralMetadata(data.collateral_metadata),
+        total_days: data.total_days,
+        interest: data.interest.toLocaleString('vi-VN'),
+    });
+
+    const buf = doc.getZip().generate({
+        type: "nodebuffer",
+        compression: "DEFLATE",
+    });
+
+    const fileName = `BienBan_HĐ_${data.full_name}.docx`;
+    return { buf, fileName };
+};
+
+module.exports = { generateContractDoc, generateReceiptDoc };

@@ -99,6 +99,20 @@ const Transactions = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    getReceipToPrint: (id) => {
+        const sql = `SELECT 
+        t.amount as amount,
+        cu.name as Full_name,
+        cu.phone as phone,
+        cu.address as Address,
+        c.code as Code
+        FROM transactions t
+        LEFT JOIN customers cu ON t.id_customer = cu.id
+        LEFT JOIN contracts c ON t.id_contract = c.id
+        WHERE t.id = ?`
+        const stmt = db.prepare(sql);
+        return stmt.get(id);
     }
 }
 

@@ -6,7 +6,7 @@ import { ref, computed } from 'vue';
 const detailContractStore = useDetailContractStore();
 
 const { detailContract, collateralmetadata, collateralImages } = storeToRefs(detailContractStore);
-const { closeDetailContract, formatCurrency } = detailContractStore;
+const { closeDetailContract, formatCurrency, getContractPrint } = detailContractStore;
 
 const activetabs = ref('Thông tin vay')
 const tabs = computed(() => [
@@ -269,19 +269,17 @@ const detail = computed(() => {
                     </div>
                 </div>
 
-                <div class="print-section" v-if="activetabs === 'In hợp đồng'">
+                <div class="print-section" v-permission="['loans.print', 'pledge.print', 'repayment.print']" v-if="activetabs === 'In hợp đồng'">
                     <div class="customer-subtitle">
                         <font-awesome-icon icon="print" /> Tùy chọn in
                     </div>
                     <div class="print-section-content">
-                        <!-- Card 1 -->
-                        <div class="print-card">
+                        <div class="print-card" @click="getContractPrint(detail.contract?.id)">
                             <font-awesome-icon class="icon-print" icon="file-contract" style="color: #1a7a6e;" />
                             <h4>In hợp đồng chính</h4>
                             <p>In hợp đồng cầm đồ tiêu chuẩn kèm điều khoản.</p>
                         </div>
                         
-                        <!-- Card 2 -->
                         <div class="print-card">
                             <font-awesome-icon class="icon-print" icon="receipt" style="color: #3498db;" />
                             <h4>In biên nhận</h4>
@@ -289,7 +287,6 @@ const detail = computed(() => {
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- Footer -->

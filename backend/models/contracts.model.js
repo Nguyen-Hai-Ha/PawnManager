@@ -26,7 +26,9 @@ const Contract = {
     },
     getById: (id) => {
         const sql = `
-        SELECT c.code, 
+        SELECT 
+        c.id,
+        c.code, 
         c.loan_amount, 
         c.interest_rate, 
         c.start_date, 

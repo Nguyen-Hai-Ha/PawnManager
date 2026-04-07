@@ -60,10 +60,10 @@ const generateContractDoc = (data) => {
     });
 
     const fileName = `HopDong_${data.full_name}.docx`;
-    const outputPath = path.resolve(__dirname, `../output/${fileName}`);
-    fs.writeFileSync(outputPath, buf);
+    // const outputPath = path.resolve(__dirname, `../output/${fileName}`);
+    // fs.writeFileSync(outputPath, buf);
 
-    return outputPath;
+    return { buf, fileName };
 };
 
 module.exports = generateContractDoc;

@@ -73,7 +73,7 @@ const getProfitRatioByTypeName = (name) => {
             </div>
           </div>
           <div class="stat-icon icon-yellow">
-            <span>🪙</span>
+            <span><font-awesome-icon icon="fa-solid fa-credit-card" /></span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ const getProfitRatioByTypeName = (name) => {
             </div>
           </div>
           <div class="stat-icon icon-purple">
-            <span>🧑‍💼</span>
+            <span><font-awesome-icon icon="fa-solid fa-landmark" /></span>
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ const getProfitRatioByTypeName = (name) => {
             </div>
           </div>
           <div class="stat-icon icon-teal">
-            <span>🧮</span>
+            <span><font-awesome-icon icon="fa-solid fa-calculator" /></span>
           </div>
         </div>
       </div>
@@ -125,7 +125,7 @@ const getProfitRatioByTypeName = (name) => {
             </div>
           </div>
           <div class="stat-icon icon-teal-light">
-            <span>🐷</span>
+            <span style="color: #000;"><font-awesome-icon icon="fa-solid fa-piggy-bank" /></span>
           </div>
         </div>
       </div>
@@ -157,10 +157,7 @@ const getProfitRatioByTypeName = (name) => {
         </thead>
         <tbody>
           <tr v-for="item in summary.loanSummary" :key="item.id">
-            <td>
-              <span class="loan-icon" v-if="item.name === 'Cầm Đồ'">🖐️</span>
-              <span class="loan-icon" v-else-if="item.name === 'Tín Chấp'">🏦</span>
-              <span class="loan-icon" v-else-if="item.name === 'Trả Góp'">💰</span>
+            <td class="fw-bold">
               {{ item.name }}
             </td>
             <td>{{ item.count || 0 }}</td>

@@ -143,10 +143,10 @@ onMounted( async () => {
                             <td class="text-danger fw-bold" >
                                 -{{ transaction.id_transaction_type === 1 ? formatCurrency(transaction.amount) : 0 }}
                             </td>
-                            <td class="text-warning fw-bold" v-if="transaction.id_transaction_type === 4">
+                            <td class="th-value orange" v-if="transaction.id_transaction_type === 4">
                                 {{ formatCurrency(transaction.amount) || 0 }}
                             </td>
-                            <td class="text-warning fw-bold" v-else>
+                            <td class="th-value orange" v-else>
                                 {{ formatCurrency(transaction.principal_amount) || 0 }}
                             </td>
                             <td class="text-success fw-bold">{{ formatCurrency(transaction.interest_amount) || 0 }}</td>

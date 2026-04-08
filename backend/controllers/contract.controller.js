@@ -2,7 +2,7 @@ const { json } = require('express');
 const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer } = require('../models');
 const { generateContractDoc, generateReceiptDoc } = require('../services/DocumentService');
 const dayjs = require('dayjs');
-const { RSVN } = require('read-vietnamese-number');
+const  { doReadNumber }  = require('read-vietnamese-number');
 
 const ContractController = {
     getAll: (req, res) => {
@@ -347,8 +347,7 @@ const ContractController = {
             const paymentSchedules = PaymentSchedules.getByContractId(id);
             contract.interest = paymentSchedules.reduce((acc, item) => acc + item.interest_amount, 0);
 
-            const rsvn = new RSVN();
-            const interestText = rsvn.read(contract.interest) + " đồng";
+            const interestText = doReadNumber(String(contract.interest)) + " đồng";
 
             contract.interest_text = interestText.charAt(0).toUpperCase() + interestText.slice(1);
 

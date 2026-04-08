@@ -1,6 +1,6 @@
 const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory } = require('../models');
 const db = require('../config/database');
-const { RSVN } = require('read-vietnamese-number');
+const { doReadNumber } = require('read-vietnamese-number');
 const { generatePaymentReceiptDoc } = require('../services/DocumentService');
 
 const TransactionsController = {
@@ -372,8 +372,7 @@ const TransactionsController = {
         try {
             const { id } = req.params;
             const transaction = Transactions.getReceipToPrint(id);
-            const rsvn = new RSVN();
-            const amount_text = rsvn.read(transaction.amount) + " đồng";
+            const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
 
             transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
 

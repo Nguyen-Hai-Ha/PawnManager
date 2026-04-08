@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS payment_schedules(
     interest_amount REAL NOT NULL,
     is_paid INTEGER DEFAULT 0,
     notified_overdue_at DATETIME NULL,
+    notified_due_today_at DATETIME NULL,
     id_contract INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_contract) REFERENCES contracts(id)
@@ -181,7 +182,9 @@ INSERT OR IGNORE INTO settings (key, value) VALUES
 ('emailEnabled', 'false'),
 ('zaloEnabled', 'true'),
 ('reminderDays', '3'),
-('reminderTime', '08:00');
+('reminderTime', '08:00'),
+('email_sender', ''),
+('email_password', '');
 
 INSERT OR IGNORE INTO permissions (name) VALUES
 ('loans.create'),

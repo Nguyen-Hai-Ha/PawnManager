@@ -159,6 +159,18 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="slider"></span>
               </label>
             </div>
+            <div class="toggle-list">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-label">📧 Email</span>
+                <span class="toggle-desc">Gửi thông báo qua email</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" v-model="settings.emailEnabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
           </div>
         </div>
 
@@ -171,29 +183,6 @@ function closeCategoryModal() { showCategoryModal.value = false }
               <p class="card-desc">Cấu hình phương thức gửi thông báo</p>
             </div>
           </div>
-          <div class="toggle-list">
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <span class="toggle-label">📧 Email</span>
-                <span class="toggle-desc">Gửi thông báo qua email</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" v-model="settings.emailEnabled">
-                <span class="slider"></span>
-              </label>
-            </div>
-            <!-- <div class="toggle-row">
-              <div class="toggle-info">
-                <span class="toggle-label">ZALO ZNS</span>
-                <span class="toggle-desc">Gửi tin nhắn Zalo ZNS đến khách hàng</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" v-model="settings.zaloEnabled">
-                <span class="slider"></span>
-              </label>
-            </div> -->
-          </div>
-
           <div class="form-section">
             <div class="form-row">
               <div class="form-group">
@@ -204,6 +193,17 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <label class="form-label">Giờ gửi nhắc</label>
                 <input type="time" class="form-input" v-model="settings.reminderTime">
               </div>
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="form-group">
+              <label class="form-label">Email (Dùng để gửi thông báo)</label>
+              <input type="email" class="form-input" v-model="settings.email_sender" placeholder="Chưa có mail">
+            </div>
+            <div class="form-group" style="margin-top: 10px;">
+              <label class="form-label">Mật khẩu ứng dụng (App Password)</label>
+              <input type="password" class="form-input" v-model="settings.email_password" placeholder="*** **** **** ****">
+              <p class="toggle-desc">Mật khẩu gồm 16 ký tự tạo từ phần bảo mật tài khoản Google.</p>
             </div>
           </div>
 

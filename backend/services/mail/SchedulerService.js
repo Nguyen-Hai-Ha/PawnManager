@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const { getSettingsInternal } = require('./SettingsService');
-const { sendOverDueZaloZNS, sendOverDueEmail } = require('../notificationService');
+const { sendOverDueEmail, sendDueTodayEmail } = require('../notificationService');
 const db = require('../../config/database');
 
 const startScheduler = () => {
@@ -38,20 +38,25 @@ const startScheduler = () => {
         }
 
         // ── Thông báo đến hạn hôm nay ──
-        // if (s.dueToday) {
-        //     const dueSchedules = db.prepare(`
-        //         SELECT ps.*,
-        //         c.code as contract_code,
-        //         cu.name as customer_name,
-        //         cu.email as customer_email
-        //         FROM payment_schedules ps
-        //         LEFT JOIN contracts c ON ps.id_contract = c.id
-        //         LEFT JOIN customers cu ON c.id_customer = cu.id
-        //         WHERE ps.is_paid = 0 AND ps.expected_date = DATE('now', '+' || ? || ' days')
-        //         AND ps.notified_due_today_at IS NULL
-        //     `).all(s.reminderDays);
+        if (s.dueToday) {
+            const dueSchedules = db.prepare(`
+                SELECT ps.*,
+                c.code as contract_code,
+                cu.name as customer_name,
+                cu.email as customer_email
+                FROM payment_schedules ps
+                LEFT JOIN contracts c ON ps.id_contract = c.id
+                LEFT JOIN customers cu ON c.id_customer = cu.id
+                WHERE ps.is_paid = 0 AND ps.expected_date = ?
+                AND ps.notified_due_today_at IS NULL
+            `).all(today);
             
-        // }
+            for (const schedule of dueSchedules) {
+                // if (s.zaloEnabled) await sendDueTodayZaloZNS(schedule);
+                if (s.emailEnabled) await sendDueTodayEmail(schedule);
+                db.prepare(`UPDATE payment_schedules SET notified_due_today_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
+            }
+        }
     });
 
     console.log('Scheduler started');

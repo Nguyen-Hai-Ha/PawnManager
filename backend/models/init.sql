@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS contracts_types (
 CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
     phone TEXT NOT NULL,
     address TEXT,
     cccd TEXT,
@@ -82,6 +83,7 @@ CREATE TABLE IF NOT EXISTS payment_schedules(
     principal_amount REAL NOT NULL,
     interest_amount REAL NOT NULL,
     is_paid INTEGER DEFAULT 0,
+    notified_overdue_at DATETIME NULL,
     id_contract INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_contract) REFERENCES contracts(id)

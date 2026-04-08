@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@emailjs/nodejs": "^5.0.2",
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-brands-svg-icons": "^7.2.0",
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
@@ -22,6 +23,7 @@
     "bootstrap": "^5.3.8",
     "dayjs": "^1.11.20",
     "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.5",
     "pinia": "^3.0.4",
     "read-vietnamese-number": "^2.3.1",
     "v-money3": "^3.24.1",

@@ -182,7 +182,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="slider"></span>
               </label>
             </div>
-            <div class="toggle-row">
+            <!-- <div class="toggle-row">
               <div class="toggle-info">
                 <span class="toggle-label">ZALO ZNS</span>
                 <span class="toggle-desc">Gửi tin nhắn Zalo ZNS đến khách hàng</span>
@@ -191,7 +191,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <input type="checkbox" v-model="settings.zaloEnabled">
                 <span class="slider"></span>
               </label>
-            </div>
+            </div> -->
           </div>
 
           <div class="form-section">

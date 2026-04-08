@@ -1,5 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+import { storeToRefs } from 'pinia'
+import { ref, onMounted } from 'vue'
 
 const activeTab = ref('notifications')
 
@@ -9,6 +11,14 @@ const tabs = [
   { key: 'categories',   label: 'Danh mục tài sản',    icon: 'fa-solid fa-tags' },
 ]
 
+const settingsStore = useSettingsStore()
+const { settings } = storeToRefs(settingsStore)
+const { getSettings, updateSettings } = settingsStore
+
+onMounted(() => {
+  getSettings()
+})
+
 /* ── Notification mock state ── */
 const notifSettings = ref({
   overdue:        true,
@@ -16,7 +26,7 @@ const notifSettings = ref({
   newContract:    false,
   liquidation:    true,
   emailEnabled:   false,
-  smsEnabled:     true,
+  zaloEnabled:     true,
   reminderDays:   3,
   reminderTime:   '08:00',
 })
@@ -115,7 +125,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="toggle-desc">Thông báo khi hợp đồng không được thanh toán đúng hạn</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="notifSettings.overdue">
+                <input type="checkbox" v-model="settings.overdue">
                 <span class="slider"></span>
               </label>
             </div>
@@ -125,7 +135,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="toggle-desc">Nhắc nhở các hợp đồng đến kỳ thu lãi trong ngày</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="notifSettings.dueToday">
+                <input type="checkbox" v-model="settings.dueToday">
                 <span class="slider"></span>
               </label>
             </div>
@@ -135,7 +145,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="toggle-desc">Thông báo khi có hợp đồng mới được tạo</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="notifSettings.newContract">
+                <input type="checkbox" v-model="settings.newContract">
                 <span class="slider"></span>
               </label>
             </div>
@@ -145,7 +155,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="toggle-desc">Thông báo khi có tài sản được thanh lý</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="notifSettings.liquidation">
+                <input type="checkbox" v-model="settings.liquidation">
                 <span class="slider"></span>
               </label>
             </div>
@@ -168,17 +178,17 @@ function closeCategoryModal() { showCategoryModal.value = false }
                 <span class="toggle-desc">Gửi thông báo qua email</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="notifSettings.emailEnabled">
+                <input type="checkbox" v-model="settings.emailEnabled">
                 <span class="slider"></span>
               </label>
             </div>
             <div class="toggle-row">
               <div class="toggle-info">
-                <span class="toggle-label">📱 SMS</span>
-                <span class="toggle-desc">Gửi tin nhắn SMS đến khách hàng</span>
+                <span class="toggle-label">ZALO ZNS</span>
+                <span class="toggle-desc">Gửi tin nhắn Zalo ZNS đến khách hàng</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="notifSettings.smsEnabled">
+                <input type="checkbox" v-model="settings.zaloEnabled">
                 <span class="slider"></span>
               </label>
             </div>
@@ -188,17 +198,17 @@ function closeCategoryModal() { showCategoryModal.value = false }
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Nhắc trước (ngày)</label>
-                <input type="number" class="form-input" v-model="notifSettings.reminderDays" min="1" max="30">
+                <input type="number" class="form-input" v-model="settings.reminderDays" min="1" max="30">
               </div>
               <div class="form-group">
                 <label class="form-label">Giờ gửi nhắc</label>
-                <input type="time" class="form-input" v-model="notifSettings.reminderTime">
+                <input type="time" class="form-input" v-model="settings.reminderTime">
               </div>
             </div>
           </div>
 
           <div class="card-actions">
-            <button class="btn-save">
+            <button class="btn-save" @click="updateSettings(settings)">
               <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Lưu cài đặt
             </button>
           </div>

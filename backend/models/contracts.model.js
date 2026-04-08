@@ -59,7 +59,8 @@ const Contract = {
                         'amount', CAST(t.amount AS INTEGER),
                         'created_at', DATE(t.created_at)
                     )
-                ) as payment_history
+                ) as payment_history,
+                t.id as transaction_id
             FROM payment_schedules ps
             LEFT JOIN transactions t ON ps.id = t.id_schedule
             WHERE ps.id_contract = ?

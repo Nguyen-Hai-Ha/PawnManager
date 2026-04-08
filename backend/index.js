@@ -7,6 +7,7 @@ const router = require('./routes/index');
 const sqlite3 = require('./config/database');
 const models = require('./models/index');
 const cookieParser = require('cookie-parser');
+const { startScheduler } = require('./services/mail/SchedulerService');
 
 // CORS configuration
 const corsOptions = {
@@ -72,3 +73,5 @@ function startServer() {
 }
 
 startServer();
+// chạy đúng 1 lần khi mở app
+startScheduler();

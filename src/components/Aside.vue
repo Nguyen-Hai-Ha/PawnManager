@@ -50,6 +50,12 @@
                         <font-awesome-icon icon="fa-solid fa-file-invoice-dollar" />Quản Lý Thu Chi
                     </router-link>
                 </li>
+
+                <li v-permission="'setting.read'">
+                    <router-link to="/admin/settings" active-class="active">
+                        <font-awesome-icon icon="fa-solid fa-gears" />Cấu Hình Hệ Thống
+                    </router-link>
+                </li>
             </ul>
         </nav>
     </aside>

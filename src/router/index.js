@@ -6,6 +6,7 @@ import PledgesView from "@/views/admin/PledgesView.vue";
 import AssetsView from "@/views/admin/AssetsView.vue";
 import StaffView from "@/views/admin/StaffView.vue";
 import TransactionView from "@/views/admin/TransactionView.vue";
+import SettingsView from "@/views/admin/SettingsView.vue";
 import LoginView from "@/views/LoginView.vue";
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -57,6 +58,11 @@ const routes = [
     path: '/admin/transactions',
     name: 'AdminTransactions',
     component: TransactionView
+  },
+  {
+    path: '/admin/settings',
+    name: 'AdminSettings',
+    component: SettingsView
   },
   {
     path: '/',

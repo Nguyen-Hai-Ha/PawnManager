@@ -2,6 +2,7 @@ const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
 const fs = require("fs");
 const path = require("path");
+const dayjs = require("dayjs");
 
 const formatCollateralMetadata = (metadataString) => {
     try {
@@ -42,6 +43,7 @@ const generateContractDoc = (data) => {
         address: data.address,
         birth_date: data.birth_date,
         loan_amount: data.Loan_amount.toLocaleString('vi-VN'),
+        amount_raw: Number(data.Loan_amount || 0),
         interest_rate: data.Interest_rate,
         start_date: data.Start_date,
         end_date: data.End_date,
@@ -78,11 +80,17 @@ const generateReceiptDoc = (data) => {
         linebreaks: true,
     });
 
+    const now = dayjs();
+
+    const day = now.format("DD");
+    const month = now.format("MM");
+    const year = now.format("YYYY");
+
     doc.render({
         contract_code: data.Code,
         full_name: data.full_name,
         phone: data.phone,
-        loan_amount: (data.Loan_amount || 0).toLocaleString('vi-VN'),
+        loan_amount: (data.Loan_amount || 0).toLocaleString('vi-VN')  + " đồng",
         start_date: data.Start_date,
         end_date: data.End_date,
         payment_term: data.Payment_term,
@@ -91,7 +99,10 @@ const generateReceiptDoc = (data) => {
         collateral_metadata: formatCollateralMetadata(data.collateral_metadata),
         total_days: data.total_days,
         interest: data.interest.toLocaleString('vi-VN'),
-        interest_text: data.interest_text
+        interest_text: data.interest_text,
+        day: day,
+        month: month,
+        year: year
     });
 
     const buf = doc.getZip().generate({
@@ -105,7 +116,7 @@ const generateReceiptDoc = (data) => {
 
 const generatePaymentReceiptDoc = (data) => {
     const content = fs.readFileSync(
-        path.resolve(__dirname, "../templates/mau-phieu-thu-2026.doc"),
+        path.resolve(__dirname, "../templates/mau-phieu-thu-2026.docx"),
         "binary"
     );
 
@@ -115,13 +126,22 @@ const generatePaymentReceiptDoc = (data) => {
         linebreaks: true,
     });
 
+    const now = dayjs();
+
+    const day = now.format("DD");
+    const month = now.format("MM");
+    const year = now.format("YYYY");
+
     doc.render({
         full_name: data.Full_name,
         phone: data.phone,
         Address: data.Address,
         Code: data.Code,
-        amount: (data.amount || 0).toLocaleString('vi-VN'),
-        amount_text: data.amount_text
+        amount: (data.amount || 0).toLocaleString('vi-VN')  + " đồng",
+        amount_text: data.amount_text,
+        day: day,
+        month: month,
+        year: year
     });
 
     const buf = doc.getZip().generate({
@@ -130,6 +150,9 @@ const generatePaymentReceiptDoc = (data) => {
     });
 
     const fileName = `BienLai_HĐ_${data.full_name}.docx`;
+    // const outputPath = path.resolve(__dirname, `../output/${fileName}`);
+    // fs.writeFileSync(outputPath, buf);
+    
     return { buf, fileName };
 };
 

@@ -22,6 +22,7 @@ const pageTitles = {
   'AdminAssets': 'Quản Lý Tài Sản',
   'AdminStaff': 'Quản Lý Nhân Viên',
   'AdminTransactions': 'Quản Lý Thu Chi',
+  'AdminSettings': 'Cấu hình hệ thống',
 };
 
 const pageTitle = computed(() => pageTitles[route.name] || '');

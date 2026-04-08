@@ -117,7 +117,6 @@ export const useInterestPayment = defineStore('interestPayment', () => {
                     item.display_history = historyArr
                         .map(p => `${formatCurrency(p.amount)} - (${p.created_at})`)
                         .join(', ');
-
                     return item;
                 });
             }
@@ -125,6 +124,8 @@ export const useInterestPayment = defineStore('interestPayment', () => {
             formDetails.value.id_contract = response.data.contract.id;
             formDetails.value.customer_name = response.data.customer.name;
             formDetails.value.payment_amount = schedule.value?.remaining_amount;
+
+            console.log('id transaction:', paymentDetails?.value?.display_history)
 
             await fetchContractDetails(id);
             await fetchHistoryPayment(id);
@@ -153,14 +154,14 @@ export const useInterestPayment = defineStore('interestPayment', () => {
 
     const getReceiptToPrint = async (id) => {
         try {
-            const response = await apiClient.get(`/transaction/receipt/${id}`);
+            const response = await apiClient.get(`/transaction/receipt/${id}`, { responseType: 'blob' });
             // Xử lý file blob và buộc trình duyệt tải xuống
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
             
             // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
-            let fileName = 'Phieu_Thu_Lai_HĐ_'+detailContract.value?.customer?.name+'.doc';
+            let fileName = 'Phieu_Thu_Lai_HĐ_' + paymentDetails.value?.customer?.name + '.docx';
             const contentDisposition = response.headers['content-disposition'];
             if (contentDisposition) {
                 const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);

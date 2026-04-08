@@ -81,7 +81,7 @@ export const useDetailContractStore = defineStore('detailContract', () => {
             link.href = url;
             
             // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
-            let fileName = 'Hop_Dong_'+detailContract.value?.customer?.name+'.doc';
+            let fileName = 'Hop_Dong_'+detailContract.value?.customer?.name+'.docx';
             const contentDisposition = response.headers['content-disposition'];
             if (contentDisposition) {
                 const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
@@ -113,7 +113,7 @@ export const useDetailContractStore = defineStore('detailContract', () => {
             link.href = url;
             
             // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
-            let fileName = 'Bien_Nhan_HĐ_'+detailContract.value?.customer?.name+'.doc';
+            let fileName = 'Bien_Nhan_HĐ_'+detailContract.value?.customer?.name+'.docx';
             const contentDisposition = response.headers['content-disposition'];
             if (contentDisposition) {
                 const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);

@@ -12,7 +12,7 @@ const finalSettlementStore = useFinalSettlementStore();
 
 
 const { paymentDetails, formDetails, loanDetails, historyPayment } = storeToRefs(store);
-const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
+const { formatCurrency, closeInterestModal, submitInterestPayment, getReceiptToPrint } = store;
 
 const { openReducePrincipalModal } = reducePrincipalStore;
 const { openFinalModal } = finalSettlementStore;
@@ -74,7 +74,7 @@ const moneyConfig = {
                                 <td class="text-danger fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
                                 <td class="text-success fw-bold">{{ formatCurrency(item.paid_amount) }}</td>
                                 <td class="text-warning fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
-                                <td><span class="text-blue">{{ item.display_history }}</span></td>
+                                <td><span class="text-blue" @click="getReceiptToPrint(item.transaction_id)" v-permission="['loans.print', 'pledge.print', 'repayment.print']" style="cursor: pointer;">{{ item.display_history }}</span></td>
                             </tr>
                         </tbody>
                     </table>

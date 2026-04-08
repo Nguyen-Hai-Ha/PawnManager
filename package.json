@@ -20,6 +20,7 @@
     "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
     "dayjs": "^1.11.20",
+    "node-cron": "^4.2.1",
     "pinia": "^3.0.4",
     "read-vietnamese-number": "^2.3.1",
     "v-money3": "^3.24.1",

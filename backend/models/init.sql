@@ -163,6 +163,24 @@ CREATE TABLE IF NOT EXISTS contract_history(
     FOREIGN KEY (id_transaction) REFERENCES transactions(id)
 );
 
+CREATE TABLE IF NOT EXISTS settings(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT UNIQUE NOT NULL,
+    value TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT OR IGNORE INTO settings (key, value) VALUES
+('overdue', 'true'),
+('dueToday', 'true'),
+('newContract', 'false'),
+('liquidation', 'true'),
+('emailEnabled', 'false'),
+('zaloEnabled', 'true'),
+('reminderDays', '3'),
+('reminderTime', '08:00');
+
 INSERT OR IGNORE INTO permissions (name) VALUES
 ('loans.create'),
 ('loans.read'),

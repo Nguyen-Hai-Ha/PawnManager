@@ -152,7 +152,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
             <div class="toggle-row">
               <div class="toggle-info">
                 <span class="toggle-label">Thanh lý tài sản</span>
-                <span class="toggle-desc">Thông báo khi có tài sản được thanh lý</span>
+                <span class="toggle-desc">Thông báo thanh lý tài sản đến hợp đồng quá hạn</span>
               </div>
               <label class="switch">
                 <input type="checkbox" v-model="settings.liquidation">

@@ -47,6 +47,8 @@ const startScheduler = () => {
             const dueSchedules = db.prepare(`
                 SELECT 
                 ps.id,
+                ps.expected_date,
+                COALESCE((ps.interest_amount + ps.principal_amount), 0) as interest_amount,
                 c.code as contract_code,
                 cu.name as customer_name,
                 cu.email as customer_email,
@@ -65,9 +67,61 @@ const startScheduler = () => {
                 db.prepare(`UPDATE payment_schedules SET notified_due_today_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
             }
         }
-    });
 
-    console.log('Scheduler started');
+        // ── Thông báo Hợp đồng mới ──
+        if (s.newContract) {
+            const newContracts = db.prepare(`
+                SELECT 
+                c.code as contract_code,
+                c.loan_amount,
+                c.start_date,
+                c.end_date,
+                c.created_at,
+                cu.name as customer_name,
+                col.name as asset_name
+                FROM contracts c
+                LEFT JOIN customers cu ON c.id_customer = cu.id
+                LEFT JOIN collaterals col ON c.id = col.id_contract
+                WHERE DATE(c.created_at) = ?
+                AND c.notified_new_at IS NULL
+            `).all(today);
+            
+            for (const contract of newContracts) {
+                if (s.emailEnabled) await sendNewContractToAdminEmail(contract);
+                db.prepare(`UPDATE contracts SET notified_new_at = CURRENT_TIMESTAMP WHERE id = ?`).run(contract.id);
+            }
+        }
+
+        // ── Thông báo thanh lý tài sản sau 7 ngày quá hạn ──
+        if (s.liquidation) {
+            const liquidation = db.prepare(`
+                SELECT
+                col.id,
+                col.name as asset_name,
+                c.code as contract_code,
+                cu.name as customer_name,
+                cu.email as customer_email,
+                MIN(ps.expected_date) as overdue_date,
+                c.loan_amount,
+                COALESCE((SELECT SUM(principal_amount + interest_amount) FROM payment_schedules WHERE id_contract = c.id AND is_paid = 0), 0) as total_debt
+                FROM collaterals col
+                LEFT JOIN contracts c ON col.id_contract = c.id
+                LEFT JOIN customers cu ON c.id_customer = cu.id
+                LEFT JOIN payment_schedules ps ON c.id = ps.id_contract
+                WHERE col.status = 'Đang Cầm'
+                AND col.notified_liquidation_at IS NULL
+                AND ps.is_paid = 0
+                AND DATE(ps.expected_date, '+7 days') <= ?
+                GROUP BY col.id
+                `).all(today);
+
+            for (const item of liquidation) {
+                if (s.emailEnabled) await sendLiquidationEmail(item);
+                if (s.emailEnabled) await sendLiquidationForAdminEmail(item);
+                db.prepare(`UPDATE collaterals SET notified_liquidation_at = CURRENT_TIMESTAMP, status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id);
+            }
+        }
+    });
 }
 
 module.exports = { startScheduler };

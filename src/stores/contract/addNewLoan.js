@@ -288,7 +288,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
                 code: codeAsset.value,
                 name: asset.value.name,
                 metadata: JSON.stringify(asset.value.metadata),
-                status: 'Đang cầm',
+                status: 'Đang Cầm',
                 id_collateral_type: asset.value.id_type
             };
             formData.append('collateral', JSON.stringify(collateralData));

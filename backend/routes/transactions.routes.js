@@ -14,7 +14,7 @@ router.post('/reduce-principal', verifyToken, hasPermission(['loans.reduce_princ
 router.post('/final-settlement', verifyToken, hasPermission(['loans.final_settlement', 'pledge.final_settlement', 'repayment.final_settlement']), TransactionsController.finalsettlement);
 router.post('/liquidation', verifyToken, hasPermission('collateral.liquidation'), TransactionsController.liquidation);
 
-router.get('/receipt/:id', verifyToken, hasPermission(['loans.print', 'pledge.print', 'repayment.print']), TransactionsController.getReceiptToPrint);
+// router.get('/receipt/:id', verifyToken, hasPermission(['loans.print', 'pledge.print', 'repayment.print']), TransactionsController.getReceiptToPrint);
 router.delete('/:id', verifyToken, hasPermission('transaction.delete'), TransactionsController.delete);
 
 module.exports = router;

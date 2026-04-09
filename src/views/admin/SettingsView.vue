@@ -3,6 +3,8 @@ import { useSettingsStore } from '@/stores/settings'
 import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 
+import AddNewTemplate from '@/components/settings/AddNewTemplate.vue'
+
 const activeTab = ref('notifications')
 
 const tabs = [
@@ -12,11 +14,12 @@ const tabs = [
 ]
 
 const settingsStore = useSettingsStore()
-const { settings } = storeToRefs(settingsStore)
-const { getSettings, updateSettings } = settingsStore
+const { settings, showAddTemplateModal, templates } = storeToRefs(settingsStore)
+const { getSettings, updateSettings, openAddTemplateModal, closeAddTemplateModal, getAllTemplates } = settingsStore
 
 onMounted(() => {
   getSettings()
+  getAllTemplates()
 })
 
 /* ── Notification mock state ── */
@@ -259,40 +262,33 @@ function closeCategoryModal() { showCategoryModal.value = false }
       <div class="section-toolbar">
         <div class="toolbar-left">
           <h2 class="section-title">Danh sách mẫu hợp đồng</h2>
-          <span class="count-badge">{{ contractTemplates.length }} mẫu</span>
+          <span class="count-badge">{{ templates.length }} mẫu</span>
         </div>
-        <button class="btn-add" @click="openAddTemplate">
+        <button class="btn-add" @click="openAddTemplateModal">
           <font-awesome-icon icon="fa-solid fa-plus" /> Thêm mẫu
         </button>
       </div>
 
       <div class="template-grid">
         <div
-          v-for="t in contractTemplates"
+          v-for="t in templates"
           :key="t.id"
           class="template-card"
-          :class="{ inactive: !t.active }"
         >
           <div class="template-top">
             <div class="template-icon-wrap">
               <font-awesome-icon icon="fa-solid fa-file-contract" class="template-icon" />
             </div>
-            <span class="template-badge" :class="t.type === 'Cầm Đồ' ? 'badge-teal' : t.type === 'Tín Chấp' ? 'badge-purple' : 'badge-orange'">
-              {{ t.type }}
-            </span>
           </div>
-          <h3 class="template-name">{{ t.name }}</h3>
-          <p class="template-date">Cập nhật: {{ t.updatedAt }}</p>
+          <h3 class="template-name">{{ t.name_file }}</h3>
+          <p class="template-date">Cập nhật: {{ t.updated_at }}</p>
           <div class="template-status">
-            <span class="status-dot" :class="t.active ? 'dot-green' : 'dot-gray'"></span>
+            <span class="status-dot" :class="t.active ?'dot-green' : 'dot-gray'"></span>
             {{ t.active ? 'Đang sử dụng' : 'Không sử dụng' }}
           </div>
           <div class="template-actions">
             <button class="btn-icon-action text-teal" title="Chỉnh sửa" @click="openEditTemplate(t)">
               <font-awesome-icon icon="fa-solid fa-pen-to-square" />
-            </button>
-            <button class="btn-icon-action text-blue" title="Xem trước">
-              <font-awesome-icon icon="fa-solid fa-eye" />
             </button>
             <button class="btn-icon-action text-orange" title="Tải xuống">
               <font-awesome-icon icon="fa-solid fa-download" />
@@ -301,7 +297,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
         </div>
 
         <!-- Add Placeholder Card -->
-        <div class="template-card add-card" @click="openAddTemplate">
+        <div class="template-card add-card" @click="openAddTemplateModal">
           <font-awesome-icon icon="fa-solid fa-plus" class="add-icon" />
           <p>Thêm mẫu mới</p>
         </div>
@@ -353,7 +349,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
                     <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                   </button>
                   <button class="btn-icon-action text-red" title="Xoá">
-                    <font-awesome-icon icon="fa-solid fa-trash" />
+                    <font-awesome-icon icon="fa-solid fa-trash-can" />
                   </button>
                 </div>
               </td>
@@ -389,45 +385,8 @@ function closeCategoryModal() { showCategoryModal.value = false }
     </div>
 
     <!-- ─── Modal: Template Form ─── -->
-    <div class="modal-overlay" v-if="showTemplateModal">
-      <div class="modal-box">
-        <div class="modal-header">
-          <h2>{{ editingTemplate?.id ? 'Chỉnh sửa mẫu' : 'Thêm mẫu hợp đồng' }}</h2>
-          <button class="modal-close" @click="closeTemplateModal">
-            <font-awesome-icon icon="fa-solid fa-xmark" />
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label">Tên mẫu</label>
-            <input type="text" class="form-input" placeholder="Nhập tên mẫu hợp đồng" v-model="editingTemplate.name">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Loại hợp đồng</label>
-            <select class="form-input" v-model="editingTemplate.type">
-              <option>Cầm Đồ</option>
-              <option>Tín Chấp</option>
-              <option>Trả Góp</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Trạng thái</label>
-            <div class="toggle-row no-border">
-              <span class="toggle-label">Đang sử dụng</span>
-              <label class="switch">
-                <input type="checkbox" v-model="editingTemplate.active">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" @click="closeTemplateModal">Hủy</button>
-          <button class="btn-save" @click="closeTemplateModal">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Lưu
-          </button>
-        </div>
-      </div>
+    <div class="modal-overlay" v-if="showAddTemplateModal">
+      <AddNewTemplate @close="closeAddTemplateModal"/>
     </div>
 
     <!-- ─── Modal: Category Form ─── -->

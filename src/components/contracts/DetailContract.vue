@@ -3,10 +3,12 @@ import { useDetailContractStore } from '@/stores/contract/detailContract';
 import { storeToRefs } from 'pinia';
 import { ref, computed } from 'vue';
 
+import SelectTemplate from '@/components/contracts/SelectTemplatePrint.vue';
+
 const detailContractStore = useDetailContractStore();
 
-const { detailContract, collateralmetadata, collateralImages } = storeToRefs(detailContractStore);
-const { closeDetailContract, formatCurrency, getContractPrint, getContractReceipt } = detailContractStore;
+const { detailContract, collateralmetadata, collateralImages, showSelectTemplate } = storeToRefs(detailContractStore);
+const { closeDetailContract, formatCurrency, getContractPrint, getContractReceipt, openSelectTemplate } = detailContractStore;
 
 const activetabs = ref('Thông tin vay')
 const tabs = computed(() => [
@@ -278,13 +280,13 @@ const detail = computed(() => {
                         <font-awesome-icon icon="print" /> Tùy chọn in
                     </div>
                     <div class="print-section-content">
-                        <div class="print-card" @click="getContractPrint(detail.contract?.id)">
+                        <div class="print-card" @click="openSelectTemplate()">
                             <font-awesome-icon class="icon-print" icon="file-contract" style="color: #1a7a6e;" />
                             <h4>In hợp đồng chính</h4>
                             <p>In hợp đồng cầm đồ tiêu chuẩn kèm điều khoản.</p>
                         </div>
                         
-                        <div class="print-card" v-if="detail.collateral.length > 0" @click="getContractReceipt(detail.contract?.id)">
+                        <div class="print-card" v-if="detail.collateral.length > 0" @click="openSelectTemplate()">
                             <font-awesome-icon class="icon-print" icon="receipt" style="color: #3498db;" />
                             <h4>In biên nhận</h4>
                             <p>In phiếu biên nhận giao nhận tiền và tài sản.</p>
@@ -305,6 +307,7 @@ const detail = computed(() => {
             <p>Đang tải dữ liệu...</p>
         </div>
     </div>
+    <SelectTemplate v-if="showSelectTemplate" />
 </template>
 
 <style scoped>

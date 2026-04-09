@@ -5,6 +5,8 @@ import apiClient from '@/plugins/axios'
 export const useDetailContractStore = defineStore('detailContract', () => {
     const detailContract = ref(null)
     const showDetailContract = ref(false);
+    const showSelectTemplate = ref(false);
+    const templates = ref({});
 
     const openDetailContract = (id) => {
         getDetailContract(id);
@@ -13,6 +15,14 @@ export const useDetailContractStore = defineStore('detailContract', () => {
 
     const closeDetailContract = () => {
         showDetailContract.value = false;
+    };
+
+    const openSelectTemplate = () => {
+        showSelectTemplate.value = true;
+    };
+
+    const closeSelectTemplate = () => {
+        showSelectTemplate.value = false;
     };
 
     const formatCurrency = (amount) => {
@@ -43,6 +53,11 @@ export const useDetailContractStore = defineStore('detailContract', () => {
         return images || [];
     })
 
+    const getAllTemplates = async () => {
+        const response = await apiClient.get('/settings/templates');
+        templates.value = response.data;
+    }
+
     const getDetailContract = async (id) => {
         try {
             const response = await apiClient.get(`/contract/${id}`);
@@ -70,10 +85,15 @@ export const useDetailContractStore = defineStore('detailContract', () => {
         }
     };
 
-    const getContractPrint = async (id) => {
+    const SelectTemplate = async (id_template) => {
+        closeSelectTemplate();
+        await getContractPrint(detailContract.value.contract.id, id_template);
+    }
+
+    const getContractPrint = async (id, id_template) => {
         try {
             // Thêm responseType: 'blob' để Axios hiểu đây là file nhị phân
-            const response = await apiClient.get(`/contract/${id}/print`, { responseType: 'blob' });
+            const response = await apiClient.get(`/contract/${id}/print`, { responseType: 'blob', params: { id_template } });
             
             // Xử lý file blob và buộc trình duyệt tải xuống
             const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -136,15 +156,15 @@ export const useDetailContractStore = defineStore('detailContract', () => {
 
     return {
         //state
-        showDetailContract, detailContract,
+        showDetailContract, detailContract, templates, showSelectTemplate,
 
         //computed
         collateralmetadata, collateralImages,
 
         //actions
-        openDetailContract, closeDetailContract, formatCurrency, 
+        openDetailContract, closeDetailContract, formatCurrency, openSelectTemplate, closeSelectTemplate, SelectTemplate,
 
         //fetch
-        getDetailContract, getContractPrint, getContractReceipt
+        getDetailContract, getContractPrint, getAllTemplates
     };
 });

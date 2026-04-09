@@ -329,7 +329,7 @@ const ContractController = {
     printReceipt: (req, res) => {
         try {
             const { id } = req.params;
-            const { id_template } = req.body;
+            const { id_template } = req.query;
             const template = Template.getById(id_template);
             const contract = Contract.getDetailForPrint(id);
             const countDaysBetween = (startDate, endDate) => {

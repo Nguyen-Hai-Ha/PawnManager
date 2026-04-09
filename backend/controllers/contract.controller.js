@@ -1,6 +1,6 @@
 const { json } = require('express');
-const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer } = require('../models');
-const { generateContractDoc, generateReceiptDoc } = require('../services/DocumentService');
+const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer, Template } = require('../models');
+const { generateContractDoc } = require('../services/DocumentService');
 const dayjs = require('dayjs');
 const  { doReadNumber }  = require('read-vietnamese-number');
 
@@ -311,24 +311,26 @@ const ContractController = {
             res.status(500).json({ error: error.message });
         }
     },
-    print: (req, res) => {
-        try {
-            const { id } = req.params;
-            const contract = Contract.getDetailForPrint(id);
-            const { buf, fileName } = generateContractDoc(contract);
-            res.set({
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
-                'Content-Length': buf.length
-            });
-            res.send(buf);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
+    // print: (req, res) => {
+    //     try {
+    //         const { id } = req.params;
+    //         const contract = Contract.getDetailForPrint(id);
+    //         const { buf, fileName } = generateContractDoc(contract);
+    //         res.set({
+    //             'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //             'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+    //             'Content-Length': buf.length
+    //         });
+    //         res.send(buf);
+    //     } catch (error) {
+    //         res.status(500).json({ error: error.message });
+    //     }
+    // },
     printReceipt: (req, res) => {
         try {
             const { id } = req.params;
+            const { id_template } = req.body;
+            const template = Template.getById(id_template);
             const contract = Contract.getDetailForPrint(id);
             const countDaysBetween = (startDate, endDate) => {
                 const start = new Date(startDate);
@@ -341,17 +343,28 @@ const ContractController = {
                 return Math.round(diffInMs / (1000 * 60 * 60 * 24));
             };
 
+            // số ngày
             const total_days = countDaysBetween(contract.Start_date, contract.End_date);
             contract.total_days = total_days;
 
+            // tổng lãi
             const paymentSchedules = PaymentSchedules.getByContractId(id);
             contract.interest = paymentSchedules.reduce((acc, item) => acc + item.interest_amount, 0);
 
+            // số tiền bằng chữ
             const interestText = doReadNumber(String(contract.interest)) + " đồng";
-
             contract.interest_text = interestText.charAt(0).toUpperCase() + interestText.slice(1);
 
-            const { buf, fileName } = generateReceiptDoc(contract);
+            // kiểu lãi
+            const Interest_type = contract.Interest_type === "percent*term" ? "Lãi suất định kỳ" : contract.Interest_type === "percent/term" ? "Lãi suất chia đều" : "Lãi suất hàng ngày";
+            contract.Interest_type = Interest_type;
+
+            // lãi suất
+            const Interest_rate = contract.Interest_type === "daily_amount" ? contract.Interest_rate.toLocaleString('vi-VN') + " đồng/ngày" : contract.Interest_rate + "%";
+
+            contract.Interest_rate = Interest_rate;
+
+            const { buf, fileName } = generateContractDoc(contract, template);
             res.set({
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,

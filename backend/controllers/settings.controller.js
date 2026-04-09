@@ -15,7 +15,8 @@ const SettingController = {
             const Templetas = {
                 name_file : req.body.name_file,
                 file_path : '/templates/' + req.file.filename,
-                active : req.body.active
+                active : req.body.active,
+                type : req.body.type
             }
 
             const template = Template.create(Templetas);

@@ -47,12 +47,15 @@ const startScheduler = () => {
         if (s.dueToday) {
             const dueSchedules = db.prepare(`
                 SELECT ps.*,
+                SELECT 
                 c.code as contract_code,
                 cu.name as customer_name,
                 cu.email as customer_email
+                cu.email as customer_email,
                 FROM payment_schedules ps
                 LEFT JOIN contracts c ON ps.id_contract = c.id
                 LEFT JOIN customers cu ON c.id_customer = cu.id
+                LEFT JOIN collaterals col ON c.id = col.id_contract
                 WHERE ps.is_paid = 0 AND ps.expected_date = ?
                 AND ps.notified_due_today_at IS NULL
             `).all(today);

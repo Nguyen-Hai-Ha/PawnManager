@@ -279,6 +279,21 @@ function closeCategoryModal() { showCategoryModal.value = false }
             <div class="template-icon-wrap">
               <font-awesome-icon icon="fa-solid fa-file-contract" class="template-icon" />
             </div>
+            <div class="template-badge badge-teal" v-if="t.type === 'hop_dong_cam_do'" >
+              Cầm Đồ
+            </div>
+            <div class="template-badge badge-red" v-if="t.type === 'hop_dong_tin_chap'" >
+              Tín Chấp
+            </div>
+            <div class="template-badge badge-blue" v-if="t.type === 'hop_dong_tra_gop'" >
+              Trả Góp
+            </div>
+            <div class="template-badge badge-purple" v-if="t.type === 'phieu_thu'" >
+              Phiếu Thu
+            </div>
+            <div class="template-badge badge-orange" v-if="t.type === 'bien_nhan'" >
+              Biên Nhận
+            </div>
           </div>
           <h3 class="template-name">{{ t.name_file }}</h3>
           <p class="template-date">Cập nhật: {{ t.updated_at }}</p>

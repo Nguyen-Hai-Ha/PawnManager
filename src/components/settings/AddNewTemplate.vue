@@ -22,6 +22,16 @@ const { closeAddTemplateModal, handleFileUpload, createTemplate } = settingsStor
                 <input type="text" class="form-input" v-model="newTemplate.name_file" placeholder="Nhập tên mẫu hợp đồng" >
             </div>
             <div class="form-group">
+                <label class="form-label">Loại hợp đồng</label>
+                <select class="form-input" v-model="newTemplate.type" required>
+                    <option value="hop_dong_cam_do">Cầm Đồ</option>
+                    <option value="hop_dong_tin_chap">Tín Chấp</option>
+                    <option value="hop_dong_tra_gop">Trả Góp</option>
+                    <option value="phieu_thu">Phiếu Thu</option>
+                    <option value="bien_nhan">Biên Nhận</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label class="form-label">Trạng thái</label>
                 <div class="toggle-row no-border">
                 <span class="toggle-label">Đang sử dụng</span>

@@ -10,6 +10,7 @@ export const useSettingsStore = defineStore('settings', () => {
     const newTemplate = ref({
         name_file: '',
         file_path: '',
+        type: '',
         active: true
     })
     const fileInput = ref(null);
@@ -50,6 +51,7 @@ export const useSettingsStore = defineStore('settings', () => {
         const formData = new FormData();
         formData.append('name_file', newTemplate.value.name_file);
         formData.append('file_path', newTemplate.value.file_path);
+        formData.append('type', newTemplate.value.type);
         formData.append('active', newTemplate.value.active);
         try {
             const response = await apiClient.post('/settings/templates', formData, {

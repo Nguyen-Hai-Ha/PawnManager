@@ -2,21 +2,25 @@
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
+import { useDetailContractStore } from '@/stores/contract/detailContract';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { Money3Component as Money3 } from 'v-money3';
+import SelectTemplatePrint from '@/components/contracts/SelectTemplatePrint.vue';
 
 const store = useInterestPayment();
 const reducePrincipalStore = useReducePrincipalStore();
 const finalSettlementStore = useFinalSettlementStore();
-
+const detailContractStore = useDetailContractStore();
 
 const { paymentDetails, formDetails, loanDetails, historyPayment } = storeToRefs(store);
-const { formatCurrency, closeInterestModal, submitInterestPayment, getReceiptToPrint } = store;
+const { formatCurrency, closeInterestModal, submitInterestPayment } = store;
 
 const { openReducePrincipalModal } = reducePrincipalStore;
 const { openFinalModal } = finalSettlementStore;
 
+const { showSelectTemplate } = storeToRefs(detailContractStore);
+const { openSelectTemplate } = detailContractStore;
 
 const activeTab = ref('Chi tiết đóng lãi');
 const tabs = ['Chi tiết đóng lãi', 'Thông Tin hợp đồng', 'Lịch sử đóng lãi'];
@@ -34,6 +38,7 @@ const moneyConfig = {
 </script>
 
 <template>
+  <div>
     <div class="modal-interest-container" @click.self="closeInterestModal">
         <div class="modal-interest-content">
             <div class="modal-header">
@@ -74,7 +79,7 @@ const moneyConfig = {
                                 <td class="text-danger fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
                                 <td class="text-success fw-bold">{{ formatCurrency(item.paid_amount) }}</td>
                                 <td class="text-warning fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
-                                <td><span class="text-blue" @click="getReceiptToPrint(item.transaction_id)" v-permission="['loans.print', 'pledge.print', 'repayment.print']" style="cursor: pointer;">{{ item.display_history }}</span></td>
+                                <td><span class="text-blue" @click="openSelectTemplate('phieu_thu')" v-permission="['loans.print', 'pledge.print', 'repayment.print']" style="cursor: pointer;">{{ item.display_history }}</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -216,6 +221,8 @@ const moneyConfig = {
             </div>
         </div>
     </div>
+    <SelectTemplatePrint v-if="showSelectTemplate" />
+  </div>
 </template>
 <style scoped>
 @import url('@/assets/interest.css');

@@ -1,6 +1,5 @@
 const cron = require('node-cron');
 const { getSettingsInternal } = require('./SettingsService');
-const { sendOverDueEmail, sendDueTodayEmail } = require('../notificationService');
 const { sendOverDueEmail, sendDueTodayEmail, sendNewContractToAdminEmail, sendLiquidationEmail, sendLiquidationForAdminEmail } = require('../notificationService');
 const db = require('../../config/database');
 
@@ -46,12 +45,12 @@ const startScheduler = () => {
         // ── Thông báo đến hạn hôm nay ──
         if (s.dueToday) {
             const dueSchedules = db.prepare(`
-                SELECT ps.*,
                 SELECT 
+                ps.id,
                 c.code as contract_code,
                 cu.name as customer_name,
-                cu.email as customer_email
                 cu.email as customer_email,
+                col.name as asset_name
                 FROM payment_schedules ps
                 LEFT JOIN contracts c ON ps.id_contract = c.id
                 LEFT JOIN customers cu ON c.id_customer = cu.id

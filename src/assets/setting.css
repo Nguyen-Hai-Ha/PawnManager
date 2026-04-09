@@ -343,8 +343,8 @@ input:checked + .slider::before { transform: translateX(20px); }
 .badge-teal   { background: #ccfbf1; color: #0f766e; }
 .badge-purple { background: #ede9fe; color: #6d28d9; }
 .badge-orange { background: #ffedd5; color: #c2410c; }
-.badge-red { background: #ffedd5; color: #c2410c; }
-.badge-blue { background: #ffedd5; color: #c2410c; }
+.badge-red { background: #ffd5d5; color: #c20c0c; }
+.badge-blue { background: #d5ebff; color: #0c6ac2; }
 
 .template-name  { font-size: 0.95rem; font-weight: 600; color: #1e293b; margin: 0 0 6px; }
 .template-date  { font-size: 0.76rem; color: #94a3b8; margin: 0 0 10px; }

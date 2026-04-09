@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
 
 const detailContractStore = useDetailContractStore()
-const { templates } = storeToRefs(detailContractStore)
+const { templates, loading, filterTemplate } = storeToRefs(detailContractStore)
 const { getAllTemplates, closeSelectTemplate, SelectTemplate } = detailContractStore
 
 onMounted(() => {
@@ -56,7 +56,7 @@ const formatDate = (dateString) => {
 
         <div v-else class="template-list custom-scrollbar">
             <div 
-            v-for="template in templates" 
+            v-for="template in filterTemplate" 
             :key="template.id"
             class="template-item"
             @click="SelectTemplate(template.id)"

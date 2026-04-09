@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS collaterals(
     name TEXT NOT NULL,
     metadata TEXT DEFAULT '{}',
     status TEXT DEFAULT 'Đang cầm',
+    notified_liquidation_at DATETIME NULL,
     id_contract INTEGER NOT NULL,
     id_collateral_type INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -170,6 +171,14 @@ CREATE TABLE IF NOT EXISTS settings(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT UNIQUE NOT NULL,
     value TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS templates(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name_file TEXT NOT NULL,
+    file_path TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

@@ -13,21 +13,26 @@ const createDynamicTransporter = () => {
     });
 };
 
+// template thông báo khách hàng có hợp đồng quá hạn
 const getReminderOverdueTemplate = (data) => {
     return `
     <div style="font-family: system-ui, sans-serif, Arial; font-size: 14px; color: #333; padding: 20px 14px; background-color: #f5f5f5;">
         <div style="max-width: 600px; margin: auto; background-color: #fff;">
             <div style="text-align: center; background-color: #9e1b1bff; padding: 14px;">
                 <span style="font-size: 22px; color: #ffffff;">TH&Ocirc;NG B&Aacute;O QU&Aacute; HẠN Đ&Oacute;NG L&Atilde;I</span>
+    <!DOCTYPE html>
             </div>
             <div style="padding: 14px;">
                 <p>Xin ch&agrave;o qu&yacute; kh&aacute;ch ${data.customer_name}</p>
                 <p>Kỳ đ&oacute;ng l&atilde;i của hợp đồng ${data.contract_code} đ&atilde; qu&aacute; hạn, mong qu&yacute; kh&aacute;ch đọc được nội dung dung n&agrave;y để đến đ&oacute;ng l&atilde;i sớm nhất.</p>
                 <p>*Lưu &yacute; sau 7 ng&agrave;y, cửa h&agrave;ng sẽ tiến h&agrave;nh thanh l&yacute; t&agrave;i sản (Hợp đồng Cầm Đồ)</p>
                 <p>Th&acirc;n gửi ${data.customer_name}<br>Cửa h&agrave;ng Cầm Đồ...</p>
+            <div class="content">
             </div>
         </div>
     </div>
+    </body>
+    </html>
     `
 }
 

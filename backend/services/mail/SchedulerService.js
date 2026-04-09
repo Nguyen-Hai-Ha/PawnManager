@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const { getSettingsInternal } = require('./SettingsService');
 const { sendOverDueEmail, sendDueTodayEmail } = require('../notificationService');
+const { sendOverDueEmail, sendDueTodayEmail, sendNewContractToAdminEmail, sendLiquidationEmail, sendLiquidationForAdminEmail } = require('../notificationService');
 const db = require('../../config/database');
 
 const startScheduler = () => {
@@ -18,13 +19,18 @@ const startScheduler = () => {
         // ── Thông báo quá hạn ──
         if (s.overdue) {
             const overdueSchedules = db.prepare(`
-                SELECT ps.*,
+                SELECT 
+                ps.id,
+                ps.expected_date,
+                COALESCE((ps.interest_amount + ps.principal_amount), 0) as interest_amount,
                 c.code as contract_code,
                 cu.name as customer_name,
-                cu.email as customer_email
+                cu.email as customer_email,
+                col.name as asset_name
                 FROM payment_schedules ps
                 LEFT JOIN contracts c ON ps.id_contract = c.id
                 LEFT JOIN customers cu ON c.id_customer = cu.id
+                LEFT JOIN collaterals col ON c.id = col.id_contract
                 WHERE ps.is_paid = 0 AND ps.expected_date < ?
                 AND ps.notified_overdue_at IS NULL
             `).all(today);

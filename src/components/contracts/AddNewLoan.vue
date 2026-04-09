@@ -201,9 +201,9 @@ onMounted(async () => {
                                     <input type="number" id="interest_rate" v-model="loan.interest_rate" min="0" required
                                         placeholder="%">
                                     <select name="interest_type" id="interest_type" v-model="loan.interest_type">
-                                        <option value="percent*term">% x Kỳ</option>
-                                        <option value="percent/term">% / Kỳ</option>
-                                        <option value="daily_amount">Lãi ngày</option>
+                                        <option value="percent*term">Lãi suất % định kỳ</option>
+                                        <option value="percent/term">Lãi suất % chia đều</option>
+                                        <option value="daily_amount">Lãi suất hàng ngày</option>
                                     </select>
                                 </div>
                             </div>

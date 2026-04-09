@@ -63,9 +63,9 @@ const moneyConfig = {
                                     </div>
                                     <div class="col-group">
                                         <label>Kiểu lãi xuất</label>
-                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'daily_amount'" :value="'Ngày'" readonly>
-                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'percent*term'" :value="`${paymentDetails.contract.interest_rate}%/Tháng`" readonly>  
-                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'percent/term'" :value="`${paymentDetails.contract.interest_rate}%/${paymentDetails.contract.total_periods} Tháng`" readonly>
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'daily_amount'" value= "Lãi suất theo ngày" readonly>
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'percent*term'" value="Lãi suất % định kỳ" readonly>  
+                                        <input type="text" style="background-color: #E8E8E8;" v-if="paymentDetails.contract.interest_type === 'percent/term'" value="Lãi suất % chia đều" readonly>
                                     </div>
                                 </div>
                             </div>

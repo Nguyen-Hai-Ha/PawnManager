@@ -7,6 +7,8 @@ export const useDetailContractStore = defineStore('detailContract', () => {
     const showDetailContract = ref(false);
     const showSelectTemplate = ref(false);
     const templates = ref({});
+    const typeTemplate = ref('');
+    const loading = ref(false);
 
     const openDetailContract = (id) => {
         getDetailContract(id);
@@ -17,8 +19,11 @@ export const useDetailContractStore = defineStore('detailContract', () => {
         showDetailContract.value = false;
     };
 
-    const openSelectTemplate = () => {
+    const openSelectTemplate = (type) => {
+        loading.value = true;
+        typeTemplate.value = type
         showSelectTemplate.value = true;
+        loading.value = false;
     };
 
     const closeSelectTemplate = () => {
@@ -85,6 +90,11 @@ export const useDetailContractStore = defineStore('detailContract', () => {
         }
     };
 
+    const filterTemplate = computed(() => {
+        if (!templates.value || !Array.isArray(templates.value)) return [];
+        return templates.value.filter(item => item.type === typeTemplate.value);
+    })
+
     const SelectTemplate = async (id_template) => {
         closeSelectTemplate();
         await getContractPrint(detailContract.value.contract.id, id_template);
@@ -101,7 +111,7 @@ export const useDetailContractStore = defineStore('detailContract', () => {
             link.href = url;
             
             // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
-            let fileName = 'Hop_Dong_'+detailContract.value?.customer?.name+'.docx';
+            let fileName = typeTemplate.value +'_'+detailContract.value?.contract?.code+'.docx';
             const contentDisposition = response.headers['content-disposition'];
             if (contentDisposition) {
                 const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
@@ -156,10 +166,10 @@ export const useDetailContractStore = defineStore('detailContract', () => {
 
     return {
         //state
-        showDetailContract, detailContract, templates, showSelectTemplate,
+        showDetailContract, detailContract, templates, showSelectTemplate, typeTemplate, loading,
 
         //computed
-        collateralmetadata, collateralImages,
+        collateralmetadata, collateralImages, filterTemplate,
 
         //actions
         openDetailContract, closeDetailContract, formatCurrency, openSelectTemplate, closeSelectTemplate, SelectTemplate,

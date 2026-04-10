@@ -11,7 +11,6 @@ export const useLoanStore = defineStore("loan", () => {
     const startDate = ref('');
     const endDate = ref('');
     const route = useRoute();
-
     const pageTitles = {
         'AdminLoanPawn': 1,
         'AdminPledges': 2,
@@ -174,6 +173,24 @@ export const useLoanStore = defineStore("loan", () => {
         }
     }
 
+    const handleExportExcel = async () => {
+    try {
+        const response = await apiClient.get('/contract/export', { responseType: 'blob', params: { id_contract_type: id_contract_type.value } });
+        
+        // Tạo link ảo để trình duyệt tự tải file về
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'DanhSachHopDong.xlsx'); // Tên file khi tải về
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.log("Lỗi xuất excel", error);
+    }
+}
+
+
     return {
         //state
         loans, customers, assetTypes, assets, search, filterStatus, startDate, endDate, paginated, totalPage, currentPage, pageTitles,
@@ -190,6 +207,7 @@ export const useLoanStore = defineStore("loan", () => {
         getAllLoans,
         fetchCustomer,
         fetchAssetTypes,
-        deleteLoan
+        deleteLoan,
+        handleExportExcel
     }
 });

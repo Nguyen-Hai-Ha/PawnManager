@@ -23,7 +23,7 @@ const finalSettlementStore = useFinalSettlementStore();
 const detailContractStore = useDetailContractStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig, filterStatus, startDate, endDate } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, deleteLoan } = loanStore;
+const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, deleteLoan, handleExportExcel } = loanStore;
 
 const { showModal } = storeToRefs(addNewLoanStore);
 const { openModal, closeModal } = addNewLoanStore;
@@ -76,6 +76,16 @@ onMounted(async() => {
                 </div>
             </div>
             <div class="button-group">
+                <!-- Nút Xuất File -->
+                <button class="btn-export" style="background-color: #2e7d32; color: white;" @click="handleExportExcel">
+                    <font-awesome-icon icon="fa-solid fa-file-excel" /> Xuất Excel
+                </button>
+                
+                <!-- Nút Nhập File (kèm input bị ẩn) -->
+                <input type="file" ref="fileInput" accept=".xlsx, .xls" style="display: none" />
+                <button class="btn-import" @click="$refs.fileInput.click()" style="background-color: #1976d2; color: white;">
+                    <font-awesome-icon icon="fa-solid fa-file-import" /> Nhập Excel
+                </button>
                 <button v-permission="'loans.create'" @click="openModal">Thêm hợp đồng</button>
             </div>
         </div>

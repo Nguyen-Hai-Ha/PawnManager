@@ -3,7 +3,10 @@ const Docxtemplater = require("docxtemplater");
 const fs = require("fs");
 const path = require("path");
 const dayjs = require("dayjs");
+const { Template } = require("../models");
 
+
+// format metadata tài sản
 const formatCollateralMetadata = (metadataString) => {
     try {
         if (!metadataString || metadataString === "{}") return "Không có mô tả chi tiết";
@@ -24,50 +27,8 @@ const formatCollateralMetadata = (metadataString) => {
     }
 };
 
-// const generateContractDoc = (data) => {
-//     const content = fs.readFileSync(
-//         path.resolve(__dirname, "../templates/mau-hop-dong-cam-co-tai-san.docx"),
-//         "binary"
-//     );
 
-//     const zip = new PizZip(content);
-//     const doc = new Docxtemplater(zip, {
-//         paragraphLoop: true,
-//         linebreaks: true,
-//     });
-
-//     doc.render({
-//         full_name: data.full_name,
-//         phone: data.phone,
-//         cccd: data.cccd,
-//         address: data.address,
-//         birth_date: data.birth_date,
-//         loan_amount: data.Loan_amount.toLocaleString('vi-VN'),
-//         amount_raw: Number(data.Loan_amount || 0),
-//         interest_rate: data.Interest_rate,
-//         start_date: data.Start_date,
-//         end_date: data.End_date,
-//         payment_term: data.Payment_term,
-//         term_unit: data.Term_unit,
-//         total_periods: data.Total_periods,
-//         interest_type: data.Interest_type,
-//         contract_type: data.Contract_type,
-//         collateral_name: data.collateral_name,
-//         collateral_metadata: formatCollateralMetadata(data.collateral_metadata),
-//     });
-
-//     const buf = doc.getZip().generate({
-//         type: "nodebuffer",
-//         compression: "DEFLATE",
-//     });
-
-//     const fileName = `HopDong_${data.full_name}.docx`;
-//     // const outputPath = path.resolve(__dirname, `../output/${fileName}`);
-//     // fs.writeFileSync(outputPath, buf);
-
-//     return { buf, fileName };
-// };
-
+// Hàm render hợp đồng theo mẫu
 const generateContractDoc = (data, template) => {
     const content = fs.readFileSync(
         path.resolve(__dirname, template.file_path),
@@ -120,44 +81,27 @@ const generateContractDoc = (data, template) => {
     return { buf, fileName };
 };
 
-// const generatePaymentReceiptDoc = (data) => {
-//     const content = fs.readFileSync(
-//         path.resolve(__dirname, "../templates/mau-phieu-thu-2026.docx"),
-//         "binary"
-//     );
 
-//     const zip = new PizZip(content);
-//     const doc = new Docxtemplater(zip, {
-//         paragraphLoop: true,
-//         linebreaks: true,
-//     });
+//Hàm Tải hợp đồng theo mẫu
+const downloadTemplateDoc = (template) => {
+    const content = fs.readFileSync(
+        path.resolve(__dirname, template.file_path),
+        "binary"
+    );
 
-//     const now = dayjs();
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    });
 
-//     const day = now.format("DD");
-//     const month = now.format("MM");
-//     const year = now.format("YYYY");
+    const buf = doc.getZip().generate({
+        type: "nodebuffer",
+        compression: "DEFLATE",
+    });
 
-//     doc.render({
-//         full_name: data.Full_name,
-//         phone: data.phone,
-//         Address: data.Address,
-//         Code: data.Code,
-//         amount: (data.amount || 0).toLocaleString('vi-VN')  + " đồng",
-//         amount_text: data.amount_text,
-//         day: day,
-//         month: month,
-//         year: year
-//     });
+    const fileName = `${template.name}.docx`;
+    return { buf, fileName };
+}
 
-//     const buf = doc.getZip().generate({
-//         type: "nodebuffer",
-//         compression: "DEFLATE",
-//     });
-
-//     const fileName = `BienLai_HĐ_${data.full_name}.docx`;
-    
-//     return { buf, fileName };
-// };
-
-module.exports = { generateContractDoc };
+module.exports = { generateContractDoc, downloadTemplateDoc };

@@ -250,7 +250,7 @@ const ContractController = {
                     // format lại cho chuẩn sqlite
                     const formattedDate = expectedDate.toISOString().split('T')[0];
 
-                    let daysInThisMonth = countDaysBetween(startDate, expectedDate);
+                    let daysInThisMonth = countDaysBetween(currentFromDate, expectedDate);
 
                     // tính lãi mỗi kỳ chia theo ngày
                     let interestAmount = 0;

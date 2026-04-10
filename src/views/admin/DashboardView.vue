@@ -4,11 +4,13 @@ import { useDashboardStore } from '@/stores/dashboard';
 import { storeToRefs } from 'pinia';
 
 const dashboardStore = useDashboardStore();
-const { summary, loading, todayDateStr, currentMonthYearStr } = storeToRefs(dashboardStore);
+const { summary, loading, todayDateStr, currentMonthYearStr, hasFetched } = storeToRefs(dashboardStore);
 const { fetchSummary, formatCurrency } = dashboardStore;
 
 onMounted(() => {
-  fetchSummary();
+  if (hasFetched.value === false) {
+    fetchSummary();
+  }
 });
 
 const totalLoanSummary = computed(() => {

@@ -19,6 +19,13 @@ export const useSettingsStore = defineStore('settings', () => {
     const editCollateralType = ref({
         name: '',
     });
+    const showEditTemplateModal = ref(false);
+    const editTemplate = ref({
+        name_file: '',
+        file_path: '',
+        type: '',
+        active: true
+    });
 
     const showEditCategoryModal = ref(false);
     const openEditCategoryModal = (id) => {

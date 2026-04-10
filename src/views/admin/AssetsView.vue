@@ -25,8 +25,12 @@ const {
 const { showDetailContract } = storeToRefs(detailContractStore);
 const { openDetailContract, closeDetailContract } = detailContractStore;
 
-onMounted(() => {
-    fetchAssets()
+onMounted( async() => {
+    const promise = []
+    if (assets.value.length === 0) {
+        promise.push(fetchAssets())
+    }
+    await Promise.all(promise)
 })
 </script>
 

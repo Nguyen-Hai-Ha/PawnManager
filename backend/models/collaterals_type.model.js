@@ -2,7 +2,11 @@ const db = require('../config/database');
 
 const CollateralsType = {
     getAll: () => {
-        const sql = `SELECT * FROM collaterals_type`;
+        const sql = `
+        SELECT collaterals_type.*, COUNT(collaterals.id) as count
+        FROM collaterals_type
+        LEFT JOIN collaterals ON collaterals_type.id = collaterals.id_collateral_type
+        GROUP BY collaterals_type.id`;
         const stmt = db.prepare(sql);
         return stmt.all();
     },

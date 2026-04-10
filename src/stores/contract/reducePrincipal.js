@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
 import { ref, nextTick, computed } from "vue";
 import { useAuthStore } from '../auth';
-import { useLoanStore } from '../loan';
+import { useLoanStore } from './loan';
 
 import { useInterestPayment } from "./interestPayment";
 import { useFinalSettlementStore } from "./finalSettlement";

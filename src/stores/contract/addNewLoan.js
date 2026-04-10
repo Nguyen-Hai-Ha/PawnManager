@@ -216,7 +216,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         await fetchAssets();
         showModal.value = true;
         nextTick(() => {
-            const firstInput = document.getElementById('assets_name');
+            const firstInput = document.getElementById('id_customer');
             if (firstInput) {
                 firstInput.focus();
             }

@@ -176,12 +176,13 @@ export const useLoanStore = defineStore("loan", () => {
     const handleExportExcel = async () => {
     try {
         const response = await apiClient.get('/contract/export', { responseType: 'blob', params: { id_contract_type: id_contract_type.value } });
-        
-        // Tạo link ảo để trình duyệt tự tải file về
+        const contractType = id_contract_type.value === 1 ? 'Cam_Do' : id_contract_type.value === 2 ? 'Tin_Chap' : 'Tra_Gop'
+        const date = new Date().toISOString().split('T')[0];
+
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'DanhSachHopDong.xlsx'); // Tên file khi tải về
+        link.setAttribute('download', `Danh_Sach_Hop_Dong_${contractType}_${date}.xlsx`); 
         document.body.appendChild(link);
         link.click();
         link.remove();

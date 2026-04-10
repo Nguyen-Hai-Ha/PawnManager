@@ -1,4 +1,5 @@
 const { Template } = require("../models");
+const { downloadTemplateDoc } = require('../services/DocumentService');
 
 
 const SettingController = {
@@ -53,6 +54,21 @@ const SettingController = {
             res.status(200).json(template);
         } catch (error) {
             res.status(500).json({ message: error.message });
+        }
+    },
+    downLoadTemplate: (req, res) => {
+        try {
+            const { id } = req.params;
+            const template = Template.getById(id);
+            const { buf, fileName } = downloadTemplateDoc(template);
+            res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+                'Content-Length': buf.length
+            });
+            res.send(buf);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
     }
 }

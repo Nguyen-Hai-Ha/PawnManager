@@ -311,21 +311,7 @@ const ContractController = {
             res.status(500).json({ error: error.message });
         }
     },
-    // print: (req, res) => {
-    //     try {
-    //         const { id } = req.params;
-    //         const contract = Contract.getDetailForPrint(id);
-    //         const { buf, fileName } = generateContractDoc(contract);
-    //         res.set({
-    //             'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    //             'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
-    //             'Content-Length': buf.length
-    //         });
-    //         res.send(buf);
-    //     } catch (error) {
-    //         res.status(500).json({ error: error.message });
-    //     }
-    // },
+
     printReceipt: (req, res) => {
         try {
             const { id } = req.params;

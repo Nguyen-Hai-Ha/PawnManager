@@ -131,39 +131,6 @@ export const useDetailContractStore = defineStore('detailContract', () => {
             console.error('Error downloading contract:', error);
         }
     };
-
-    // const getContractReceipt = async (id) => {
-    //     try {
-    //         // Thêm responseType: 'blob' để Axios hiểu đây là file nhị phân
-    //         const response = await apiClient.get(`/contract/${id}/print-receipt`, { responseType: 'blob' });
-            
-    //         // Xử lý file blob và buộc trình duyệt tải xuống
-    //         const url = window.URL.createObjectURL(new Blob([response.data]));
-    //         const link = document.createElement('a');
-    //         link.href = url;
-            
-    //         // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
-    //         let fileName = 'Bien_Nhan_HĐ_'+detailContract.value?.customer?.name+'.docx';
-    //         const contentDisposition = response.headers['content-disposition'];
-    //         if (contentDisposition) {
-    //             const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-    //             if (fileNameMatch && fileNameMatch.length === 2) {
-    //                 fileName = decodeURIComponent(fileNameMatch[1]);
-    //             }
-    //         }
-            
-    //         link.setAttribute('download', fileName);
-    //         document.body.appendChild(link);
-    //         link.click();
-            
-    //         // Dọn dẹp
-    //         document.body.removeChild(link);
-    //         window.URL.revokeObjectURL(url);
-    //     } catch (error) {
-    //         console.error('Error downloading contract:', error);
-    //     }
-    // };
-
     return {
         //state
         showDetailContract, detailContract, templates, showSelectTemplate, typeTemplate, loading,

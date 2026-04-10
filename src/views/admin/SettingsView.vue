@@ -23,7 +23,7 @@ const { getSettings, updateSettings, openAddTemplateModal,
         closeAddTemplateModal, getAllTemplates, fetchCollateralTypes, 
         openAddCategoryModal, closeAddCategoryModal, deleteCollateralType,
         openEditCategoryModal, closeEditCategoryModal, openEditTemplateModal, 
-        closeEditTemplateModal } = settingsStore
+        closeEditTemplateModal, downloadTemplate } = settingsStore
 
 onMounted(() => {
   getSettings()
@@ -173,7 +173,7 @@ onMounted(() => {
         </div>
 
         <!-- Card: Xem trước thông báo -->
-        <div class="setting-card preview-card">
+        <!-- <div class="setting-card preview-card">
           <div class="card-header">
             <span class="card-icon purple"><font-awesome-icon icon="fa-solid fa-eye" /></span>
             <div>
@@ -207,7 +207,7 @@ onMounted(() => {
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
       </div>
     </div>
@@ -219,6 +219,7 @@ onMounted(() => {
           <h2 class="section-title">Danh sách mẫu hợp đồng</h2>
           <span class="count-badge">{{ templates.length }} mẫu</span>
         </div>
+        <input type="text" class="form-input" placeholder="Tìm kiếm mẫu hợp đồng">
         <button class="btn-add" @click="openAddTemplateModal">
           <font-awesome-icon icon="fa-solid fa-plus" /> Thêm mẫu
         </button>
@@ -260,7 +261,7 @@ onMounted(() => {
             <button class="btn-icon-action text-teal" title="Chỉnh sửa" @click="openEditTemplateModal(t.id)" >
               <font-awesome-icon icon="fa-solid fa-pen-to-square" />
             </button>
-            <button class="btn-icon-action text-orange" title="Tải xuống">
+            <button class="btn-icon-action text-orange" title="Tải xuống" @click="downloadTemplate(t.id)" >
               <font-awesome-icon icon="fa-solid fa-download" />
             </button>
           </div>

@@ -239,6 +239,36 @@ export const useSettingsStore = defineStore('settings', () => {
         }
     }
 
+    const downloadTemplate = async (id) => {
+        try {
+            const response = await apiClient.get(`/settings/templates/${id}/download`, { responseType: 'blob' });
+            // Xử lý file blob và buộc trình duyệt tải xuống
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
+            let fileName = 'template_'+id+'.docx';
+            const contentDisposition = response.headers['content-disposition'];
+            if (contentDisposition) {
+                const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (fileNameMatch && fileNameMatch.length === 2) {
+                    fileName = decodeURIComponent(fileNameMatch[1]);
+                }
+            }
+            
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            
+            // Dọn dẹp
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return {
         //state
         settings, loading, showAddTemplateModal, newTemplate, fileInput, templates, collateralTypes, newCollateralType,
@@ -267,6 +297,7 @@ export const useSettingsStore = defineStore('settings', () => {
         GetIdCollateralType,
         updateCollateralType,
         getIdTemplate,
-        updateTemplate
+        updateTemplate,
+        downloadTemplate
     }
 })

@@ -28,6 +28,12 @@ const Images = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    deleteByCollateralId: (id) => {
+        const sql = `DELETE FROM images WHERE id_collateral = ?`;
+        const stmt = db.prepare(sql);
+        const result = stmt.run(id);
+        return result.changes;
     }
 }
 

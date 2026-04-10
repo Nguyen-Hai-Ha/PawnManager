@@ -70,7 +70,7 @@ const moneyConfig = {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in paymentDetails.paymentDetails">
+                            <tr v-for="item in paymentDetails.paymentDetails" :key="item.id">
                                 <td>{{ item.period_number }}</td>
                                 <td>{{ item.expected_date }}</td>
                                 <td>{{ formatCurrency(item.interest_amount) }}</td>
@@ -193,7 +193,7 @@ const moneyConfig = {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item, index in historyPayment">
+                            <tr v-for="item, index in historyPayment" :key="item.id">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ item.created_at }}</td>
                                 <td>{{ formatCurrency(item.amount) }}</td>

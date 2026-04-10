@@ -1,7 +1,7 @@
 import { defineStore, storeToRefs } from "pinia";
 import apiClient from "@/plugins/axios";
 import { useAuthStore } from '../auth';
-import { useLoanStore } from '../loan';
+import { useLoanStore } from './loan';
 import { useAssetsStore } from '../assets';
 import { ref, nextTick, onBeforeUnmount, computed } from "vue";
 import { useRoute } from "vue-router";

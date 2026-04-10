@@ -12,5 +12,6 @@ router.post('/templates', verifyToken, hasPermission('settings.create'), uploadF
 router.put('/templates/:id', verifyToken, hasPermission('settings.update'), uploadFile.single('file_path'), SettingController.updateTemplate);
 router.delete('/templates/:id', verifyToken, hasPermission('settings.delete'), SettingController.deleteTemplate);
 router.put('/', verifyToken, hasPermission('settings.update'), updateSettings);
+router.get('/templates/:id/download', verifyToken, hasPermission('settings.print'), SettingController.downLoadTemplate);
 
 module.exports = router;

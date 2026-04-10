@@ -16,7 +16,10 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
     const loading = ref(false);
 
+    const hasFetched = ref(false);
+
     const fetchSummary = async () => {
+        hasFetched.value = true
         loading.value = true;
         try {
             const response = await apiClient.get('/dashboard/summary');
@@ -46,6 +49,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     return {
         summary,
         loading,
+        hasFetched,
         fetchSummary,
         formatCurrency,
         todayDateStr,

@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, nextTick } from 'vue'
 import apiClient from "@/plugins/axios";
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref({})
     const loading = ref({ getSettings: false, updateSettings: false })
     const templates = ref({})
+    const templates = ref([])
     const showAddTemplateModal = ref(false)
     const newTemplate = ref({
         name_file: '',
@@ -24,9 +25,11 @@ export const useSettingsStore = defineStore('settings', () => {
 
     const openAddTemplateModal = () => {
         showAddTemplateModal.value = true
+
     }
 
     const closeAddTemplateModal = () => {
+        newTemplate.value = {
         showAddTemplateModal.value = false
     }
 

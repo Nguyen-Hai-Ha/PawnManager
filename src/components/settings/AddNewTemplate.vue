@@ -19,7 +19,7 @@ const { closeAddTemplateModal, handleFileUpload, createTemplate } = settingsStor
             <div class="modal-body">
             <div class="form-group">
                 <label class="form-label">Tên mẫu</label>
-                <input type="text" class="form-input" v-model="newTemplate.name_file" placeholder="Nhập tên mẫu hợp đồng" >
+                <input type="text" id="addTemplate" class="form-input" v-model="newTemplate.name_file" placeholder="Nhập tên mẫu hợp đồng" >
             </div>
             <div class="form-group">
                 <label class="form-label">Loại hợp đồng</label>

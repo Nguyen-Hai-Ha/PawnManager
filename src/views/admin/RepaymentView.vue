@@ -8,7 +8,7 @@ import ReducePrincipal from '@/components/contracts/ReducePrincipal.vue';
 import FinalSettlement from '@/components/contracts/FinalSettlement.vue';
 import DetailContract from '@/components/contracts/DetailContract.vue';
 
-import { useLoanStore } from '@/stores/loan';
+import { useLoanStore } from '@/stores/contract/loan';
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';

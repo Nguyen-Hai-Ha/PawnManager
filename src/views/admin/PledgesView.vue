@@ -11,7 +11,7 @@ import DetailContract from '@/components/contracts/DetailContract.vue';
 import { useReducePrincipalStore } from '@/stores/contract/reducePrincipal';
 import { useFinalSettlementStore } from '@/stores/contract/finalSettlement';
 import { useDetailContractStore } from '@/stores/contract/detailContract';
-import { useLoanStore } from '@/stores/loan';
+import { useLoanStore } from '@/stores/contract/loan';
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
 

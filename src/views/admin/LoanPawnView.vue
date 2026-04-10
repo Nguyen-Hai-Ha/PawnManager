@@ -1,5 +1,5 @@
 <script setup>
-import { useLoanStore } from '@/stores/loan';
+import { useLoanStore } from '@/stores/contract/loan';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 

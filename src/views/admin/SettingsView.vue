@@ -18,12 +18,13 @@ const tabs = [
 
 const settingsStore = useSettingsStore()
 const { settings, showAddTemplateModal, templates, collateralTypes, showAddCategoryModal, 
-        showEditCategoryModal, showEditTemplateModal } = storeToRefs(settingsStore)
+        showEditCategoryModal, showEditTemplateModal, search, SearchTemplate, sortedCollateralTypes,
+        sortConfig } = storeToRefs(settingsStore)
 const { getSettings, updateSettings, openAddTemplateModal, 
         closeAddTemplateModal, getAllTemplates, fetchCollateralTypes, 
         openAddCategoryModal, closeAddCategoryModal, deleteCollateralType,
         openEditCategoryModal, closeEditCategoryModal, openEditTemplateModal, 
-        closeEditTemplateModal, downloadTemplate } = settingsStore
+        closeEditTemplateModal, downloadTemplate, handleSort } = settingsStore
 
 onMounted(() => {
   getSettings()
@@ -219,15 +220,19 @@ onMounted(() => {
           <h2 class="section-title">Danh sách mẫu hợp đồng</h2>
           <span class="count-badge">{{ templates.length }} mẫu</span>
         </div>
-        <input type="text" class="form-input" placeholder="Tìm kiếm mẫu hợp đồng">
+        
         <button class="btn-add" @click="openAddTemplateModal">
           <font-awesome-icon icon="fa-solid fa-plus" /> Thêm mẫu
         </button>
       </div>
-
+      <div class="search" style="margin-bottom: 20px;">
+        <div class="search-input">
+          <input type="text" id="search" placeholder="Tìm kiếm theo tên mẫu hợp đồng" v-model="search">
+        </div>
+      </div>
       <div class="template-grid">
         <div
-          v-for="t in templates"
+          v-for="t in SearchTemplate"
           :key="t.id"
           class="template-card"
         >
@@ -321,15 +326,33 @@ onMounted(() => {
         <table class="category-table">
           <thead>
             <tr>
-              <th>STT</th>
-              <th>Tên danh mục</th>
-              <th>Số tài sản</th>
+              <th @click="handleSort('id')">STT
+                <span class="sort-icon">
+                  <font-awesome-icon v-if="sortConfig.key === 'id' && sortConfig.direction === 'asc'" icon="sort-up" />
+                  <font-awesome-icon v-else-if="sortConfig.key === 'id' && sortConfig.direction === 'desc'" icon="sort-down" />
+                  <font-awesome-icon v-else icon="sort" />
+                </span>
+              </th>
+              <th @click="handleSort('name')">Tên danh mục
+                <span class="sort-icon">
+                  <font-awesome-icon v-if="sortConfig.key === 'name' && sortConfig.direction === 'asc'" icon="sort-up" />
+                  <font-awesome-icon v-else-if="sortConfig.key === 'name' && sortConfig.direction === 'desc'" icon="sort-down" />
+                  <font-awesome-icon v-else icon="sort" />
+                </span>
+              </th>
+              <th @click="handleSort('count')">Số tài sản
+                <span class="sort-icon">
+                  <font-awesome-icon v-if="sortConfig.key === 'count' && sortConfig.direction === 'asc'" icon="sort-up" />
+                  <font-awesome-icon v-else-if="sortConfig.key === 'count' && sortConfig.direction === 'desc'" icon="sort-down" />
+                  <font-awesome-icon v-else icon="sort" />
+                </span>
+              </th>
               <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(cat, idx) in collateralTypes" :key="cat.id">
-              <td class="td-center">{{ idx + 1 }}</td>
+            <tr v-for="(cat) in sortedCollateralTypes" :key="cat.id">
+              <td class="td-center">{{ cat.id }}</td>
               <td class="td-name">{{ cat.name }}</td>
               <td class="td-center">
                 <span class="count-pill">{{ cat.count }}</span>

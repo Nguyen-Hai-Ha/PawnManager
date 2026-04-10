@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, computed } from 'vue'
 import apiClient from "@/plugins/axios";
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -26,6 +26,48 @@ export const useSettingsStore = defineStore('settings', () => {
         type: '',
         active: true
     });
+
+    const search = ref('');
+
+    const SearchTemplate = computed(() => {
+        if (search.value === '') {
+            return templates.value;
+        }
+        return templates.value.filter(item => item.name_file.toLowerCase().includes(search.value.toLowerCase()));
+    })
+
+    const sortConfig = ref({
+        key: 'id',
+        direction: 'asc'
+    })
+
+    const handleSort = (key) => {
+        if (sortConfig.value.key === key) {
+            sortConfig.value.direction = sortConfig.value.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortConfig.value.key = key;
+            sortConfig.value.direction = 'asc';
+        }
+    }
+
+    const sortedCollateralTypes = computed(() => {
+        const list = [...collateralTypes.value];
+        const { key, direction } = sortConfig.value;
+        list.sort((a, b) => {
+            let valA = a[key];
+            let valB = b[key];
+            // So sánh số cho STT (index), còn lại so sánh string
+            if (typeof valA === 'number' && typeof valB === 'number') {
+                return direction === 'asc' ? valA - valB : valB - valA;
+            }
+            valA = String(valA ?? '').toLowerCase();
+            valB = String(valB ?? '').toLowerCase();
+            if (valA < valB) return direction === 'asc' ? -1 : 1;
+            if (valA > valB) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        return list;
+    })
 
     const newFileForEdit = ref(null);
     const handleFileUploadEdit = (event) => {
@@ -272,7 +314,11 @@ export const useSettingsStore = defineStore('settings', () => {
     return {
         //state
         settings, loading, showAddTemplateModal, newTemplate, fileInput, templates, collateralTypes, newCollateralType,
-        showAddCategoryModal, editCollateralType, showEditCategoryModal, showEditTemplateModal, editTemplate,
+        showAddCategoryModal, editCollateralType, showEditCategoryModal, showEditTemplateModal, editTemplate, search,
+        sortConfig, 
+        
+        //computed
+        SearchTemplate, sortedCollateralTypes,
 
         //actions
         handleFileUpload,
@@ -285,6 +331,7 @@ export const useSettingsStore = defineStore('settings', () => {
         openEditTemplateModal,
         closeEditTemplateModal,
         handleFileUploadEdit,
+        handleSort,
 
         //fetch
         getSettings,

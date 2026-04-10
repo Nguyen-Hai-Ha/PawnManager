@@ -27,6 +27,34 @@ export const useSettingsStore = defineStore('settings', () => {
         active: true
     });
 
+    const newFileForEdit = ref(null);
+    const handleFileUploadEdit = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            newFileForEdit.value = file;
+        }
+    }
+
+    const openEditTemplateModal = (id) => {
+        getIdTemplate(id);
+        showEditTemplateModal.value = true
+        nextTick(() => {
+            const firstInput = document.getElementById('editTemplate');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        })
+    }
+    const closeEditTemplateModal = () => {
+        editTemplate.value = {
+            name_file: '',
+            file_path: '',
+            type: '',
+            active: true
+        }
+        showEditTemplateModal.value = false
+    }
+
     const showEditCategoryModal = ref(false);
     const openEditCategoryModal = (id) => {
         GetIdCollateralType(id);
@@ -181,10 +209,40 @@ export const useSettingsStore = defineStore('settings', () => {
         }
     }
 
+    const getIdTemplate = async (id) => {
+        try {
+            const response = await apiClient.get(`/settings/templates/${id}`);
+            editTemplate.value = response.data;
+        } catch (error) {     
+            console.log(error);
+        }
+    }
+
+    const updateTemplate = async () => {
+        const formData = new FormData();
+        formData.append('name_file', editTemplate.value.name_file);
+        formData.append('type', editTemplate.value.type);
+        formData.append('active', editTemplate.value.active);
+        formData.append('existing_file_path', editTemplate.value.file_path);
+        if (newFileForEdit.value) {
+            formData.append('file_path', newFileForEdit.value);
+        }
+        try {
+            await apiClient.put(`/settings/templates/${editTemplate.value.id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            await getAllTemplates();
+            newFileForEdit.value = null;
+            closeEditTemplateModal();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return {
         //state
         settings, loading, showAddTemplateModal, newTemplate, fileInput, templates, collateralTypes, newCollateralType,
-        showAddCategoryModal, editCollateralType, showEditCategoryModal,
+        showAddCategoryModal, editCollateralType, showEditCategoryModal, showEditTemplateModal, editTemplate,
 
         //actions
         handleFileUpload,
@@ -194,6 +252,9 @@ export const useSettingsStore = defineStore('settings', () => {
         closeAddCategoryModal,
         openEditCategoryModal,
         closeEditCategoryModal,
+        openEditTemplateModal,
+        closeEditTemplateModal,
+        handleFileUploadEdit,
 
         //fetch
         getSettings,
@@ -204,6 +265,8 @@ export const useSettingsStore = defineStore('settings', () => {
         createCollateralType,
         deleteCollateralType,
         GetIdCollateralType,
-        updateCollateralType
+        updateCollateralType,
+        getIdTemplate,
+        updateTemplate
     }
 })

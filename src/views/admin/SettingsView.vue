@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 
 import AddNewTemplate from '@/components/settings/AddNewTemplate.vue'
+import EditTemplate from '@/components/settings/EditTemplate.vue'
 import AddNewAssetsType from '@/components/settings/AddNewAssetsType.vue'
 import EditAssetsType from '@/components/settings/EditAssetsType.vue'
 
@@ -16,11 +17,13 @@ const tabs = [
 ]
 
 const settingsStore = useSettingsStore()
-const { settings, showAddTemplateModal, templates, collateralTypes, showAddCategoryModal, showEditCategoryModal } = storeToRefs(settingsStore)
+const { settings, showAddTemplateModal, templates, collateralTypes, showAddCategoryModal, 
+        showEditCategoryModal, showEditTemplateModal } = storeToRefs(settingsStore)
 const { getSettings, updateSettings, openAddTemplateModal, 
         closeAddTemplateModal, getAllTemplates, fetchCollateralTypes, 
         openAddCategoryModal, closeAddCategoryModal, deleteCollateralType,
-        openEditCategoryModal, closeEditCategoryModal } = settingsStore
+        openEditCategoryModal, closeEditCategoryModal, openEditTemplateModal, 
+        closeEditTemplateModal } = settingsStore
 
 onMounted(() => {
   getSettings()
@@ -250,11 +253,11 @@ onMounted(() => {
           <h3 class="template-name">{{ t.name_file }}</h3>
           <p class="template-date">Cập nhật: {{ t.updated_at }}</p>
           <div class="template-status">
-            <span class="status-dot" :class="t.active ?'dot-green' : 'dot-gray'"></span>
-            {{ t.active ? 'Đang sử dụng' : 'Không sử dụng' }}
+            <span class="status-dot" :class="t.active === 'true' ?'dot-green' : 'dot-gray'"></span>
+            {{ t.active === 'true' ? 'Đang sử dụng' : 'Không sử dụng' }}
           </div>
           <div class="template-actions">
-            <button class="btn-icon-action text-teal" title="Chỉnh sửa" >
+            <button class="btn-icon-action text-teal" title="Chỉnh sửa" @click="openEditTemplateModal(t.id)" >
               <font-awesome-icon icon="fa-solid fa-pen-to-square" />
             </button>
             <button class="btn-icon-action text-orange" title="Tải xuống">
@@ -342,6 +345,11 @@ onMounted(() => {
     <!-- ─── Modal: Template Form ─── -->
     <div class="modal-overlay" v-if="showAddTemplateModal">
       <AddNewTemplate @close="closeAddTemplateModal"/>
+    </div>
+
+    <!-- ─── Modal: Edit Template Form ─── -->
+    <div class="modal-overlay" v-if="showEditTemplateModal">
+      <EditTemplate @close="closeEditTemplateModal"/>
     </div>
 
     <!-- ─── Modal: Category Form ─── -->

@@ -37,7 +37,7 @@ const SettingController = {
         try {
             const Templetas = {
                 name_file : req.body.name_file,
-                file_path : '/templates/' + req.file.filename,
+                file_path : req.file ? '/templates/' + req.file.filename : req.body.existing_file_path,
                 active : req.body.active,
                 type : req.body.type
             }

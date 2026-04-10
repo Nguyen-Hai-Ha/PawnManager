@@ -143,7 +143,7 @@ export const useInterestPayment = defineStore('interestPayment', () => {
 
     const fetchHistoryPayment = async (id) => {
         try {
-            const response = await apiClient.get(`/transaction/schedule/${id}`);
+            const response = await apiClient.get(`/transaction/history/${id}`);
             historyPayment.value = response.data;
         } catch (error) {
             console.error('Error fetching payment history:', error);

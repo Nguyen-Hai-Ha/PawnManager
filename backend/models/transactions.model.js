@@ -41,16 +41,6 @@ const Transactions = {
         const stmt = db.prepare(sql);
         return stmt.all(id);
     },
-    getByScheduleId: (id) => {
-        const sql = `SELECT * FROM transactions 
-        INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
-        INNER JOIN payment_schedules ON transactions.id_schedule = payment_schedules.id
-        INNER JOIN contracts ON transactions.id_contract = contracts.id
-        INNER JOIN staff ON transactions.id_staff = staff.id
-        WHERE id_schedule = ?`;
-        const stmt = db.prepare(sql);
-        return stmt.all(id);
-    },
     getHistoryPayment: (id) => {
         const sql = `SELECT * FROM transactions 
         INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id

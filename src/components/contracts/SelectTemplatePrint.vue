@@ -33,8 +33,8 @@ const formatDate = (dateString) => {
             <font-awesome-icon icon="file-contract" />
             </div>
             <div class="header-text">
-            <h2>Chọn mẫu hợp đồng</h2>
-            <p>Chọn một mẫu để thực hiện in hợp đồng</p>
+            <h2>Chọn mẫu In</h2>
+            <p>Chọn một mẫu để thực hiện in</p>
             </div>
         </div>
         <button class="modal-close" @click="closeSelectTemplate()">

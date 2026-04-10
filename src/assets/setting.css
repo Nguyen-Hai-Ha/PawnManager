@@ -554,3 +554,6 @@ input:checked + .slider::before { transform: translateX(20px); }
 .template-note li:last-child {
   margin-bottom: 0;
 }
+.sort-icon {
+  color: #dad8d8;
+}

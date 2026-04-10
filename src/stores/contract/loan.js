@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 
 export const useLoanStore = defineStore("loan", () => {
@@ -12,9 +12,6 @@ export const useLoanStore = defineStore("loan", () => {
     const endDate = ref('');
     const route = useRoute();
 
-    watch([search, filterStatus, startDate, endDate], () => {
-        currentPage.value = 1;
-    });
     const pageTitles = {
         'AdminLoanPawn': 1,
         'AdminPledges': 2,

@@ -4,6 +4,8 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 
 import AddNewTemplate from '@/components/settings/AddNewTemplate.vue'
+import AddNewAssetsType from '@/components/settings/AddNewAssetsType.vue'
+import EditAssetsType from '@/components/settings/EditAssetsType.vue'
 
 const activeTab = ref('notifications')
 
@@ -14,68 +16,18 @@ const tabs = [
 ]
 
 const settingsStore = useSettingsStore()
-const { settings, showAddTemplateModal, templates } = storeToRefs(settingsStore)
-const { getSettings, updateSettings, openAddTemplateModal, closeAddTemplateModal, getAllTemplates } = settingsStore
+const { settings, showAddTemplateModal, templates, collateralTypes, showAddCategoryModal, showEditCategoryModal } = storeToRefs(settingsStore)
+const { getSettings, updateSettings, openAddTemplateModal, 
+        closeAddTemplateModal, getAllTemplates, fetchCollateralTypes, 
+        openAddCategoryModal, closeAddCategoryModal, deleteCollateralType,
+        openEditCategoryModal, closeEditCategoryModal } = settingsStore
 
 onMounted(() => {
   getSettings()
   getAllTemplates()
+  fetchCollateralTypes()
 })
 
-/* ── Notification mock state ── */
-const notifSettings = ref({
-  overdue:        true,
-  dueToday:       true,
-  newContract:    false,
-  liquidation:    true,
-  emailEnabled:   false,
-  zaloEnabled:     true,
-  reminderDays:   3,
-  reminderTime:   '08:00',
-})
-
-/* ── Contract template mock state ── */
-const contractTemplates = ref([
-  { id: 1, name: 'Mẫu Cầm Đồ Chuẩn',  type: 'Cầm Đồ',  updatedAt: '01/04/2026', active: true  },
-  { id: 2, name: 'Mẫu Tín Chấp Chuẩn', type: 'Tín Chấp', updatedAt: '28/03/2026', active: true  },
-  { id: 3, name: 'Mẫu Trả Góp Chuẩn',  type: 'Trả Góp',  updatedAt: '15/03/2026', active: false },
-])
-
-const showTemplateModal = ref(false)
-const editingTemplate   = ref(null)
-
-function openAddTemplate() {
-  editingTemplate.value = { id: null, name: '', type: 'Cầm Đồ', active: true }
-  showTemplateModal.value = true
-}
-function openEditTemplate(t) {
-  editingTemplate.value = { ...t }
-  showTemplateModal.value = true
-}
-function closeTemplateModal() { showTemplateModal.value = false }
-
-/* ── Asset category mock state ── */
-const assetCategories = ref([
-  { id: 1, name: 'Điện thoại',    icon: '📱', count: 42, active: true  },
-  { id: 2, name: 'Trang sức',     icon: '💍', count: 28, active: true  },
-  { id: 3, name: 'Xe máy',        icon: '🛵', count: 15, active: true  },
-  { id: 4, name: 'Laptop / Máy tính', icon: '💻', count: 19, active: true  },
-  { id: 5, name: 'Đồng hồ',       icon: '⌚', count: 11, active: false },
-  { id: 6, name: 'Khác',          icon: '📦', count: 7,  active: true  },
-])
-
-const showCategoryModal = ref(false)
-const editingCategory   = ref(null)
-
-function openAddCategory() {
-  editingCategory.value = { id: null, name: '', icon: '📦', active: true }
-  showCategoryModal.value = true
-}
-function openEditCategory(c) {
-  editingCategory.value = { ...c }
-  showCategoryModal.value = true
-}
-function closeCategoryModal() { showCategoryModal.value = false }
 </script>
 
 <template>
@@ -302,7 +254,7 @@ function closeCategoryModal() { showCategoryModal.value = false }
             {{ t.active ? 'Đang sử dụng' : 'Không sử dụng' }}
           </div>
           <div class="template-actions">
-            <button class="btn-icon-action text-teal" title="Chỉnh sửa" @click="openEditTemplate(t)">
+            <button class="btn-icon-action text-teal" title="Chỉnh sửa" >
               <font-awesome-icon icon="fa-solid fa-pen-to-square" />
             </button>
             <button class="btn-icon-action text-orange" title="Tải xuống">
@@ -324,10 +276,10 @@ function closeCategoryModal() { showCategoryModal.value = false }
       <div class="section-toolbar">
         <div class="toolbar-left">
           <h2 class="section-title">Danh mục tài sản</h2>
-          <span class="count-badge">{{ assetCategories.length }} danh mục</span>
+          <span class="count-badge">{{ collateralTypes.length }} danh mục</span>
         </div>
-        <button class="btn-add" @click="openAddCategory">
-          <font-awesome-icon icon="fa-solid fa-plus" /> Thêm danh mục
+        <button class="btn-add"  @click="openAddCategoryModal">
+          <font-awesome-icon icon="fa-solid fa-plus"/> Thêm danh mục
         </button>
       </div>
 
@@ -336,34 +288,29 @@ function closeCategoryModal() { showCategoryModal.value = false }
           <thead>
             <tr>
               <th>STT</th>
-              <th>Biểu tượng</th>
               <th>Tên danh mục</th>
               <th>Số tài sản</th>
-              <th>Trạng thái</th>
               <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(cat, idx) in assetCategories" :key="cat.id" :class="{ 'row-inactive': !cat.active }">
+            <tr v-for="(cat, idx) in collateralTypes" :key="cat.id">
               <td class="td-center">{{ idx + 1 }}</td>
-              <td class="td-center">
-                <span class="cat-emoji">{{ cat.icon }}</span>
-              </td>
               <td class="td-name">{{ cat.name }}</td>
               <td class="td-center">
                 <span class="count-pill">{{ cat.count }}</span>
               </td>
-              <td class="td-center">
+              <!-- <td class="td-center">
                 <span class="status-badge" :class="cat.active ? 'badge-active' : 'badge-inactive'">
                   {{ cat.active ? 'Đang dùng' : 'Ẩn' }}
                 </span>
-              </td>
+              </td> -->
               <td class="td-center">
                 <div class="action-cell">
-                  <button class="btn-icon-action text-teal" title="Chỉnh sửa" @click="openEditCategory(cat)">
+                  <button class="btn-icon-action text-teal" title="Chỉnh sửa" @click="openEditCategoryModal(cat.id)">
                     <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                   </button>
-                  <button class="btn-icon-action text-red" title="Xoá">
+                  <button class="btn-icon-action text-red" title="Xoá" @click="deleteCollateralType(cat.id)">
                     <font-awesome-icon icon="fa-solid fa-trash-can" />
                   </button>
                 </div>
@@ -378,21 +325,14 @@ function closeCategoryModal() { showCategoryModal.value = false }
         <div class="cat-stat-card">
           <span class="cat-stat-icon">📦</span>
           <div>
-            <div class="cat-stat-value">{{ assetCategories.reduce((s,c) => s + c.count, 0) }}</div>
+            <div class="cat-stat-value">{{ collateralTypes.reduce((s,c) => s + c.count, 0) }}</div>
             <div class="cat-stat-label">Tổng tài sản</div>
-          </div>
-        </div>
-        <div class="cat-stat-card">
-          <span class="cat-stat-icon">✅</span>
-          <div>
-            <div class="cat-stat-value">{{ assetCategories.filter(c => c.active).length }}</div>
-            <div class="cat-stat-label">Danh mục đang dùng</div>
           </div>
         </div>
         <div class="cat-stat-card">
           <span class="cat-stat-icon">🏷️</span>
           <div>
-            <div class="cat-stat-value">{{ assetCategories.length }}</div>
+            <div class="cat-stat-value">{{ collateralTypes.length }}</div>
             <div class="cat-stat-label">Tổng danh mục</div>
           </div>
         </div>
@@ -405,41 +345,13 @@ function closeCategoryModal() { showCategoryModal.value = false }
     </div>
 
     <!-- ─── Modal: Category Form ─── -->
-    <div class="modal-overlay" v-if="showCategoryModal">
-      <div class="modal-box">
-        <div class="modal-header">
-          <h2>{{ editingCategory?.id ? 'Chỉnh sửa danh mục' : 'Thêm danh mục tài sản' }}</h2>
-          <button class="modal-close" @click="closeCategoryModal">
-            <font-awesome-icon icon="fa-solid fa-xmark" />
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label">Tên danh mục</label>
-            <input type="text" class="form-input" placeholder="VD: Điện thoại, Xe máy..." v-model="editingCategory.name">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Biểu tượng (emoji)</label>
-            <input type="text" class="form-input" placeholder="VD: 📱" v-model="editingCategory.icon" maxlength="2">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Trạng thái</label>
-            <div class="toggle-row no-border">
-              <span class="toggle-label">Hiển thị danh mục</span>
-              <label class="switch">
-                <input type="checkbox" v-model="editingCategory.active">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" @click="closeCategoryModal">Hủy</button>
-          <button class="btn-save" @click="closeCategoryModal">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Lưu
-          </button>
-        </div>
-      </div>
+    <div class="modal-overlay" v-if="showAddCategoryModal">
+      <AddNewAssetsType @close="closeAddCategoryModal"/>
+    </div>
+
+    <!-- ─── Modal: Edit Category Form ─── -->
+    <div class="modal-overlay" v-if="showEditCategoryModal">
+      <EditAssetsType @close="closeEditCategoryModal"/>
     </div>
 
   </div>

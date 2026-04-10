@@ -526,3 +526,31 @@ input:checked + .slider::before { transform: translateX(20px); }
   transition: background 0.18s;
 }
 .btn-cancel:hover { background: #e2e8f0; }
+
+.template-note {
+  margin-top: 20px;
+  background: #faf0d0;
+  border: 1px solid #fcca36;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.template-note p {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 10px;
+}
+.template-note ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #000000;
+  font-size: 0.85rem;
+}
+.template-note li {
+  margin-bottom: 6px;
+}
+.template-note li:last-child {
+  margin-bottom: 0;
+}

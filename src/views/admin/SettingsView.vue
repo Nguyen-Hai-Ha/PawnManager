@@ -273,6 +273,36 @@ onMounted(() => {
           <p>Thêm mẫu mới</p>
         </div>
       </div>
+
+      <div class="template-note">
+        <div class="note-content">
+          <p>LƯU Ý: Phải thêm các trường sau đây vào mẫu hợp đồng để có thể sử dụng được:</p>
+          <ul>
+            <li>{Ma_HD} : Mã hợp đồng</li>
+            <li>{Ten_KH} : Tên khách hàng</li>
+            <li>{SDT_KH} : Số điện thoại khách hàng</li>
+            <li>{Dia_chi_KH} : Địa chỉ khách hàng</li>
+            <li>{CMND_CCCD} : CMND/CCCD khách hàng</li>
+            <li>{Ngay_sinh} : Ngày sinh khách hàng</li>
+            <li>{Tien_vay} : Số tiền vay</li>
+            <li>{Kieu_lai} : Kiểu lãi</li>
+            <li>{Lai_suat} : Lãi suất</li>
+            <li>{Ngay_vay} : Ngày vay</li>
+            <li>{Ngay_het_han} : Ngày hết hạn</li>
+            <li>{Ky_han} : Kỳ hạn</li>
+            <li>{Don_vi_ky_han} : Đơn vị kỳ hạn</li>
+            <li>{Tong_ky_han} : Tổng kỳ hạn</li>
+            <li>{Tai_san_cam_co} : Tài sản cầm cố</li>
+            <li>{Thong_tin_tai_san} : Thông tin tài sản</li>
+            <li>{So_ngay} : Số ngày</li>
+            <li>{Tien_lai} : Số tiền lãi</li>
+            <li>{Tien_lai_bang_chu} : Số tiền lãi bằng chữ</li>
+            <li>{Ngay} : Ngày</li>
+            <li>{Thang} : Tháng</li>
+            <li>{Nam} : Năm</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- ─── TAB: Asset Categories ─── -->

@@ -30,7 +30,7 @@ export const useLoanStore = defineStore("loan", () => {
     });
 
     const changePage = ( page) => {
-        if (page >= 1 && page <= totalPage){
+        if (page >= 1 && page <= totalPage.value){
             currentPage.value = page;
         }
     };
@@ -116,8 +116,8 @@ export const useLoanStore = defineStore("loan", () => {
     });
 
     const sortConfig = ref({
-        key: 'code',
-        direction: 'asc'
+        key: 'id',
+        direction: 'desc'
     });
 
     const handleSort = (key) => {
@@ -174,41 +174,58 @@ export const useLoanStore = defineStore("loan", () => {
     }
 
     const handleExportExcel = async () => {
-    try {
-        const response = await apiClient.get('/contract/export', { responseType: 'blob', params: { id_contract_type: id_contract_type.value } });
-        const contractType = id_contract_type.value === 1 ? 'Cam_Do' : id_contract_type.value === 2 ? 'Tin_Chap' : 'Tra_Gop'
-        const date = new Date().toISOString().split('T')[0];
+        try {
+            const response = await apiClient.get('/contract/export', { responseType: 'blob', params: { id_contract_type: id_contract_type.value } });
+            const contractType = id_contract_type.value === 1 ? 'Cam_Do' : id_contract_type.value === 2 ? 'Tin_Chap' : 'Tra_Gop'
+            const date = new Date().toISOString().split('T')[0];
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `Danh_Sach_Hop_Dong_${contractType}_${date}.xlsx`); 
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-    } catch (error) {
-        console.log("Lỗi xuất excel", error);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Danh_Sach_Hop_Dong_${contractType}_${date}.xlsx`); 
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.log("Lỗi xuất excel", error);
+        }
     }
-}
+
+    const handleImportExcel = async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            formData.append('id_contract_type', id_contract_type.value);
+
+            const response = await apiClient.post('contract/import', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.log("Lỗi nhập excel", error);
+        }
+    }
 
 
     return {
         //state
         loans, customers, assetTypes, assets, search, filterStatus, startDate, endDate, paginated, totalPage, currentPage, pageTitles,
-        
-
+    
         //computed
         filteredLoans, sortConfig, id_contract_type,
 
         //actions
         formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort,
         
-
         //fetch
         getAllLoans,
         fetchCustomer,
         fetchAssetTypes,
         deleteLoan,
-        handleExportExcel
+        handleExportExcel,
+        handleImportExcel
     }
 });

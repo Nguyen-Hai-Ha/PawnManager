@@ -353,26 +353,26 @@ const getReminderEarlyTemplate = (data) =>{
                 <p style="margin: 5px 0 0 0; opacity: 0.8;">PawnManager xin thông báo</p>
             </div>
             <div class="content">
-                <p>Chào bạn <strong>${customer_name}</strong>,</p>
+                <p>Chào bạn <strong>${data.customer_name}</strong>,</p>
                 <p>Đây là bản tin nhắc hẹn tự động. Hợp đồng của bạn sẽ đến hạn đóng lãi trong vài ngày tới. Thông tin chi tiết:</p>
                 
                 <div class="due-box">
                     <span style="font-size: 14px; color: #666;">Ngày đến hạn thanh toán:</span><br>
-                    <span class="due-date">${due_date}</span>
+                    <span class="due-date">${data.expected_date}</span>
                 </div>
 
                 <table class="info-table">
                     <tr>
                         <td class="label">Mã hợp đồng:</td>
-                        <td class="value">${contract_code}</td>
+                        <td class="value">${data.contract_code}</td>
                     </tr>
                     <tr>
                         <td class="label">Tài sản:</td>
-                        <td class="value">${asset_name}</td>
+                        <td class="value">${data.asset_name || 'Không có tài sản'}</td>
                     </tr>
                     <tr>
                         <td class="label">Số tiền lãi kỳ này:</td>
-                        <td class="value highlight-price">${interest_amount} VNĐ</td>
+                        <td class="value highlight-price">${data.interest_amount.toLocaleString('vi-VN')} VNĐ</td>
                     </tr>
                 </table>
             </div>
@@ -470,4 +470,21 @@ const sendLiquidationForAdminEmail = async (contract) => {
     }
 }
 
-module.exports = { sendOverDueEmail, sendDueTodayEmail, sendNewContractToAdminEmail, sendLiquidationEmail, sendLiquidationForAdminEmail };
+const sendReminderEarlyEmail = async (contract) => {
+    try {
+        const s = getSettingsInternal();
+        const transporter = createDynamicTransporter();
+        const mailOptions = {
+            from: s.email_sender,
+            to: contract.customer_email,
+            subject: 'NHẮC HẸN THANH TOÁN - CỬA HÀNG CẦM ĐỒ',
+            html: getReminderEarlyTemplate(contract)
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent:', contract.customer_email);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = { sendOverDueEmail, sendDueTodayEmail, sendNewContractToAdminEmail, sendLiquidationEmail, sendLiquidationForAdminEmail, sendReminderEarlyEmail };

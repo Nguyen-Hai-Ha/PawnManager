@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const { getSettingsInternal } = require('./SettingsService');
-const { sendOverDueEmail, sendDueTodayEmail, sendNewContractToAdminEmail, sendLiquidationEmail, sendLiquidationForAdminEmail } = require('../notificationService');
+const { sendOverDueEmail, sendDueTodayEmail, sendNewContractToAdminEmail, sendLiquidationEmail, sendLiquidationForAdminEmail, sendReminderEarlyEmail } = require('../notificationService');
 const db = require('../../config/database');
 
 const startScheduler = () => {
@@ -119,6 +119,35 @@ const startScheduler = () => {
                 if (s.emailEnabled) await sendLiquidationEmail(item);
                 if (s.emailEnabled) await sendLiquidationForAdminEmail(item);
                 db.prepare(`UPDATE collaterals SET notified_liquidation_at = CURRENT_TIMESTAMP, status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id);
+            }
+        }
+
+        // ── Thông báo nhắc hẹn thanh toán trước ──
+        if (s.reminderEarly) {
+            const targetDateObj = new Date(now);
+            targetDateObj.setDate(now.getDate() + parseInt(s.reminderDays));
+            const targetDateString = targetDateObj.toISOString().split('T')[0];
+
+            const reminderEarly = db.prepare(`
+                SELECT
+                ps.id,
+                ps.expected_date,
+                COALESCE((ps.interest_amount + ps.principal_amount), 0) as interest_amount,
+                c.code as contract_code,
+                cu.name as customer_name,
+                cu.email as customer_email,
+                col.name as asset_name
+                FROM payment_schedules ps
+                LEFT JOIN contracts c ON ps.id_contract = c.id
+                LEFT JOIN customers cu ON c.id_customer = cu.id
+                LEFT JOIN collaterals col ON c.id = col.id_contract
+                WHERE ps.is_paid = 0 AND ps.expected_date = ?
+                AND ps.notified_reminder_early_at IS NULL
+            `).all(targetDateString);
+            
+            for (const item of reminderEarly) {
+                if (s.emailEnabled) await sendReminderEarlyEmail(item);
+                db.prepare(`UPDATE payment_schedules SET notified_reminder_early_at = CURRENT_TIMESTAMP WHERE id = ?`).run(item.id);
             }
         }
     });

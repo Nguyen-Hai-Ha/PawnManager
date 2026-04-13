@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS payment_schedules(
     is_paid INTEGER DEFAULT 0,
     notified_overdue_at DATETIME NULL,
     notified_due_today_at DATETIME NULL,
+    notified_reminder_early_at DATETIME NULL,
     id_contract INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_contract) REFERENCES contracts(id)

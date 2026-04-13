@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 
 const store = useCustomerStore();
 const { Editform, relative } = storeToRefs(store);
-const { closeEditModal, handleImageChange, removeImage, 
+const { closeEditModal, handleEditImageChange, removeImage, 
         addRelative, removeRelative, updateCustomer } = store;
 
 </script>
@@ -34,18 +34,25 @@ const { closeEditModal, handleImageChange, removeImage,
                             <input type="text" id="edit-cccd" v-model="Editform.cccd" required>
                         </div>
                         <div class="pm-form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="edit-email" v-model="Editform.email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="pm-form-group">
+                            <label for="address">Địa chỉ</label>
+                            <input type="text" id="edit-address" v-model="Editform.address" required>
+                        </div>
+                        <div class="pm-form-group">
                             <label for="birthday">Ngày sinh</label>
                             <input type="date" id="edit-birthday" v-model="Editform.birth_date" required>
                         </div>
-                    </div>
-                    <div class="pm-form-group">
-                        <label for="address">Địa chỉ</label>
-                        <input type="text" id="edit-address" v-model="Editform.address" required>
+                        
                     </div>
                     <div class="form-row">
                         <div class="pm-form-group">
                             <label for="images_cccd">Hình ảnh CCCD</label>
-                            <input type="file" id="edit-images_cccd" @change="handleImageChange">
+                            <input type="file" id="edit-images_cccd" @change="handleEditImageChange">
                         </div>
                         <div class="pm-form-group">
                             <div class="image-preview" v-if="Editform.imagePreview">

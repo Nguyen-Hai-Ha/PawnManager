@@ -9,21 +9,23 @@ export const useCustomerStore = defineStore('customer', () => {
     const form = ref({
         name: '',
         phone: '',
+        email: '',
         cccd: '',
         birth_date: '',
         address: '',
         images_cccd: null,
-        imagePreview: ''
+        imagePreview: null
     });
     const Editform = ref({
         id: '',
         name: '',
         phone: '',
+        email: '',
         cccd: '',
         birth_date: '',
         address: '',
         images_cccd: null,
-        imagePreview: ''
+        imagePreview: null
     })
     const relative = ref([]);
 
@@ -156,6 +158,7 @@ export const useCustomerStore = defineStore('customer', () => {
         form.value = {
             name: '',
             phone: '',
+            email: '',
             cccd: '',
             birth_date: '',
             address: '',
@@ -170,11 +173,12 @@ export const useCustomerStore = defineStore('customer', () => {
         Editform.value = {
             name: '',
             phone: '',
+            email: '',
             cccd: '',
             birth_date: '',
             address: '',
-            images_cccd: '',
-            imagePreview: ''
+            images_cccd: null,
+            imagePreview: null
         }
         relative.value = []
         showEditCustomer.value = false;
@@ -186,6 +190,15 @@ export const useCustomerStore = defineStore('customer', () => {
             form.value.images_cccd = file;
             form.value.imagePreview = URL.createObjectURL(file);
             console.log(form.value.images_cccd);
+        }
+    };
+
+    const handleEditImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            Editform.value.images_cccd = file;
+            Editform.value.imagePreview = URL.createObjectURL(file);
+            console.log(Editform.value.images_cccd);
         }
     };
 
@@ -202,6 +215,7 @@ export const useCustomerStore = defineStore('customer', () => {
         const formData = new FormData();
         formData.append('name', form.value.name);
         formData.append('phone', form.value.phone);
+        formData.append('email', form.value.email);
         formData.append('cccd', form.value.cccd);
         formData.append('birth_date', form.value.birth_date || '');
         formData.append('address', form.value.address);
@@ -221,6 +235,7 @@ export const useCustomerStore = defineStore('customer', () => {
         const formData = new FormData();
         formData.append('name', Editform.value.name);
         formData.append('phone', Editform.value.phone);
+        formData.append('email', Editform.value.email);
         formData.append('cccd', Editform.value.cccd);
         formData.append('birth_date', Editform.value.birth_date || '');
         formData.append('address', Editform.value.address);
@@ -264,6 +279,7 @@ export const useCustomerStore = defineStore('customer', () => {
         openModal, closeModal, handleImageChange, removeImage, 
         addRelative, removeRelative, submitForm, deleteCutomer,
         closeEditModal, openEditModal, updateCustomer, handleSort,
+        handleEditImageChange,
 
         // fetch
         fetchcustomer

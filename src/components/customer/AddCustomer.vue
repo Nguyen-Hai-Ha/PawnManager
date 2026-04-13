@@ -34,14 +34,22 @@ const { closeModal, handleImageChange, removeImage,
                             <input type="text" id="cccd" v-model="form.cccd" required>
                         </div>
                         <div class="pm-form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" v-model="form.email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="pm-form-group">
+                            <label for="address">Địa chỉ</label>
+                            <input type="text" id="address" v-model="form.address" required>
+                        </div>
+                        <div class="pm-form-group">
                             <label for="birthday">Ngày sinh</label>
                             <input type="date" id="birthday" v-model="form.birth_date" required>
                         </div>
+                        
                     </div>
-                    <div class="pm-form-group">
-                        <label for="address">Địa chỉ</label>
-                        <input type="text" id="address" v-model="form.address" required>
-                    </div>
+                    
                     <div class="form-row">
                         <div class="pm-form-group">
                             <label for="images_cccd">Hình ảnh CCCD</label>

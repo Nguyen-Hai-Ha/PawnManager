@@ -159,6 +159,15 @@ export const useLoanStore = defineStore("loan", () => {
         try {
             const response = await apiClient.get('/customer');
             customers.value = response.data;
+            currentPage.value = 1;
+            search.value = '';
+            filterStatus.value = '';
+            startDate.value = '';
+            endDate.value = '';
+            sortConfig.value = {
+                key: 'id',
+                direction: 'desc'
+            };
         } catch (error) {
             console.error('Error fetching customers:', error);
         }

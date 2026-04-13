@@ -29,7 +29,7 @@ export const useCustomerStore = defineStore('customer', () => {
     })
     const relative = ref([]);
 
-    const itemPage = 12;
+    const itemPage = 8;
     const currentPage = ref(1);
 
     const search = ref('');

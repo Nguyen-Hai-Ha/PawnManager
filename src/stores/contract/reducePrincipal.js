@@ -84,6 +84,7 @@ export const useReducePrincipalStore = defineStore('reducePrincipal', () => {
             const response = await apiClient.get(`/contract/${id}/payment-details`);
             paymentDetails.value = response.data;
             formReducePrincipal.value.id_contract = paymentDetails.value.contract.id;
+            formReducePrincipal.value.interest_rate = paymentDetails.value.contract.interest_rate;
             fetchHistoryReducePrincipal(id);
         } catch (error) {
             console.error('Error fetching payment details:', error);

@@ -158,12 +158,12 @@ const TransactionsController = {
             const contractHistory = ContractHistory.create({
                 id_transaction: transaction.id,
                 id_contract: id_contract,
+                id_staff: data.id_staff,
                 old_principal: contract.loan_amount,
                 new_principal: contract.loan_amount - amount,
                 old_interest_rate: oldHistoryInterestRate,
                 new_interest_rate: newHistoryInterestRate,
-                other_fees: other_fees,
-                note: note
+                type: 'reduce_principal',
             });
 
             // Tính Tỷ lệ giảm gốc

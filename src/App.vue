@@ -3,6 +3,7 @@ import Aside from './components/Aside.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { useAuthStore } from './stores/auth';
+import UpdateNotification from './components/UpdateNotification.vue';
 
 const authStore = useAuthStore();
 
@@ -36,6 +37,7 @@ const logout = () => {
 </script>
 <template>
   <main>
+    <UpdateNotification />
     <div class="app-layout" v-if="!isLoginPage">
       <Aside />
       <div class="main-content">

@@ -173,8 +173,9 @@ onMounted(async() => {
                                     <button class="btn-action text-success" data-tooltip="Tất toán" v-permission="'loans.final_settlement'" @click="openFinalModal(loan.id)">
                                         <font-awesome-icon icon="hand-holding-dollar" />
                                     </button>
-                                    <!-- <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'loans.delete'" @click="deleteLoan(loan.id)"><font-awesome-icon
-                                            icon="circle-xmark" /></button> -->
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'loans.delete'" @click="deleteLoan(loan.id)">
+                                        <font-awesome-icon icon="circle-xmark" />
+                                    </button>
                                 </div>
                             </td>
                         </tr>

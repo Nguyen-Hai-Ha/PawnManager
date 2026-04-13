@@ -111,7 +111,7 @@ const startScheduler = () => {
                 WHERE col.status = 'Đang Cầm'
                 AND col.notified_liquidation_at IS NULL
                 AND ps.is_paid = 0
-                AND DATE(ps.expected_date, '+7 days') <= ?
+                AND DATE(ps.expected_date, '+3 days') <= ?
                 GROUP BY col.id
                 `).all(today);
 

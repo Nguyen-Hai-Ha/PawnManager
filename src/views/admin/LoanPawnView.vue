@@ -172,6 +172,11 @@ onMounted(async() => {
                                         <font-awesome-icon icon="fa-solid fa-eye" />
                                     </button>
                                 </div>
+                                <div class="action-cell" v-else-if="loan.status === 'Đã Tất Toán'">
+                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)" v-permission="'loans.detail'">
+                                        <font-awesome-icon icon="fa-solid fa-eye" />
+                                    </button>
+                                </div>
                                 <div class="action-cell" v-else>
                                     <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'loans.interest_payment'" @click="openInterestModal(loan.id)">
                                         <font-awesome-icon icon="coins" />

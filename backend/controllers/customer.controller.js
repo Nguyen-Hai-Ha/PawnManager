@@ -1,4 +1,4 @@
-const { Customer, Relative, Contract } = require('../models');
+const { Customer, Relative, Contract, Staff } = require('../models');
 
 const CustomerController = {
     getAll: (req, res) => {
@@ -26,6 +26,12 @@ const CustomerController = {
             }
 
             const customer = Customer.create(data);
+            const staff = Staff.getById(req.id_staff);
+            const log = AuditLogs.create({
+                action: 'Thêm mới khách hàng',
+                details: `Thêm mới khách hàng ${customer.name} bởi nhân viên ${staff.name}`,
+                id_staff: staff.id,
+            });
             if (data.relatives && data.relatives.length > 0) {
                 const relatives = JSON.parse(data.relatives);
                 relatives.forEach(item => {
@@ -69,6 +75,13 @@ const CustomerController = {
                 });
                 
             }
+
+            const staff = Staff.getById(req.id_staff);
+            const log = AuditLogs.create({
+                action: 'Cập nhật thông tin khách hàng',
+                details: `Cập nhật thông tin khách hàng ${customer.name} bởi nhân viên ${staff.name}`,
+                id_staff: staff.id,
+            });
             res.json({customer, relatives});
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -84,6 +97,15 @@ const CustomerController = {
             if (contract) {
                 return res.status(400).json({ error: 'Customer has contract' });
             }
+
+            const { id_staff } = req.query
+            const staff = Staff.getById(id_staff);
+            const log = AuditLogs.create({
+                action: 'Xóa khách hàng',
+                details: `Xóa khách hàng ${customer.name} bởi nhân viên ${staff.name}`,
+                id_staff: staff.id,
+            });
+
             Customer.delete(req.params.id);
             const relative = Relative.deleteByIdCustomer(req.params.id);
             res.json({customer, relative});

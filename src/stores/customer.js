@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
 import apiClient from "@/plugins/axios";
+import { useAuthStore } from './auth';
 import { ref, computed, nextTick } from "vue";
 
 export const useCustomerStore = defineStore('customer', () => {
+    const authStore = useAuthStore();
+    const staffId = computed(() => authStore.user.id);
     const customers = ref([]);
     const showAddCustomer = ref(false);
     const showEditCustomer = ref(false);
@@ -221,6 +224,7 @@ export const useCustomerStore = defineStore('customer', () => {
         formData.append('address', form.value.address);
         formData.append('images_cccd', form.value.images_cccd);
         formData.append('relatives', JSON.stringify(relative.value));
+        formData.append('id_staff', staffId.value);
 
         try {
             await apiClient.post('/customer', formData);
@@ -241,6 +245,7 @@ export const useCustomerStore = defineStore('customer', () => {
         formData.append('address', Editform.value.address);
         formData.append('images_cccd', Editform.value.images_cccd);
         formData.append('relatives', JSON.stringify(relative.value));
+        formData.append('id_staff', staffId.value);
 
         try {
             await apiClient.put(`/customer/${Editform.value.id}`, formData);
@@ -253,7 +258,7 @@ export const useCustomerStore = defineStore('customer', () => {
 
     const deleteCutomer = async (id) => {
         try {
-            await apiClient.delete(`/customer/${id}`);
+            await apiClient.delete(`/customer/${id}`, {params: {id_staff: staffId.value}});
             await fetchcustomer();
         }catch (error) {
             console.error('Error deleting customer:', error);
@@ -272,7 +277,7 @@ export const useCustomerStore = defineStore('customer', () => {
         Editform, sortConfig,
 
         // computed
-        paginated, totalPage, searchCustomer, sortedCustomers,
+        paginated, totalPage, searchCustomer, sortedCustomers, staffId,
 
         // method
         changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,

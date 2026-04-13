@@ -24,6 +24,11 @@ const StaffController = {
         try {
             const data = req.body;
             const staff = await Staff.create(data);
+            const log = AuditLogs.create({
+                action: 'Thêm mới nhân viên',
+                details: `Thêm mới nhân viên ${staff.name} bởi admin`,
+                id_staff: data.id_staff,
+            });
             res.json(staff);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -37,6 +42,11 @@ const StaffController = {
                 Staff.updatePassword(req.params.id, password);
             }
             const result = Staff.update(req.params.id, data);
+            const log = AuditLogs.create({
+                action: 'Cập nhật nhân viên',
+                details: `Cập nhật nhân viên ${result.name} bởi admin`,
+                id_staff: data.id_staff,
+            });
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -45,6 +55,11 @@ const StaffController = {
     delete: (req, res) => {
         try {
             const staff = Staff.delete(req.params.id);
+            const log = AuditLogs.create({
+                action: 'Xóa nhân viên',
+                details: `Xóa nhân viên ${staff.name} bởi admin`,
+                id_staff: req.body.id_staff,
+            });
             res.json(staff);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -71,6 +86,12 @@ const StaffController = {
                 config.secret,
                 { expiresIn: '1d' }
             );
+
+            const log = AuditLogs.create({
+                action: 'Đăng nhập',
+                details: `Nhân viên ${staff.name} đăng nhập`,
+                id_staff: staff.id,
+            });
 
             res.json({ staff, token, permissions: permissionNames });
         } catch (error) {

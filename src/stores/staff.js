@@ -4,6 +4,7 @@ import { ref, computed, watch, nextTick } from 'vue';
 import { PERMISSION } from '@/constants/permission';
 
 export const useStaffStore = defineStore('staff', () => {
+
     const staff = ref([])
     const newStaff = ref({
         name: '',

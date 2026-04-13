@@ -1,4 +1,4 @@
-const { Template } = require("../models");
+const { Template, AuditLogs } = require("../models");
 const { downloadTemplateDoc } = require('../services/DocumentService');
 
 
@@ -28,6 +28,12 @@ const SettingController = {
                 type : req.body.type
             }
 
+            const log = AuditLogs.create({
+                action: 'Thêm mới mẫu hợp đồng',
+                details: `Thêm mới mẫu hợp đồng ${Templetas.name_file} bởi admin`,
+                id_staff: 1,
+            });
+
             const template = Template.create(Templetas);
             res.status(200).json(template);
         } catch (error) {
@@ -42,6 +48,13 @@ const SettingController = {
                 active : req.body.active,
                 type : req.body.type
             }
+
+            const log = AuditLogs.create({
+                action: 'Cập nhật mẫu hợp đồng',
+                details: `Cập nhật mẫu hợp đồng ${Templetas.name_file} bởi admin`,
+                id_staff: 1,
+            });
+
             const template = Template.update(req.params.id, Templetas);
             res.status(200).json(template);
         } catch (error) {
@@ -50,8 +63,16 @@ const SettingController = {
     },
     deleteTemplate : (req, res) => {
         try {
-            const template = Template.delete(req.params.id);
-            res.status(200).json(template);
+            const template = Template.getById(req.params.id);
+            const log = AuditLogs.create({
+                action: 'Xóa mẫu hợp đồng',
+                details: `Xóa mẫu hợp đồng ${template.name_file} bởi admin`,
+                id_staff: 1,
+            });
+
+            const templatedelete = Template.delete(req.params.id);
+
+            res.status(200).json(templatedelete);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

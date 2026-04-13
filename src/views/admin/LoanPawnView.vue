@@ -22,8 +22,11 @@ const reducePrincipalStore = useReducePrincipalStore();
 const finalSettlementStore = useFinalSettlementStore();
 const detailContractStore = useDetailContractStore();
 
-const { loans, paginated, totalPage, currentPage, search, sortConfig, filterStatus, startDate, endDate } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, deleteLoan, handleExportExcel } = loanStore;
+const { loans, paginated, totalPage, currentPage, search, sortConfig, 
+        filterStatus, startDate, endDate } = storeToRefs(loanStore);
+const { getAllLoans, formatCurrency, changePage, goToFirstPage, 
+        goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, 
+        deleteLoan, handleExportExcel, handleImportExcel } = loanStore;
 
 const { showModal } = storeToRefs(addNewLoanStore);
 const { openModal, closeModal } = addNewLoanStore;
@@ -39,6 +42,15 @@ const { openFinalModal, closeFinalModal } = finalSettlementStore;
 
 const { showDetailContract } = storeToRefs(detailContractStore);
 const { openDetailContract, closeDetailContract } = detailContractStore;
+
+const onFileSelected = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        await handleImportExcel(file);
+        event.target.value = '';
+        await getAllLoans();
+    }
+}
 
 onMounted(async() => {
     await getAllLoans();
@@ -77,12 +89,12 @@ onMounted(async() => {
             </div>
             <div class="button-group">
                 <!-- Nút Xuất File -->
-                <button class="btn-export" style="background-color: #2e7d32; color: white;" @click="handleExportExcel">
+                <button class="btn-export" style="background-color: #ff7221; color: white;" @click="handleExportExcel">
                     <font-awesome-icon icon="fa-solid fa-file-excel" /> Xuất Excel
                 </button>
                 
                 <!-- Nút Nhập File (kèm input bị ẩn) -->
-                <input type="file" ref="fileInput" accept=".xlsx, .xls" style="display: none" />
+                <input type="file" ref="fileInput" accept=".xlsx, .xls" style="display: none" @change="onFileSelected" />
                 <button class="btn-import" @click="$refs.fileInput.click()" style="background-color: #1976d2; color: white;">
                     <font-awesome-icon icon="fa-solid fa-file-import" /> Nhập Excel
                 </button>

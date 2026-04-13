@@ -153,7 +153,7 @@ export const useAssetsStore = defineStore("assets", () => {
     });
 
     const changePage = ( page) => {
-        if (page >= 1 && page <= totalPage){
+        if (page >= 1 && page <= totalPage.value){
             currentPage.value = page;
         }
     };

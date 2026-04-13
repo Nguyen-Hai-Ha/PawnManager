@@ -462,6 +462,197 @@ const ContractController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+    importExcel: async (req, res) => {
+        try {
+            if (!req.file) {
+                return res.status(400).json({message: "không tìm thấy file tải lên"})
+            }
+            // ID phân loại hợp đồng từ client
+            const id_contract_type = req.body.id_contract_type || 1; 
+
+            const workbook = new ExcelJS.Workbook();
+            // Đọc file từ đường dẫn lưu tạm trên ổ cứng (req.file.path) thay vì buffer
+            await workbook.xlsx.readFile(req.file.path);
+            
+            // Đọc xong thì xoá file tạm đi cho đỡ nặng máy
+            const fs = require('fs');
+            fs.unlinkSync(req.file.path);
+
+            const worksheet = workbook.getWorksheet(1);
+            const contracts = [];
+            
+            worksheet.eachRow((row, rowNumber) => {
+                if (rowNumber > 1) {
+                    const customer_name = row.getCell('B').text.trim();
+                    if (!customer_name) return; 
+
+                    const contract = {
+                        code: row.getCell('A').text,
+                        customer_name: customer_name,
+                        customer_phone: row.getCell('C').text,
+                        customer_email: row.getCell('D').text,
+                        customer_cccd: row.getCell('E').text,
+                        customer_address: row.getCell('F').text,
+                        customer_birth_date: row.getCell('G').text,
+                        loan_amount: row.getCell('H').text,
+                        interest_rate: row.getCell('I').text,
+                        start_date: row.getCell('J').text,
+                        end_date: row.getCell('K').text,
+                        total_periods: row.getCell('L').text,
+                        status: row.getCell('M').text,
+                        collateral_name: row.getCell('N').text,
+                        collateral_code: row.getCell('O').text,
+                        collateral_metadata: row.getCell('P').text,
+                        collateral_type: row.getCell('Q').text,
+                    };
+                    contracts.push(contract);
+                }
+            });
+            
+            // Lấy trước tất cả khách hàng để kiểm tra xem đã tồn tại chưa (tránh query lặp lại nhiều lần)
+            const allCustomers = Customer.getAll();
+
+            for (const data of contracts) {
+                // Chuyển về số điện thoại hoặc cccd dạng chuỗi để so sánh
+                const phone = String(data.customer_phone || '').trim();
+                const cccd = String(data.customer_cccd || '').trim();
+                
+                // Chỉ map với khách hàng cũ nếu có thông tin SĐT hoặc CCCD hợp lệ (tránh việc so sánh chuỗi rỗng '' === '')
+                let existCustomer = allCustomers.find(c => 
+                    (cccd !== '' && c.cccd === cccd) || 
+                    (phone !== '' && c.phone === phone)
+                );
+                let id_customer = null;
+
+                if (existCustomer) {
+                    id_customer = existCustomer.id;
+                } else {
+                    // Nếu chưa có thì tạo mới
+                    const newCustomer = Customer.create({
+                        name: data.customer_name,
+                        phone: phone,
+                        address: data.customer_address,
+                        cccd: cccd,
+                        birth_date: data.customer_birth_date,
+                        images_cccd: null
+                    });
+                    id_customer = newCustomer.id;
+                    // Đẩy vào mảng cục bộ để dòng sau đọc Excel có trùng thì không tạo mới nữa
+                    allCustomers.push({ ...data, phone: phone, cccd: cccd, id: id_customer });
+                }
+
+                const loan_amount = Number(String(data.loan_amount || "0").replace(/[^0-9]/g, "")) || 0;
+                let interest_rate = data.interest_rate;
+                if (typeof interest_rate === 'string') {
+                    interest_rate = Number(interest_rate.replace(/[^0-9.]/g, "")) || 0;
+                }
+                const total_periods = Number(data.total_periods) || 1;
+
+                const newContract = Contract.create({
+                    code: data.code,
+                    loan_amount: loan_amount,
+                    interest_rate: interest_rate,
+                    start_date: data.start_date,
+                    end_date: data.end_date,
+                    payment_term: 1, // Mặc định chu kỳ 1
+                    term_unit: "Tháng", // Mặc định đơn vị tháng (để tránh lỗi)
+                    total_periods: total_periods,
+                    interest_type: "percent/term", // Mặc định lãi phần trăm
+                    status: data.status || 'Đang vay',
+                    id_customer: id_customer,
+                    id_contract_type: id_contract_type,
+                    id_staff: 1
+                });
+
+                const processMetadata = (metadata) => {
+                    if (!metadata) return '{}';
+                    const pairs = metadata.split(';');
+                    const result = {};
+                    pairs.forEach(pair => {
+                        const [key, value] = pair.split(':');
+                        if (key && value) {
+                            result[key.trim()] = value.trim();
+                        }
+                    });
+                    return JSON.stringify(result);
+                }
+
+                if (data.collateral_name) {
+                    Collaterals.create({
+                        code: data.collateral_code,
+                        name: data.collateral_name,
+                        metadata: processMetadata(data.collateral_metadata),
+                        status: 'Đang cầm',
+                        id_contract: newContract.id,
+                        id_collateral_type: data.collateral_type || 1
+                    });
+                }
+
+                // 4. Sinh lịch đóng lãi (PaymentSchedules) theo tháng
+                const startDate = new Date(data.start_date);
+                let currentFromDate = data.start_date;
+                let principalAmount = 0;
+                
+                // Tiền gốc mỗi kỳ chỉ áp dụng cho HĐ trả góp (Loại 3)
+                if (id_contract_type == 3) {
+                    principalAmount = Math.ceil(loan_amount / total_periods);
+                }
+
+                for (let i = 1; i <= total_periods; i++) {
+                    let expectedDate = new Date(startDate);
+                    expectedDate.setMonth(expectedDate.getMonth() + i);
+
+                    if (expectedDate.getDate() != startDate.getDate()) {
+                        expectedDate.setDate(0);
+                    }
+                    const formattedDate = expectedDate.toISOString().split('T')[0];
+
+                    // Tính Lãi chia đều (percent/term)
+                    let interestAmount = Math.ceil((loan_amount * (interest_rate / 100)) / total_periods);
+
+                    PaymentSchedules.create({
+                        id_contract: newContract.id,
+                        period_number: i,
+                        from_date: currentFromDate,
+                        expected_date: formattedDate,
+                        is_paid: 0,
+                        interest_amount: interestAmount,
+                        principal_amount: principalAmount
+                    });
+
+                    currentFromDate = formattedDate;
+
+                    // Kỳ cuối cùng và tạo thêm 1 kỳ nữa cho hợp đồng cầm đồ và tín chấp (1, 2) thì tiền gốc = tiền vay, tiền lãi = 0
+                    if (i == total_periods && (id_contract_type == 1 || id_contract_type == 2)) {
+                        PaymentSchedules.create({
+                            id_contract: newContract.id,
+                            period_number: i + 1,
+                            from_date: formattedDate,
+                            expected_date: formattedDate,
+                            interest_amount: 0,
+                            principal_amount: loan_amount,
+                            is_paid: 0
+                        });
+                    }
+                }
+
+                // 5. Lưu giao dịch thu chi để hệ thống ghi nhận hợp đồng hợp lệ
+                Transactions.create({
+                    amount: loan_amount,
+                    other_fees: 0,
+                    id_contract: newContract.id,
+                    id_transaction_type: 1,
+                    id_staff: 1,
+                    id_schedule: null
+                });
+            }
+
+            res.status(200).json({ message: `Đã import thành công ${contracts.length} hợp đồng.` });
+        } catch (error) {
+            console.error("Lỗi khi import excel:", error);
+            res.status(500).json({ error: error.message });
+        }
     }
 }
 

@@ -26,15 +26,15 @@ const PaymentScheduleController = {
     //         res.status(500).json({ error: error.message });
     //     }
     // },
-    update: (req, res) => {
-        try {
-            const data = req.body;
-            const paymentSchedule = PaymentSchedules.update(req.params.id, data);
-            res.json(paymentSchedule);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
+    // update: (req, res) => {
+    //     try {
+    //         const data = req.body;
+    //         const paymentSchedule = PaymentSchedules.update(req.params.id, data);
+    //         res.json(paymentSchedule);
+    //     } catch (error) {
+    //         res.status(500).json({ error: error.message });
+    //     }
+    // },
     // delete: (req, res) => {
     //     try {
     //         const paymentSchedule = PaymentSchedules.delete(req.params.id);

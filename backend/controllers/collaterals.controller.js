@@ -1,4 +1,4 @@
-const { Collaterals } = require('../models');
+const { Collaterals, AuditLogs, Contract } = require('../models');
 
 const CollateralsController = {
     getAll: (req, res) => {
@@ -38,6 +38,12 @@ const CollateralsController = {
         try {
             const data = req.body;
             const collateral = Collaterals.update(req.params.id, data);
+            const contract = Contract.getStaffByIdContract(collateral.id_contract);
+            const log = AuditLogs.create({
+                action: 'Thay đổi thông tin tài sản',
+                details: `Thay đổi thông tin tài sản ${collateral.name} bởi nhân viên ${contract.staff_name}`,
+                id_staff: contract.id_staff,
+            });
             res.json(collateral);
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -14,7 +14,7 @@ const corsOptions = {
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
 
-        const allowedOrigins = ['http://localhost:5173'];
+        const allowedOrigins = ['*'];
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
@@ -64,8 +64,8 @@ function startServer() {
     try {
         console.log('--- Database connection established successfully (better-sqlite3) ---');
 
-        app.listen(port, () => {
-            console.log(`--- Server is running on http://localhost:${port} ---`);
+        app.listen(port, '0.0.0.0', () => {
+            console.log(`--- Server is running on http://localhost:${port} (accessible from all interfaces) ---`);
         });
     } catch (error) {
         console.error('Unable to start the server:', error);

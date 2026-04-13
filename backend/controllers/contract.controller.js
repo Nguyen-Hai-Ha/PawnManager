@@ -113,6 +113,12 @@ const ContractController = {
                 dataCollateral = JSON.parse(req.body.collateral);
                 dataCollateral.id_contract = contract.id;
                 collateral = Collaterals.create(dataCollateral);
+                AuditLogs.create({
+                    action: 'Thêm mới tài sản cầm cố',
+                    details: `Tạo tài sản cầm cố ${collateral.name} với hợp đồng ${contract.id} bởi nhân viên ${dataStaff.id}`,
+                    id_staff: dataStaff.id,
+                    
+                });
             }
             if (req.body.relatives) {
                 // FE gửi mảng 2 người
@@ -303,11 +309,18 @@ const ContractController = {
     },
     delete: (req, res) => {
         try {
+            const staff = Contract.getStaffByIdContract(req.params.id);
+            AuditLogs.create({
+                action: 'Xóa hợp đồng',
+                details: `Hợp đồng ${req.params.id} đã được xóa bởi nhân viên ${staff.staff_name}`,
+                id_staff: staff.id_staff,
+            });
             const transaction = Transactions.deleteByContractId(req.params.id);
             const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
             const collateral = Collaterals.deleteByContractId(req.params.id);
             const images = Image.deleteByCollateralId(req.params.id);
             const contract = Contract.delete(req.params.id);
+            
             res.json({ contract, paymentSchedules, collateral, transaction, images });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -357,6 +370,11 @@ const ContractController = {
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
                 'Content-Length': buf.length
+            });
+            AuditLogs.create({
+                action: 'In hợp đồng',
+                details: `In hợp đồng ${contract.Code} bởi nhân viên ${contract.staff_name}`,
+                id_staff: contract.id_staff,
             });
             res.send(buf);
         } catch (error) {
@@ -457,6 +475,12 @@ const ContractController = {
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Content-Disposition': `attachment; filename="DanhSachHopDong.xlsx"`,
                 'Content-Length': buffer.length
+            });
+
+            AuditLogs.create({
+                action: 'Export hợp đồng',
+                details: `Export ${contracts.length} hợp đồng loại ${id_contract_type} bởi admin`,
+                id_staff: 1,
             });
             res.send(buffer);
         } catch (error) {
@@ -647,6 +671,12 @@ const ContractController = {
                     id_schedule: null
                 });
             }
+
+            AuditLogs.create({
+                action: 'Import hợp đồng',
+                details: `Import ${contracts.length} hợp đồng loại ${id_contract_type} bởi admin`,
+                id_staff: 1,
+            });
 
             res.status(200).json({ message: `Đã import thành công ${contracts.length} hợp đồng.` });
         } catch (error) {

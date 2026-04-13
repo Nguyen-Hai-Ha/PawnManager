@@ -102,7 +102,7 @@ const Contract = {
                 cu.cccd,
                 cu.address,
                 cu.birth_date,
-                c.Code,
+                c.code as Code,
                 c.loan_amount as Loan_amount,
                 c.interest_rate as Interest_rate,
                 c.start_date as Start_date,
@@ -113,11 +113,14 @@ const Contract = {
                 c.interest_type as Interest_type,
                 ct.name as Contract_type,
                 cl.name as collateral_name,
-                cl.metadata as collateral_metadata
+                cl.metadata as collateral_metadata,
+                s.name as staff_name,
+                s.id as id_staff
             FROM contracts c
             LEFT JOIN collaterals cl ON c.id = cl.id_contract
             LEFT JOIN contracts_types ct ON c.id_contract_type = ct.id
             LEFT JOIN customers cu ON c.id_customer = cu.id
+            LEFT JOIN staff s ON c.id_staff = s.id
             WHERE c.id = ?`;
         const stmt = db.prepare(sql);
         return stmt.get(id);
@@ -156,6 +159,11 @@ const Contract = {
             GROUP BY c.id`;
         const stmt = db.prepare(sql);
         return stmt.all(id_contract_type);
+    },
+    getStaffByIdContract: (id) => {
+        const sql = `SELECT s.id as id_staff, s.name as staff_name FROM contracts c LEFT JOIN staff s ON c.id_staff = s.id WHERE c.id = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.get(id);
     }
 };
 

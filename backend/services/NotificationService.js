@@ -322,12 +322,68 @@ const getLiquidationTemplateForAdmin = (data) => {
         </div>
     </body>
     </html>
-`
+    `
 }
 
-// const sendOverDueZaloZNS = (contract) => {
-//     console.log(`Sending Zalo ZNS for contract ${contract.id} of type ${type}`);
-// }
+const getReminderEarlyTemplate = (data) =>{
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            .container { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 550px; margin: 20px auto; border: 1px solid #e8f5e9; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+            .header { background-color: #1a7a6e; color: #ffffff; padding: 25px; text-align: center; }
+            .content { padding: 30px; background-color: #ffffff; }
+            .due-box { background-color: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 20px; margin-bottom: 25px; text-align: center; }
+            .due-date { font-size: 20px; color: #1a7a6e; font-weight: bold; }
+            .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            .info-table td { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+            .label { color: #757575; font-size: 14px; }
+            .value { font-weight: 600; text-align: right; color: #2c3e50; }
+            .highlight-price { color: #e53935; font-size: 18px; font-weight: bold; }
+            .footer { background-color: #f9f9f9; color: #999; padding: 20px; text-align: center; font-size: 12px; }
+            .btn { display: inline-block; background-color: #2e7d32; color: #ffffff !important; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 15px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2 style="margin: 0; font-size: 22px;">NHẮC HẸN THANH TOÁN</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.8;">PawnManager xin thông báo</p>
+            </div>
+            <div class="content">
+                <p>Chào bạn <strong>${customer_name}</strong>,</p>
+                <p>Đây là bản tin nhắc hẹn tự động. Hợp đồng của bạn sẽ đến hạn đóng lãi trong vài ngày tới. Thông tin chi tiết:</p>
+                
+                <div class="due-box">
+                    <span style="font-size: 14px; color: #666;">Ngày đến hạn thanh toán:</span><br>
+                    <span class="due-date">${due_date}</span>
+                </div>
+
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Mã hợp đồng:</td>
+                        <td class="value">${contract_code}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Tài sản:</td>
+                        <td class="value">${asset_name}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Số tiền lãi kỳ này:</td>
+                        <td class="value highlight-price">${interest_amount} VNĐ</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="footer">
+                <p style="margin-top: 10px;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `
+}
 
 const sendOverDueEmail = async (contract) => {
     try {

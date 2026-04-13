@@ -1,4 +1,4 @@
-const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory } = require('../models');
+const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory, AuditLogs, Staff } = require('../models');
 const db = require('../config/database');
 const { doReadNumber } = require('read-vietnamese-number');
 const { generatePaymentReceiptDoc } = require('../services/DocumentService');
@@ -92,6 +92,14 @@ const TransactionsController = {
                 }
             }
 
+            const staff = Staff.getById(data.id_staff);
+
+            const log = AuditLogs.create({
+                action: 'Đóng lãi cho Hợp đồng',
+                details: `Đóng lãi cho Hợp đồng ${contract.code} kỳ ${paymentSchedule.period_number} với số tiền ${data.amount} bởi nhân viên ${staff.name}`,
+                id_staff: data.id_staff,
+            });
+
             res.json({ transaction, paymentSchedule });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -113,6 +121,7 @@ const TransactionsController = {
             const other_fees = data.other_fees || 0;
             const newInterestRate = data.interest_rate;
             const note = data.note;
+            const staff = Staff.getById(data.id_staff);
 
             const contract = Contract.getById(id_contract);
             if (!contract) return res.status(404).json({ error: "Hợp đồng không tồn tại" });
@@ -260,6 +269,12 @@ const TransactionsController = {
                 });
             }
 
+            AuditLogs.create({
+                action: 'Trả bớt gốc cho Hợp đồng',
+                details: `Trả bớt gốc cho Hợp đồng ${contract.code} với số tiền ${amount} bởi nhân viên ${staff.name}`,
+                id_staff: staff.id,
+            });
+
             // Cập nhật lại số tiền gốc của hợp đồng
             Contract.updateLoanAmount({ loan_amount: newLoanAmount, interest_rate: newInterestRate }, id_contract);
 
@@ -314,6 +329,14 @@ const TransactionsController = {
                 PaymentSchedules.updateStatus({ is_paid: 1 }, schedule.id);
             });
 
+            const staff = Staff.getById(id_staff);
+
+            AuditLogs.create({
+                action: 'Tất toán Hợp đồng',
+                details: `Tất toán Hợp đồng ${contract.code} với số tiền ${amount} bởi nhân viên ${staff.name}`,
+                id_staff: staff.id,
+            });
+
             return { transaction, msg: "Hợp đồng đã được tất toán" };
         });
         try {
@@ -355,6 +378,14 @@ const TransactionsController = {
             } else {
                 return { error: "Tài sản không tồn tại" };
             }
+
+            const staff = Staff.getById(id_staff);
+
+            AuditLogs.create({
+                action: 'Thanh lý Tài Sản',
+                details: `Thanh lý Tài Sản của Hợp đồng ${contract.code} với số tiền ${amount} bởi ${staff.name}`,
+                id_staff: staff.id,
+            });
 
             return { transaction, msg: "Tài sản đã được thanh lý" };
         });

@@ -58,6 +58,13 @@ const countLiquidation = async () => {
   }
 }
 
+const goToOverDueContracts = () => {
+  router.push({
+    name: 'AdminLoanPawn',
+    query: { filter: 'Quá Hạn' },
+  });
+}
+
 onMounted(async () => {
   await countContractOverDate();
   await countLiquidation();
@@ -84,7 +91,7 @@ onMounted(async () => {
               <div class="header-waring-liquidation" v-if="Liquidation > 0">
                 <span>{{ Liquidation }} Tài sản chờ thanh lý</span>
               </div>
-              <div class="header-waring-contract" v-if="count > 0">
+              <div class="header-waring-contract" v-if="count > 0" @click="goToOverDueContracts">
                 <span>{{ count }} Hợp đồng Quá Hạn</span>
               </div>
               <div class="header-actions">

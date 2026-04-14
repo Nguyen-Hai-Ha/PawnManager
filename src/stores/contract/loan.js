@@ -140,34 +140,44 @@ export const useLoanStore = defineStore("loan", () => {
     const deleteLoan = async (id) => {
         try {
             const response = await apiClient.delete(`/contract/${id}`);
-            await getAllLoans();
+            await getAllLoansType();
         } catch (error) {
             console.error('Error deleting loan:', error);
         }
     }
 
-    const getAllLoans = async () => {
+    const getAllLoansType = async () => {
         try {
-            const response = await apiClient.get(`/contract/type/${id_contract_type.value}`);
-            loans.value = response.data;
+            if (filterStatus.value === 'Quá Hạn') {
+                // Fetch từ tất cả 3 loại khi filter Quá Hạn
+                const type1 = await apiClient.get('/contract/type/1');
+                const type2 = await apiClient.get('/contract/type/2');
+                const type3 = await apiClient.get('/contract/type/3');
+                loans.value = [...type1.data, ...type2.data, ...type3.data];
+            } else {
+                // Fetch từ loại hiện tại
+                const response = await apiClient.get(`/contract/type/${id_contract_type.value}`);
+                loans.value = response.data;
+                currentPage.value = 1;
+                search.value = '';
+                filterStatus.value = '';
+                startDate.value = '';
+                endDate.value = '';
+                sortConfig.value = {
+                    key: 'id',
+                    direction: 'desc'
+                };
+        }
         } catch (error) {
             console.error('Error fetching loans:', error);
         }
     };
 
+
     const fetchCustomer = async () => {
         try {
             const response = await apiClient.get('/customer');
             customers.value = response.data;
-            currentPage.value = 1;
-            search.value = '';
-            filterStatus.value = '';
-            startDate.value = '';
-            endDate.value = '';
-            sortConfig.value = {
-                key: 'id',
-                direction: 'desc'
-            };
         } catch (error) {
             console.error('Error fetching customers:', error);
         }
@@ -230,7 +240,7 @@ export const useLoanStore = defineStore("loan", () => {
         formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort,
         
         //fetch
-        getAllLoans,
+        getAllLoansType,
         fetchCustomer,
         fetchAssetTypes,
         deleteLoan,

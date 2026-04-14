@@ -112,6 +112,7 @@ nav a {
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #ff0000;
+  cursor: pointer;
 }
 
 .header-waring-contract span {

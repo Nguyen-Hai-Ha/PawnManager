@@ -99,7 +99,35 @@ const DashboardController = {
                     paid: projected.paid || 0,
                     unpaid: projected.unpaid || 0,
                     percent: projected.paid ? ((projected.paid / (projected.paid + projected.unpaid)) * 100).toFixed(1) : 0
-                }
+                },
+                dueToday: db.prepare(`
+                    SELECT 
+                        c.id as id_contract,
+                        c.code as contract_code,
+                        cu.name as customer_name,
+                        cu.phone as customer_phone,
+                        ps.expected_date,
+                        COALESCE(ps.interest_amount + ps.principal_amount, 0) as amount_due
+                    FROM payment_schedules ps
+                    JOIN contracts c ON ps.id_contract = c.id
+                    JOIN customers cu ON c.id_customer = cu.id
+                    WHERE ps.is_paid = 0 AND ps.expected_date = ?
+                    ORDER BY ps.expected_date ASC
+                `).all(today),
+                dueSoon: db.prepare(`
+                    SELECT 
+                        c.id as id_contract,
+                        c.code as contract_code,
+                        cu.name as customer_name,
+                        cu.phone as customer_phone,
+                        ps.expected_date,
+                        COALESCE(ps.interest_amount + ps.principal_amount, 0) as amount_due
+                    FROM payment_schedules ps
+                    JOIN contracts c ON ps.id_contract = c.id
+                    JOIN customers cu ON c.id_customer = cu.id
+                    WHERE ps.is_paid = 0 AND ps.expected_date > ? AND ps.expected_date <= date(?, '+3 days')
+                    ORDER BY ps.expected_date ASC
+                `).all(today, today)
             });
         } catch (error) {
             console.error(error);

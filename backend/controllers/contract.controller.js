@@ -591,7 +591,7 @@ const ContractController = {
 
                 const processMetadata = (metadata) => {
                     if (!metadata) return '{}';
-                    const pairs = metadata.split(';');
+                    const pairs = metadata.split(',');
                     const result = {};
                     pairs.forEach(pair => {
                         const [key, value] = pair.split(':');

@@ -319,9 +319,11 @@ const TransactionsController = {
             // Cập nhật trạng thái của hợp đồng
             Contract.updateStatus({ status: 'Đã Tất Toán' }, id_contract);
 
-            const collateral = Collaterals.getById(contract.id_collateral);
+            const collateral = Collaterals.getByContractId(contract.id);
             if (collateral) {
-                Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);
+                collateral.forEach(item => {
+                    Collaterals.updateStatus({ status: 'Đã Chuộc' }, item.id);
+                })
             }
 
             // Cập nhật trạng thái của tất cả các kỳ

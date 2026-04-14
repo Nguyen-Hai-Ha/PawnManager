@@ -683,6 +683,16 @@ const ContractController = {
             console.error("Lỗi khi import excel:", error);
             res.status(500).json({ error: error.message });
         }
+    },
+
+    countContractOverDate: (req, res) => {
+        try {
+            const count = Contract.countContractOverDate();
+            res.status(200).json(count);
+        } catch (error) {
+            console.error("Lỗi khi đếm hợp đồng quá hạn:", error);
+            res.status(500).json({ error: error.message });
+        }
     }
 }
 

@@ -1,9 +1,10 @@
 <script setup>
 import Aside from './components/Aside.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useAuthStore } from './stores/auth';
 import UpdateNotification from './components/UpdateNotification.vue';
+import apiClient from './plugins/axios';
 
 const authStore = useAuthStore();
 
@@ -34,6 +35,22 @@ const logout = () => {
   authStore.logout();
   router.push('/login');
 };
+const count = ref(0);
+
+const countContractOverDate = async () => {
+  try {
+    const response = await apiClient.get('/contract/count-over-date');
+    count.value = response.data.count;
+  } catch (error) {
+    console.error('Lỗi khi đếm hợp đồng quá hạn:', error);
+    return 0;
+  }
+}
+
+onMounted(async () => {
+  await countContractOverDate();
+})
+
 </script>
 <template>
   <main>
@@ -52,7 +69,10 @@ const logout = () => {
               <h1>{{ pageTitle }}</h1>
             </div>
             <div class="header-right">
-
+              <div class="header-waring-contract" v-if="count > 0">
+                <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
+                <span>{{ count }} Hợp đồng Quá Hạn</span>
+              </div>
               <div class="header-actions">
                 <button class="refresh-btn" @click="refreshPage" title="Tải lại trang">
                   <font-awesome-icon icon="fa-solid fa-rotate" />

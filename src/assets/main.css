@@ -105,6 +105,19 @@ nav a {
   gap: 12px;
 }
 
+.header-waring-contract{
+  background-color: #ffdcdc;
+  color: #ff0000;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ff0000;
+}
+
+.header-waring-contract span {
+  font-weight: 600;
+}
+
 .header-actions {
   display: flex;
   align-items: center;

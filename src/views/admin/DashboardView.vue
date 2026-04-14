@@ -367,7 +367,7 @@ const getProfitRatioByTypeName = (name) => {
   color: white;
   font-weight: bold;
 }
-.header-red { background:  #c62828; }
+.header-red { background:  #1a7a6e; }
 .header-orange { background: #fb8c00; }
 .badge-white { background: rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 2px 10px; }
 .schedule-body { padding: 0; flex: 1; max-height: 400px; overflow-y: auto; }
@@ -378,6 +378,7 @@ const getProfitRatioByTypeName = (name) => {
 .text-right { text-align: right; }
 .red { color: #d32f2f; }
 .orange { color: #f57c00; }
+.teal { color: #1a7a6e; }
 .fw-bold { font-weight: 600; }
 .small { font-size: 13px; }
 .empty-state { padding: 30px; text-align: center; color: #999; font-style: italic; }

@@ -164,6 +164,11 @@ const Contract = {
         const sql = `SELECT s.id as id_staff, s.name as staff_name FROM contracts c LEFT JOIN staff s ON c.id_staff = s.id WHERE c.id = ?`;
         const stmt = db.prepare(sql);
         return stmt.get(id);
+    },
+    countContractOverDate: () => {
+        const sql = `SELECT count(contracts.status) as count FROM contracts WHERE contracts.status = 'Quá Hạn'`;
+        const stmt = db.prepare(sql);
+        return stmt.get();
     }
 };
 

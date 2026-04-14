@@ -109,6 +109,11 @@ const Collaterals = {
         const stmt = db.prepare(sql);
         const result = stmt.run(id);
         return result.changes;
+    },
+    countLiquidation: () => {
+        const sql = `SELECT COUNT(id) as count FROM collaterals WHERE status = 'Chờ Thanh Lý'`;
+        const stmt = db.prepare(sql);
+        return stmt.get();
     }
 }
 

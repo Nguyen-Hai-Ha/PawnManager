@@ -56,6 +56,14 @@ const CollateralsController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+    countLiquidation: (req, res) => {
+        try {
+            const count = Collaterals.countLiquidation();
+            res.json(count);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
 }
 

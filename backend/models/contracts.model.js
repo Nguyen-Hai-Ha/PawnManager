@@ -166,7 +166,7 @@ const Contract = {
         return stmt.get(id);
     },
     countContractOverDate: () => {
-        const sql = `SELECT count(contracts.status) as count FROM contracts WHERE contracts.status = 'Quá Hạn'`;
+        const sql = `SELECT count(id) as count FROM contracts WHERE status = 'Quá Hạn'`;
         const stmt = db.prepare(sql);
         return stmt.get();
     }

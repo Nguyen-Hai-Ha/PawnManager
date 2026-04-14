@@ -36,6 +36,7 @@ const logout = () => {
   router.push('/login');
 };
 const count = ref(0);
+const Liquidation = ref(0);
 
 const countContractOverDate = async () => {
   try {
@@ -47,8 +48,19 @@ const countContractOverDate = async () => {
   }
 }
 
+const countLiquidation = async () => {
+  try {
+    const response = await apiClient.get('/collateral/count-liquidation');
+    Liquidation.value = response.data.count;
+  } catch (error) {
+    console.error('Lỗi khi đếm tài sản chờ thanh lý:', error);
+    return 0;
+  }
+}
+
 onMounted(async () => {
   await countContractOverDate();
+  await countLiquidation();
 })
 
 </script>
@@ -69,6 +81,10 @@ onMounted(async () => {
               <h1>{{ pageTitle }}</h1>
             </div>
             <div class="header-right">
+              <div class="header-waring-liquidation" v-if="Liquidation > 0">
+                <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
+                <span>{{ Liquidation }} Tài sản chờ thanh lý</span>
+              </div>
               <div class="header-waring-contract" v-if="count > 0">
                 <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
                 <span>{{ count }} Hợp đồng Quá Hạn</span>

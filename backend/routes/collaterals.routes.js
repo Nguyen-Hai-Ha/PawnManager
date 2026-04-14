@@ -8,6 +8,7 @@ router.get('/:id', verifyToken, hasPermission('collateral.detail'), CollateralsC
 router.get('/liquidation/:id', verifyToken, hasPermission('collateral.liquidation'), CollateralsController.getLiquidationById);
 router.post('/', verifyToken, hasPermission('collateral.create'), CollateralsController.create);
 router.put('/:id', verifyToken, hasPermission('collateral.update'), CollateralsController.update);
+router.get('/count-liquidation', verifyToken, hasPermission('collateral.count'), CollateralsController.countLiquidation);
 // router.delete('/:id', CollateralsController.delete);
 
 module.exports = router;

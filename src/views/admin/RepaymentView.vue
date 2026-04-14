@@ -71,9 +71,12 @@ onMounted(async() => {
                     <label for="filter">Trạng thái</label>
                     <select id="filter" v-model="filterStatus">
                         <option value="">Tất cả</option>
-                        <option value="Đang vay">Đang vay</option>
-                        <option value="Đã thanh toán">Đã thanh toán</option>
-                        <option value="Quá hạn">Quá hạn</option>
+                        <option value="Đang Vay">Đang Vay</option>
+                        <option value="Đã Hoàn Tất">Đã Hoàn Tất</option>
+                        <option value="Đã Tất Toán">Đã Tất Toán</option>
+                        <option value="Quá Hạn">Quá Hạn</option>
+                        <option value="Đến Hạn">Đến Hạn</option>
+                        <option value="Sắp Đến Hạn">Sắp Đến Hạn</option>
                     </select>
                 </div>
                 <div class="time-range">

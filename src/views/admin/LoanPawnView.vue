@@ -71,11 +71,14 @@ onMounted(async() => {
                     <label for="filter">Trạng thái</label>
                     <select id="filter" v-model="filterStatus">
                         <option value="">Tất cả</option>
-                        <option value="Đang cầm">Đang cầm</option>
-                        <option value="Đã Hoàn Tất">Đã hoàn thành</option>
-                        <option value="Cần thanh lý">Cần thanh lý</option>
-                        <option value="Đã Thanh Lý">Đã thanh lý</option>
-                        <option value="Quá hạn">Quá hạn</option>
+                        <option value="Đang Cầm">Đang Cầm</option>
+                        <option value="Đã Hoàn Tất">Đã Hoàn Tất</option>
+                        <option value="Đã Tất Toán">Đã Tất Toán</option>
+                        <option value="Cần Thanh Lý">Cần Thanh Lý</option>
+                        <option value="Đã Thanh Lý">Đã Thanh Lý</option>
+                        <option value="Quá Hạn">Quá Hạn</option>
+                        <option value="Đến Hạn">Đến Hạn</option>
+                        <option value="Sắp Đến Hạn">Sắp Đến Hạn</option>
                     </select>
                 </div>
                 <div class="time-range">
@@ -153,29 +156,33 @@ onMounted(async() => {
                             <td><span class="text-success fw-bold">{{ formatCurrency(loan.had_paid) }}</span></td>
                             <td><span class="text fw-bold">{{ formatCurrency(loan.remaining_amount) }}</span></td>
                             <td>
-                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Đang cầm' || loan.status === 'Đang Cầm'">
+                                <span class="badge rounded-pill bg text-warning-emphasis fw-bold" style="background-color: #CCFBF1;" v-if="loan.status === 'Đang cầm' || loan.status === 'Đang Cầm'">
                                     {{ loan.status }}
                                 </span>
                                 <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-danger text-danger-emphasis fw-bold" v-if="loan.status === 'Cần thanh lý' || loan.status === 'Quá hạn'">
+                                <span class="badge rounded-pill bg-danger fw-bold" v-if="loan.status === 'Cần thanh lý' || loan.status === 'Quá Hạn'">
                                     {{ loan.status }}
                                 </span>
                                 <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Thanh Lý'">
                                     {{ loan.status }}
                                 </span>
+                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Tất Toán'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg fw-bold" style="background-color: #ff7221;" v-if="loan.status === 'Đến Hạn'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Sắp Đến Hạn'">
+                                    {{ loan.status }}
+                                </span>
                             </td>
                             <td>
-                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
+                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý' || loan.status === 'Đã Tất Toán'">
                                     <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)" v-permission="'loans.detail'">
                                         <font-awesome-icon icon="fa-solid fa-eye" />
-                                    </button>
-                                </div>
-                                <div class="action-cell" v-else-if="loan.status === 'Đã Tất Toán'">
-                                    <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)" v-permission="'loans.detail'">
-                                        <font-awesome-icon icon="fa-solid fa-eye" />
-                                    </button>
+                                    </button>   
                                 </div>
                                 <div class="action-cell" v-else>
                                     <button class="btn-action text-success" data-tooltip="Đóng lãi" v-permission="'loans.interest_payment'" @click="openInterestModal(loan.id)">

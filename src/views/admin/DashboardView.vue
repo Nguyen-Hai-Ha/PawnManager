@@ -133,6 +133,75 @@ const getProfitRatioByTypeName = (name) => {
       </div>
     </div>
 
+    <!-- Alert Schedules Row -->
+    <div class="schedules-row">
+      <!-- Đến hạn hôm nay -->
+      <div class="schedule-card">
+        <div class="schedule-header header-red">
+          <span class="title">Đến hạn hôm nay</span>
+          <span class="badge badge-white">{{ summary.dueToday.length }}</span>
+        </div>
+        <div class="schedule-body">
+          <table class="schedule-table" v-if="summary.dueToday.length > 0">
+            <thead>
+              <tr>
+                <th>Khách hàng</th>
+                <th>Số tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in summary.dueToday" :key="item.id_contract">
+                <td>
+                  <div class="fw-bold">{{ item.customer_name }}</div>
+                  <div class="small phone">{{ item.customer_phone }} | HĐ: {{ item.contract_code }}</div>
+                </td>
+                <td class="text-right fw-bold red">
+                  {{ formatCurrency(item.amount_due) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="empty-state">
+            Không có hợp đồng nào đến hạn hôm nay.
+          </div>
+        </div>
+      </div>
+
+      <!-- Sắp đến hạn -->
+      <div class="schedule-card">
+        <div class="schedule-header header-orange">
+          <span class="title">Sắp đến hạn (3 ngày tới)</span>
+          <span class="badge badge-white">{{ summary.dueSoon.length }}</span>
+        </div>
+        <div class="schedule-body">
+          <table class="schedule-table" v-if="summary.dueSoon.length > 0">
+            <thead>
+              <tr>
+                <th>Khách hàng</th>
+                <th>Ngày</th>
+                <th>Số tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in summary.dueSoon" :key="item.id_contract">
+                <td>
+                  <div class="fw-bold">{{ item.customer_name }}</div>
+                  <div class="small phone">{{ item.customer_phone }} | HĐ: {{ item.contract_code }}</div>
+                </td>
+                <td class="small">{{ item.expected_date }}</td>
+                <td class="text-right fw-bold orange">
+                  {{ formatCurrency(item.amount_due) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="empty-state">
+            Không có hợp đồng nào sắp đến hạn.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Loan Summary Table -->
     <div class="loan-table-wrapper">
       <table class="loan-table">
@@ -253,6 +322,8 @@ const getProfitRatioByTypeName = (name) => {
         </div>
       </div>
     </div>
+
+    
   </div>
   <div v-else class="loading-container">
     Đang tải dữ liệu...
@@ -271,4 +342,43 @@ const getProfitRatioByTypeName = (name) => {
 .dot-blue { background-color: #3480E4; }
 .positive { color: white; }
 .negative { color: #ff5252; }
+
+/* Schedules Row */
+.schedules-row {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.schedule-card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+.schedule-header {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+.header-red { background:  #c62828; }
+.header-orange { background: #fb8c00; }
+.badge-white { background: rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 2px 10px; }
+.schedule-body { padding: 0; flex: 1; max-height: 400px; overflow-y: auto; }
+.schedule-table { width: 100%; border-collapse: collapse; }
+.schedule-table th { padding: 10px 20px; font-size: 13px; color: #757575; text-align: left; background: #fafafa; border-bottom: 1px solid #eee; }
+.schedule-table td { padding: 12px 20px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; text-align: left; }
+.phone { color: #888; margin-top: 4px; }
+.text-right { text-align: right; }
+.red { color: #d32f2f; }
+.orange { color: #f57c00; }
+.fw-bold { font-weight: 600; }
+.small { font-size: 13px; }
+.empty-state { padding: 30px; text-align: center; color: #999; font-style: italic; }
 </style>

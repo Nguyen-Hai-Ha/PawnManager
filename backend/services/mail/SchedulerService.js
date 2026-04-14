@@ -21,6 +21,7 @@ const startScheduler = () => {
                 SELECT 
                 ps.id,
                 ps.expected_date,
+                ps.id_contract,
                 COALESCE((ps.interest_amount + ps.principal_amount), 0) as interest_amount,
                 c.code as contract_code,
                 cu.name as customer_name,
@@ -39,6 +40,7 @@ const startScheduler = () => {
                 if (s.emailEnabled) await sendOverDueEmail(schedule);
                 // Đánh dấu đã gửi
                 db.prepare(`UPDATE payment_schedules SET notified_overdue_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
+                db.prepare(`UPDATE contracts SET status = 'Quá Hạn' WHERE id = ?`).run(schedule.id_contract);
             }
         }
 
@@ -48,6 +50,7 @@ const startScheduler = () => {
                 SELECT 
                 ps.id,
                 ps.expected_date,
+                ps.id_contract,
                 COALESCE((ps.interest_amount + ps.principal_amount), 0) as interest_amount,
                 c.code as contract_code,
                 cu.name as customer_name,
@@ -65,6 +68,7 @@ const startScheduler = () => {
                 // if (s.zaloEnabled) await sendDueTodayZaloZNS(schedule);
                 if (s.emailEnabled) await sendDueTodayEmail(schedule);
                 db.prepare(`UPDATE payment_schedules SET notified_due_today_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
+                db.prepare(`UPDATE contracts SET status = 'Đến Hạn' WHERE id = ?`).run(schedule.id_contract);
             }
         }
 
@@ -92,13 +96,14 @@ const startScheduler = () => {
             }
         }
 
-        // ── Thông báo thanh lý tài sản sau 7 ngày quá hạn ──
+        // ── Thông báo thanh lý tài sản sau 3 ngày quá hạn ──
         if (s.liquidation) {
             const liquidation = db.prepare(`
                 SELECT
                 col.id,
                 col.name as asset_name,
                 c.code as contract_code,
+                c.id as id_contract,
                 cu.name as customer_name,
                 cu.email as customer_email,
                 MIN(ps.expected_date) as overdue_date,
@@ -119,6 +124,7 @@ const startScheduler = () => {
                 if (s.emailEnabled) await sendLiquidationEmail(item);
                 if (s.emailEnabled) await sendLiquidationForAdminEmail(item);
                 db.prepare(`UPDATE collaterals SET notified_liquidation_at = CURRENT_TIMESTAMP, status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id);
+                db.prepare(`UPDATE contracts SET status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id_contract);
             }
         }
 
@@ -132,6 +138,7 @@ const startScheduler = () => {
                 SELECT
                 ps.id,
                 ps.expected_date,
+                ps.id_contract,
                 COALESCE((ps.interest_amount + ps.principal_amount), 0) as interest_amount,
                 c.code as contract_code,
                 cu.name as customer_name,
@@ -148,6 +155,7 @@ const startScheduler = () => {
             for (const item of reminderEarly) {
                 if (s.emailEnabled) await sendReminderEarlyEmail(item);
                 db.prepare(`UPDATE payment_schedules SET notified_reminder_early_at = CURRENT_TIMESTAMP WHERE id = ?`).run(item.id);
+                db.prepare(`UPDATE contracts SET status = 'Sắp Đến Hạn' WHERE id = ?`).run(item.id_contract);
             }
         }
     });

@@ -11,7 +11,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
             fund: 0
         },
         loanSummary: [],
-        projected: { paid: 0, unpaid: 0, percent: 0 }
+        projected: { paid: 0, unpaid: 0, percent: 0 },
+        dueToday: [],
+        dueSoon: []
     });
 
     const loading = ref(false);

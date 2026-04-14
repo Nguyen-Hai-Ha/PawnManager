@@ -114,7 +114,7 @@ const getReminderDueTodayTemplate = (data) => {
                     </tr>
                     <tr>
                         <td class="label">Tài sản cầm cố</td>
-                        <td class="value">${data.asset_name}</td>
+                        <td class="value">${data.asset_name || 'Không có'}</td>
                     </tr>
                     <tr>
                         <td class="label">Ngày đến hạn</td>

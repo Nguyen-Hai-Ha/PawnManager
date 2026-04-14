@@ -72,7 +72,7 @@ export const useReducePrincipalStore = defineStore('reducePrincipal', () => {
         console.log(payload);
         try {
             const response = await apiClient.post('/transaction/reduce-principal', payload);
-            await loanStore.getAllLoans();
+            await loanStore.getAllLoansType();
             closeReducePrincipalModal();
         } catch (error) {
             console.error('Error submitting reduce principal:', error);

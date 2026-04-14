@@ -49,7 +49,7 @@ export const useFinalSettlementStore = defineStore('finalSettlement', () => {
 
         try {
             await apiClient.post('/transaction/final-settlement', payload);
-            await loanStore.getAllLoans();
+            await loanStore.getAllLoansType();
             closeFinalModal();
         } catch (error) {
             console.error('Error submitting final settlement:', error);

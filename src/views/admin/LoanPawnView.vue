@@ -2,6 +2,7 @@
 import { useLoanStore } from '@/stores/contract/loan';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { useAddNewLoanStore } from '@/stores/contract/addNewLoan';
 import { useInterestPayment } from '@/stores/contract/interestPayment';
@@ -24,7 +25,7 @@ const detailContractStore = useDetailContractStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig, 
         filterStatus, startDate, endDate } = storeToRefs(loanStore);
-const { getAllLoans, formatCurrency, changePage, goToFirstPage, 
+const { getAllLoansType, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, 
         deleteLoan, handleExportExcel, handleImportExcel } = loanStore;
 
@@ -48,13 +49,20 @@ const onFileSelected = async (event) => {
     if (file) {
         await handleImportExcel(file);
         event.target.value = '';
-        await getAllLoans();
+        await getAllLoansType();
     }
 }
 
+const route = useRoute();
+
 onMounted(async() => {
-    await getAllLoans();
     await fetchCustomer()
+
+    await getAllLoansType();
+
+    if (route.query.filter) {
+        filterStatus.value = route.query.filter;
+    }
 })
 
 </script>

@@ -93,7 +93,7 @@ export const useInterestPayment = defineStore('interestPayment', () => {
         }
         try {
             const response = await apiClient.post('/transaction', payload);
-            await loanStore.getAllLoans();
+            await loanStore.getAllLoansType();
             closeInterestModal();
         } catch (error) {
             console.error('Error submitting interest payment:', error);

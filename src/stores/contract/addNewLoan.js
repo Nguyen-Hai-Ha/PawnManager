@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const loanStore = useLoanStore();
     const { loans } = storeToRefs(loanStore);
-    const { getAllLoans } = loanStore;
+    const { getAllLoansType } = loanStore;
 
     const assetsStore = useAssetsStore();
     const { assets } = storeToRefs(assetsStore);
@@ -212,7 +212,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     });
 
     const openModal = async () => {
-        await getAllLoans();
+        await getAllLoansType();
         await fetchAssets();
         showModal.value = true;
         nextTick(() => {
@@ -315,7 +315,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             if (response.data) {
-                await getAllLoans();
+                await getAllLoansType();
                 await fetchAssets();
             }
             closeModal();
@@ -355,7 +355,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         formatCurrency, handleImageChange, openModal, closeModal, removeImage, submitLoan,
 
         //fetch
-        getAllLoans,
+        getAllLoansType,
         fetchCustomer,
         fetchAssetTypes,
     }

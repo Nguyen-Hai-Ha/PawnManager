@@ -24,7 +24,7 @@ const detailContractStore = useDetailContractStore();
 
 const {loans, paginated, totalPage, currentPage, search, 
         sortConfig, filterStatus, startDate, endDate} = storeToRefs(loanStore);
-const { getAllLoans, deleteLoan, formatCurrency, changePage, goToFirstPage, 
+const { getAllLoansType, deleteLoan, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, 
         handleExportExcel, handleImportExcel } = loanStore;
 
@@ -48,12 +48,12 @@ const onFileSelected = async (event) => {
     if (file) {
         await handleImportExcel(file);
         event.target.value = '';
-        await getAllLoans();
+        await getAllLoansType();
     }
 }
 
 onMounted(async() => {
-    await getAllLoans();
+    await getAllLoansType();
     await fetchCustomer()
 })
 </script>

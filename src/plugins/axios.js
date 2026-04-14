@@ -1,18 +1,18 @@
 import axios from 'axios';
 
 // Tạo baseURL động dựa vào host hiện tại
-const getApiBaseURL = () => {
-  // Nếu là production/public, sử dụng host hiện tại
-  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    // Cho devtunnels hoặc domain công khai khác
-    return `${window.location.protocol}//${window.location.host}/api`;
-  }
-  // Cho development local
-  return 'http://localhost:3000/api';
-};
+// const getApiBaseURL = () => {
+//   // Nếu là production/public, sử dụng host hiện tại
+//   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+//     // Cho devtunnels hoặc domain công khai khác
+//     return `${window.location.protocol}//${window.location.host}/api`;
+//   }
+//   // Cho development local
+//   return 'http://localhost:3000/api';
+// };
 
 const apiClient = axios.create({
-  baseURL: getApiBaseURL(),
+  baseURL: 'http://localhost:3000/api',
   timeout: 10000,
   headers: {
     'Accept': 'application/json'

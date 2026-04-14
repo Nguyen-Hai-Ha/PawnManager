@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAssetsStore } from '@/stores/assets'
 import { useDetailContractStore } from '@/stores/contract/detailContract';
@@ -24,6 +24,16 @@ const {
     
 const { showDetailContract } = storeToRefs(detailContractStore);
 const { openDetailContract, closeDetailContract } = detailContractStore;
+
+const CountBetweenDate = (a,b) => {
+    const firstDate = new Date(a);
+    const secondDate = new Date(b);
+    const diffTime = firstDate - secondDate;
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+}
+
+const today = new Date().toISOString().split('T')[0];
 
 onMounted( async() => {
     const promise = []
@@ -98,6 +108,7 @@ onMounted( async() => {
                             <td>{{ asset.id }}</td>
                             <td>
                                 <span id="detailContract" @click="openAssetsDetailModal(asset.id)" v-permission="'collateral.detail'" class="fw-bold">{{ asset.code || 'Chưa có' }}</span>
+                                <p v-if="asset.status === 'Đang cầm'" class="text-danger fw-bold">{{ CountBetweenDate(asset.payment_schedules, today) == 0 ? 'Đến Hạn' : CountBetweenDate(asset.payment_schedules, today) + ' ngày đến hạn' }}</p>
                             </td>
                             <td>{{ asset.name }}</td>
                             <td><span class="text-success fw-bold" id="detailContract" @click="openDetailContract(asset.contract_id)" v-permission="['loans.detail', 'pledge.detail', 'repayment.detail']">{{ asset.contract_code }}</span></td>

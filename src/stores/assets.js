@@ -237,7 +237,26 @@ export const useAssetsStore = defineStore("assets", () => {
     const fetchAssets = async () => {
         try {
             const response = await apiClient.get('collateral')
-            assets.value = response.data
+            assets.value = response.data.map(item => {
+                let schedule = item.payment_schedules
+                if (typeof schedule === 'string'){
+                    try {
+                        schedule = JSON.parse(schedule);
+                    } catch (error) {
+                        schedule = []
+                    }
+                }
+                if (Array.isArray(schedule)) {
+                    // Tìm ngày của kỳ đóng lãi đầu tiên chưa thanh toán
+                    item.payment_schedules = schedule
+                        .filter(s => s.is_paid === 0)[0]?.expected_date || null;
+                } else {
+                    item.payment_schedules = null;
+                }
+                return item
+            })
+            
+            console.log(assets.value)
         } catch (error) {
             console.error('Error fetching assets:', error)
         }

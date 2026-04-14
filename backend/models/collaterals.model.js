@@ -13,9 +13,16 @@ const Collaterals = {
             cu.name as customer_name,
             cu.phone as customer_phone,
             MIN(i.id) as image_id,
-            MIN(i.url) as image_url
+            MIN(i.url) as image_url,
+            JSON_GROUP_ARRAY(
+                JSON_OBJECT(
+                    'expected_date', ps.expected_date,
+                    'is_paid', ps.is_paid
+                )
+            ) as payment_schedules
             FROM collaterals c
             LEFT JOIN contracts co ON c.id_contract = co.id
+            LEFT JOIN payment_schedules ps ON co.id = ps.id_contract
             LEFT JOIN customers cu ON co.id_customer = cu.id
             LEFT JOIN images i ON c.id = i.id_collateral
             GROUP BY c.id`;

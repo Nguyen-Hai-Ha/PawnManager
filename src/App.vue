@@ -82,11 +82,9 @@ onMounted(async () => {
             </div>
             <div class="header-right">
               <div class="header-waring-liquidation" v-if="Liquidation > 0">
-                <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
                 <span>{{ Liquidation }} Tài sản chờ thanh lý</span>
               </div>
               <div class="header-waring-contract" v-if="count > 0">
-                <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
                 <span>{{ count }} Hợp đồng Quá Hạn</span>
               </div>
               <div class="header-actions">

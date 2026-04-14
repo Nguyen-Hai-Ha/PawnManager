@@ -179,11 +179,11 @@ onUnmounted(() => {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #62c4b8 0%, #1a7a6e 100%);
     color: white;
     padding: 16px 20px;
     border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 10px 40px rgba(102, 234, 205, 0.4);
     z-index: 10000;
     min-width: 320px;
     max-width: 420px;
@@ -303,7 +303,7 @@ onUnmounted(() => {
     flex: 1;
     padding: 10px 16px;
     background: white;
-    color: #667eea;
+    color: #1a7a6e;
     border: none;
     border-radius: 8px;
     font-weight: 600;

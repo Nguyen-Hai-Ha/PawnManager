@@ -1,8 +1,9 @@
-const { app, BrowserWindow, protocol } = require('electron');
+const { app, BrowserWindow, protocol, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
-const { backupDatabase } = require('./backend/services/BackupService');
+const { autoUpdater } = require('electron-updater');
+const { backupDatabase } = require('./backend/services/backup/BackupService');
 
 // Khởi động Express Backend
 try {
@@ -14,14 +15,16 @@ try {
     console.error('Lỗi khi khởi động backend:', error);
 }
 
+let mainWindow;
+
 function createWindow() {
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.cjs') // Chúng ta sẽ tạo file này sau nếu cần
+            preload: path.join(__dirname, 'preload.cjs')
         },
         icon: path.join(__dirname, 'public/logo.png')
     });
@@ -38,13 +41,82 @@ function createWindow() {
     }
 }
 
+
+// IPC Handlers
+ipcMain.handle('get-app-version', () => {
+    return app.getVersion();
+});
+
+ipcMain.on('download-update', () => {
+    autoUpdater.downloadUpdate();
+});
+
+ipcMain.on('install-update', () => {
+    autoUpdater.quitAndInstall();
+});
+
+// Auto-Updater Events
+autoUpdater.on('checking-for-update', () => {
+    if (mainWindow) {
+        mainWindow.webContents.send('update-status', { status: 'checking' });
+    }
+});
+
+autoUpdater.on('update-available', (info) => {
+    if (mainWindow) {
+        mainWindow.webContents.send('update-status', {
+            status: 'available',
+            version: info.version
+        });
+    }
+});
+
+autoUpdater.on('update-not-available', () => {
+    if (mainWindow) {
+        mainWindow.webContents.send('update-status', { status: 'not-available' });
+    }
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    if (mainWindow) {
+        mainWindow.webContents.send('update-status', {
+            status: 'downloading',
+            percent: Math.round(progressObj.percent)
+        });
+    }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+    if (mainWindow) {
+        mainWindow.webContents.send('update-status', {
+            status: 'downloaded',
+            version: info.version
+        });
+    }
+});
+
+autoUpdater.on('error', (err) => {
+    if (mainWindow) {
+        mainWindow.webContents.send('update-status', {
+            status: 'error',
+            message: err.message || 'Không thể kiểm tra cập nhật'
+        });
+    }
+});
+
 app.whenReady().then(() => {
     createWindow();
+    
+    // Check for updates in production
+    if (app.isPackaged) {
+        autoUpdater.checkForUpdatesAndNotify();
+    }
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 });
+
 
 app.on('window-all-closed', function () {
     backupDatabase(); // Backup trước khi đóng ứng dụng

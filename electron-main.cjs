@@ -2,6 +2,7 @@ const { app, BrowserWindow, protocol } = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const { backupDatabase } = require('./backend/services/BackupService');
 
 // Khởi động Express Backend
 try {
@@ -46,5 +47,6 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', function () {
+    backupDatabase(); // Backup trước khi đóng ứng dụng
     if (process.platform !== 'darwin') app.quit();
 });

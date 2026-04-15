@@ -1,4 +1,4 @@
-const { Customer, Relative, Contract, Staff } = require('../models');
+const { Customer, Relative, Contract, Staff, AuditLogs } = require('../models');
 
 const CustomerController = {
     getAll: (req, res) => {

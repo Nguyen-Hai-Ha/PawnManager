@@ -13,13 +13,15 @@ function getBackendPath(relativePath) {
 // Khởi động Express Backend
 let backupDatabase;
 try {
-    // Backend được unpack ra ngoài app.asar trong production
     const backendPath = getBackendPath('backend/index.js');
     require(backendPath);
     // Load BackupService sau khi backend đã khởi động
     ({ backupDatabase } = require(getBackendPath('backend/services/backup/BackupService')));
 } catch (error) {
-    console.error('Lỗi khi khởi động backend:', error);
+    console.error('❌ Lỗi khi khởi động backend:');
+    console.error('Message:', error.message);
+    console.error('Stack:', error.stack);
+    console.error('Details:', error);
 }
 
 let mainWindow;
@@ -116,7 +118,9 @@ app.whenReady().then(() => {
     
     // Check for updates in production
     if (app.isPackaged) {
-        autoUpdater.checkForUpdatesAndNotify();
+        // Use checkForUpdates() instead of checkForUpdatesAndNotify()
+        // to emit all events for the update notification component
+        autoUpdater.checkForUpdates();
     }
 
     app.on('activate', function () {

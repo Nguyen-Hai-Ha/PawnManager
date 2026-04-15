@@ -1,8 +1,13 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
+const { app } = require('electron');
 
-const dbDir = path.join(__dirname, '../data');
+// Save database in AppData for persistent data across updates
+// Dev: backend/data/pawn.db | Production: C:\Users\[User]\AppData\Local\Roaming\PawnManager\pawn.db
+const dbDir = app.isPackaged 
+    ? path.join(app.getPath('userData'), 'data')
+    : path.join(__dirname, '../data');
 
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });

@@ -352,7 +352,10 @@ const ContractController = {
             const paymentSchedules = PaymentSchedules.getByContractId(id);
             contract.interest = paymentSchedules.reduce((acc, item) => acc + item.interest_amount, 0);
 
-            // số tiền bằng chữ
+            const LoanText = doReadNumber(String(contract.Loan_amount)) + " đồng";
+            contract.Loan_amount_text = LoanText.charAt(0).toUpperCase() + LoanText.slice(1);
+
+            // số tiền lãi bằng chữ
             const interestText = doReadNumber(String(contract.interest)) + " đồng";
             contract.interest_text = interestText.charAt(0).toUpperCase() + interestText.slice(1);
 

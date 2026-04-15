@@ -228,13 +228,11 @@ npm run electron:publish
 #### Reset Database (Xóa Sạch Dữ Liệu)
 ⚠️ **Cảnh báo**: Thao tác này sẽ **xóa tất cả dữ liệu** - không thể khôi phục!
 
-1. Đóng app hoàn toàn
-2. Mở Windows Explorer
-3. Điều hướng tới: `C:\Users\[User Name]\AppData\Roaming\PawnManager\`
-4. **Xóa folder `data`** (hoặc chỉ xóa file `data/pawn.db`)
-5. Khởi động lại app
-6. App sẽ **tự tạo database mới trắng**
-7. Tạo lại tài khoản quản trị & bắt đầu từ đầu
+1. Điều hướng tới: `C:\Users\[User Name]\AppData\Roaming\PawnManager\`
+2. **Xóa folder `data`** (hoặc chỉ xóa file `data/pawn.db`)
+3. Khởi động lại app
+4. App sẽ **tự tạo database mới trắng**
+5. Tạo lại tài khoản quản trị & bắt đầu từ đầu
 
 ### 5. Quản Lý Nhân Viên & Bằng Cấp
 

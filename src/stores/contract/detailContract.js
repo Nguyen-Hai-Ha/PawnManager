@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import apiClient from '@/plugins/axios'
+import { useInterestPayment } from './interestPayment';
 
 export const useDetailContractStore = defineStore('detailContract', () => {
+    const useInterestPaymentStore = useInterestPayment();
+    const { paymentDetail } = storeToRefs(useInterestPaymentStore);
     const detailContract = ref(null)
     const showDetailContract = ref(false);
     const showSelectTemplate = ref(false);
@@ -97,7 +101,11 @@ export const useDetailContractStore = defineStore('detailContract', () => {
 
     const SelectTemplate = async (id_template) => {
         closeSelectTemplate();
-        await getContractPrint(detailContract.value.contract.id, id_template);
+        if(typeTemplate.value === 'phieu_thu' && paymentDetail.value?.paymentDetail?.id) {
+            await getTransactionPrint(paymentDetail.value?.paymentDetail?.id, id_template);
+        } else {
+            await getContractPrint(detailContract.value.contract.id, id_template);
+        }
     }
 
     const getContractPrint = async (id, id_template) => {
@@ -131,6 +139,38 @@ export const useDetailContractStore = defineStore('detailContract', () => {
             console.error('Error downloading contract:', error);
         }
     };
+
+    const getTransactionPrint = async (id, id_template) => {
+        try {
+            // Thêm responseType: 'blob' để Axios hiểu đây là file nhị phân
+            const response = await apiClient.get(`/transactions/receipt/${id}`, { responseType: 'blob', params: { id_template } });
+            
+            // Xử lý file blob và buộc trình duyệt tải xuống
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Lấy tên file từ header (nếu backend có gửi Content-Disposition)
+            let fileName = typeTemplate.value +'_'+detailContract.value?.contract?.code+'.docx';
+            const contentDisposition = response.headers['content-disposition'];
+            if (contentDisposition) {
+                const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (fileNameMatch && fileNameMatch.length === 2) {
+                    fileName = decodeURIComponent(fileNameMatch[1]);
+                }
+            }
+            
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            
+            // Dọn dẹp
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading transaction receipt:', error);
+        }
+    };
     return {
         //state
         showDetailContract, detailContract, templates, showSelectTemplate, typeTemplate, loading,
@@ -139,7 +179,7 @@ export const useDetailContractStore = defineStore('detailContract', () => {
         collateralmetadata, collateralImages, filterTemplate,
 
         //actions
-        openDetailContract, closeDetailContract, formatCurrency, openSelectTemplate, closeSelectTemplate, SelectTemplate,
+        openDetailContract, closeDetailContract, formatCurrency, openSelectTemplate, closeSelectTemplate, SelectTemplate, getTransactionPrint,
 
         //fetch
         getDetailContract, getContractPrint, getAllTemplates

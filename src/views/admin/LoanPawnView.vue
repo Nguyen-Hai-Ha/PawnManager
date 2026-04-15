@@ -64,7 +64,6 @@ onMounted(async() => {
         filterStatus.value = route.query.filter;
     }
 })
-
 </script>
 
 <template>

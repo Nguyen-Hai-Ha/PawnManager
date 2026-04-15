@@ -65,6 +65,13 @@ const goToOverDueContracts = () => {
   });
 }
 
+const goToLiquidation = () => {
+  router.push({
+    name: 'AdminAssets',
+    query: { filter: 'Chờ Thanh Lý' },
+  });
+}
+
 onMounted(async () => {
   await countContractOverDate();
   await countLiquidation();
@@ -73,8 +80,8 @@ onMounted(async () => {
 </script>
 <template>
   <main>
-    <UpdateNotification />
     <div class="app-layout" v-if="!isLoginPage">
+      <UpdateNotification />
       <Aside />
       <div class="main-content">
         <!-- Header -->
@@ -88,7 +95,7 @@ onMounted(async () => {
               <h1>{{ pageTitle }}</h1>
             </div>
             <div class="header-right">
-              <div class="header-waring-liquidation" v-if="Liquidation > 0">
+              <div class="header-waring-liquidation" v-if="Liquidation > 0" @click="goToLiquidation">
                 <span>{{ Liquidation }} Tài sản chờ thanh lý</span>
               </div>
               <div class="header-waring-contract" v-if="count > 0" @click="goToOverDueContracts">

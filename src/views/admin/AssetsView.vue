@@ -3,6 +3,7 @@ import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAssetsStore } from '@/stores/assets'
 import { useDetailContractStore } from '@/stores/contract/detailContract';
+import { useRoute } from 'vue-router';
 
 import AssetsLiquidation from '@/components/assets/AssetsLiquidation.vue'
 import AssetsDetail from '@/components/assets/AssetsDetail.vue'
@@ -11,6 +12,7 @@ import DetailContract from '@/components/contracts/DetailContract.vue';
 
 const assetsStore = useAssetsStore()
 const detailContractStore = useDetailContractStore();
+const route = useRoute();
 
 const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, 
         showAssetsLiquidationModal, showAssetsDetailModal, showAssetsEditModal, filterStatus } = storeToRefs(assetsStore)
@@ -48,6 +50,10 @@ const CountBetweenDate = (expectedDate, todayDate) => {
 const today = new Date().toISOString().split('T')[0];
 
 onMounted( async() => {
+    if (route.query.filter) {
+        filterStatus.value = route.query.filter;
+    }
+
     const promise = []
     if (assets.value.length === 0) {
         promise.push(fetchAssets())

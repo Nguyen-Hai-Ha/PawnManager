@@ -143,7 +143,7 @@ npm run electron:publish
 
 ### 1. Cài Đặt Lần Đầu
 **Cho người dùng cuối:**
-1. Tải file `PawnManager Setup 1.1.8.exe` từ [GitHub Releases](https://github.com/Nguyen-Hai-Ha/PawnManager/releases)
+1. Tải file `PawnManager Setup x.x.x.exe` mới nhất từ [GitHub Releases](https://github.com/Nguyen-Hai-Ha/PawnManager/releases)
 2. Chạy file .exe và làm theo hướng dẫn cài đặt
 3. App sẽ tự tạo database trên lần khởi động đầu tiên
 4. Đăng nhập với tài khoản quản trị

@@ -1,6 +1,6 @@
 {
   "name": "pawnmanagers",
-  "version": "1.1.2",
+  "version": "1.1.8",
   "description": "Pawn Manager Application",
   "private": true,
   "type": "module",
@@ -30,12 +30,7 @@
       "preload.cjs",
       "package.json"
     ],
-    "asar": true,
-    "asarUnpack": [
-      "backend/**/*",
-      "node_modules/better-sqlite3/**/*",
-      "node_modules/bcryptjs/**/*"
-    ],
+    "asar": false,
     "win": {
       "target": "nsis",
       "icon": "public/logo.png"
@@ -80,6 +75,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
     "@vitejs/plugin-vue": "^6.0.4",
     "concurrently": "^9.2.1",
     "electron": "^41.2.0",

@@ -527,6 +527,11 @@ input:checked + .slider::before { transform: translateX(20px); }
 }
 .btn-cancel:hover { background: #e2e8f0; }
 
+.template-grid-note {
+  display: flex;
+  gap: 20px;
+}
+
 .template-note {
   margin-top: 20px;
   background: #faf0d0;

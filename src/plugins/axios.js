@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Tạo baseURL động dựa vào host hiện tại
+// // Tạo baseURL động dựa vào host hiện tại
 // const getApiBaseURL = () => {
 //   // Nếu là production/public, sử dụng host hiện tại
 //   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
@@ -44,6 +44,17 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('access_token');
       window.location.href = '/login';
     }
+    
+    // Log network errors for debugging
+    if (!error.response) {
+      console.error('Network Error:', {
+        message: error.message,
+        baseURL: apiClient.defaults.baseURL,
+        hostname: window.location.hostname,
+        url: `${error.config?.url}`
+      });
+    }
+    
     return Promise.reject(error);
   }
 );

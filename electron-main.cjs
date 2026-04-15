@@ -5,10 +5,8 @@ const fs = require('fs');
 const { autoUpdater } = require('electron-updater');
 
 // Resolve đường dẫn backend đúng cho cả dev và production
+// ASAR được disable (asar: false), nên dùng __dirname cho cả dev và production
 function getBackendPath(relativePath) {
-    if (app.isPackaged) {
-        return path.join(process.resourcesPath, 'app.asar.unpacked', relativePath);
-    }
     return path.join(__dirname, relativePath);
 }
 

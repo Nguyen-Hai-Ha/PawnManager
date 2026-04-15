@@ -93,10 +93,12 @@ const Transactions = {
     getReceipToPrint: (id) => {
         const sql = `SELECT 
         t.amount as amount,
-        cu.name as Full_name,
-        cu.phone as phone,
-        cu.address as Address,
-        c.code as Code
+        t.other_fees as other_fees,
+        t.created_at as created_at,
+        cu.name as customer_name,
+        cu.phone as customer_phone,
+        cu.address as customer_address,
+        c.code as contract_code
         FROM transactions t
         LEFT JOIN contracts c ON t.id_contract = c.id
         LEFT JOIN customers cu ON c.id_customer = cu.id

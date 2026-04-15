@@ -55,6 +55,7 @@ const generateContractDoc = (data, template) => {
         CMND_CCCD: data.cccd,
         Ngay_sinh: data.birth_date,
         Tien_vay: (data.Loan_amount || 0).toLocaleString('vi-VN')  + " đồng",
+        Tien_vay_bang_chu: data.Loan_amount_text,
         Kieu_lai: data.Interest_type,
         Lai_suat: data.Interest_rate,
         Ngay_vay: data.Start_date,
@@ -77,10 +78,52 @@ const generateContractDoc = (data, template) => {
         compression: "DEFLATE",
     });
 
-    const fileName = `BienBan_HĐ_${data.full_name}.docx`;
+    const fileName = `HĐ_${data.Code}_${data.full_name}_${data.Start_date}.docx`;
     return { buf, fileName };
 };
 
+//Hàm render phiếu thu theo mẫu
+const generatePaymentReceiptDoc = (data, template) => {
+    const content = fs.readFileSync(
+        path.resolve(__dirname, template.file_path),
+        "binary"
+    );
+
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    });
+
+    const now = dayjs();
+
+    const day = now.format("DD");
+    const month = now.format("MM");
+    const year = now.format("YYYY");
+
+    doc.render({
+        Tien_thu: data.amount.toLocaleString('vi-VN') + " đồng",
+        Tien_thu_bang_chu: data.amount_text,
+        Tien_thu_phi: data.other_fees.toLocaleString('vi-VN') + " đồng",
+        Tien_thu_phi_bang_chu: data.other_fees_text,
+        Ten_KH: data.customer_name,
+        SDT_KH: data.customer_phone,
+        Dia_chi_KH: data.customer_address,
+        Ma_HD: data.contract_code,
+        Ngay_thu: data.created_at,
+        Ngay: day,
+        Thang: month,
+        Nam: year
+    });
+
+    const buf = doc.getZip().generate({
+        type: "nodebuffer",
+        compression: "DEFLATE",
+    });
+
+    const fileName = `Phieu_Thu_${data.customer_name}_${data.created_at}.docx`;
+    return { buf, fileName };
+}
 
 //Hàm Tải hợp đồng theo mẫu
 const downloadTemplateDoc = (template) => {
@@ -104,4 +147,4 @@ const downloadTemplateDoc = (template) => {
     return { buf, fileName };
 }
 
-module.exports = { generateContractDoc, downloadTemplateDoc };
+module.exports = { generateContractDoc, downloadTemplateDoc, generatePaymentReceiptDoc };

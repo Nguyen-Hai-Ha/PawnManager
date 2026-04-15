@@ -1,4 +1,4 @@
-const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory, AuditLogs, Staff } = require('../models');
+const { Transactions, PaymentSchedules, Contract, Collaterals, ContractHistory, AuditLogs, Staff, Template } = require('../models');
 const db = require('../config/database');
 const { doReadNumber } = require('read-vietnamese-number');
 const { generatePaymentReceiptDoc } = require('../services/DocumentService');
@@ -401,25 +401,30 @@ const TransactionsController = {
             res.status(500).json({ error: error.message });
         }
     },
-    // getReceiptToPrint: (req, res) => {
-    //     try {
-    //         const { id } = req.params;
-    //         const transaction = Transactions.getReceipToPrint(id);
-    //         const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
+    getReceiptToPrint: (req, res) => {
+        try {
+            const { id } = req.params;
+            const { id_template } = req.query;
+            const template = Template.getById(id_template);
+            const transaction = Transactions.getReceipToPrint(id);
 
-    //         transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
+            const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
+            transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
 
-    //         const { buf, fileName } = generatePaymentReceiptDoc(transaction);
-    //         res.set({
-    //             'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    //             'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
-    //             'Content-Length': buf.length
-    //         });
-    //         res.send(buf);
-    //     } catch (error) {
-    //         res.status(500).json({ error: error.message });
-    //     }
-    // }
+            const other_fees_text = doReadNumber(String(transaction.other_fees)) + " đồng";
+            transaction.other_fees_text = other_fees_text.charAt(0).toUpperCase() + other_fees_text.slice(1);
+
+            const { buf, fileName } = generatePaymentReceiptDoc(transaction, template);
+            res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+                'Content-Length': buf.length
+            });
+            res.send(buf);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = TransactionsController;

@@ -32,6 +32,7 @@ Hệ thống quản lý cầm đồ chuyên nghiệp được xây dựng trên 
 Chạy cả Frontend, Backend và Electron app cùng lúc:
 ```sh
 npm run electron:dev
+npm run dev
 ```
 - **Frontend**: `http://localhost:5173`
 - **Backend**: `http://localhost:3000`
@@ -45,11 +46,6 @@ npm run electron:build:win
 - Database sẽ được lưu tại: `C:\Users\[User Name]\AppData\Roaming\PawnManager\data\pawn.db`
 - ✅ Dữ liệu **sẽ được giữ nguyên** khi cập nhật app
 
-### Publish Update (GitHub Release)
-```sh
-$env:GH_TOKEN="your_github_token"
-npm run electron:publish
-```
 - Tự động build và upload lên GitHub Releases
 - App sẽ tự kiểm tra cập nhật khi khởi động
 
@@ -141,57 +137,21 @@ npm run electron:publish
 
 ## 🔧 Hướng Dẫn Sử Dụng & Troubleshooting
 
-### 1. Cài Đặt Lần Đầu
+### Cài Đặt Lần Đầu
 **Cho người dùng cuối:**
 1. Tải file `PawnManager Setup x.x.x.exe` mới nhất từ [GitHub Releases](https://github.com/Nguyen-Hai-Ha/PawnManager/releases)
 2. Chạy file .exe và làm theo hướng dẫn cài đặt
 3. App sẽ tự tạo database trên lần khởi động đầu tiên
 4. Đăng nhập với tài khoản quản trị
 
-### 2. Cập Nhật Phiên Bản Mới
+### Cập Nhật Phiên Bản Mới
 - App sẽ **tự động kiểm tra cập nhật** khi khởi động
 - Khi có bản cập nhật mới, bạn sẽ thấy thông báo "Có bản cập nhật mới!"
 - Chọn "Tải xuống" → App sẽ download bản mới
 - Chọn "Khởi động lại ngay" → App sẽ cài đặt và khởi động lại
 - ✅ **Dữ liệu cũ sẽ được giữ nguyên** (database nằm độc lập)
 
-### 3. Các Tính Năng In Tài Liệu & Quản Lý Mẫu
-#### In Hợp Đồng & Phiếu Thu
-- **In Hợp Đồng**: 
-  1. Vào **Chi Tiết Hợp Đồng**
-  2. Bấm nút **"In"** (hoặc **"In Hợp Đồng"**)
-  3. Chọn template mẫu từ danh sách
-  4. File Word sẽ được tải xuống tự động
-
-- **In Phiếu Thu**:
-  1. Vào **Đóng Lãi** → các lần đóng
-  2. Bấm cột **"Các Lần Đóng"** 
-  3. Chọn template phiếu thu
-  4. File Word sẽ được tải xuống
-
-#### Quản Lý Mẫu In
-1. Vào **Cấu Hình Hệ Thống** (menu bên dưới dùng)
-2. Chọn **Quản Lý Mẫu**
-3. **Thêm Mẫu Mới**:
-   - Bấm **"Thêm Template"**
-   - Điền tên mẫu (ví dụ: "Hợp Đồng Cầm Đồ - Mẫu A")
-   - Chọn loại mẫu (hợp đồng/phiếu thu)
-   - Upload file Word (.docx) làm mẫu
-   - Bấm **"Lưu"**
-
-4. **Chỉnh Sửa Mẫu**:
-   - Bấm nút **"Sửa"** trên mẫu
-   - Cập nhật thông tin hoặc upload file mới
-   - Bấm **"Cập Nhật"**
-
-5. **Xóa Mẫu**:
-   - Bấm nút **"Xóa"** (chỉ có thể xóa nếu không dùng)
-
-6. **Các Biến Có Sẵn Trong Template**:
-   - **Hợp Đồng**: `{Ma_HD}`, `{Ten_KH}`, `{SDT_KH}`, `{Tien_vay}`, `{Lai_suat}`, v.v.
-   - **Phiếu Thu**: `{Ten_KH}`, `{Tien_thu}`, `{Tien_thu_bang_chu}`, `{Ngay_thu}`, v.v.
-
-### 4. Quản Lý Dữ Liệu
+### Quản Lý Dữ Liệu
 
 #### Sao Lưu Dữ Liệu (Backup)
 - **Tự Động Backup**: 
@@ -217,14 +177,6 @@ npm run electron:publish
   6. Paste và rename thành `pawn.db`
   7. Khởi động lại app
 
-#### Export Dữ Liệu (Báo Cáo)
-- **Export Báo Cáo**:
-  1. Vào module **Báo Cáo**
-  2. Chọn loại báo cáo (doanh thu, chi phí, v.v.)
-  3. Chọn khoảng thời gian
-  4. Bấm **"Export Excel"** hoặc **"Export PDF"**
-  5. File sẽ được tải xuống
-
 #### Reset Database (Xóa Sạch Dữ Liệu)
 ⚠️ **Cảnh báo**: Thao tác này sẽ **xóa tất cả dữ liệu** - không thể khôi phục!
 
@@ -234,140 +186,12 @@ npm run electron:publish
 4. App sẽ **tự tạo database mới trắng**
 5. Tạo lại tài khoản quản trị & bắt đầu từ đầu
 
-### 5. Quản Lý Nhân Viên & Bằng Cấp
-
-#### Cập Nhật Thông Tin Bằng Cấp
-1. Vào **Quản Lý Nhân Viên**
-2. Chọn nhân viên cần update
-3. Tab **"Thông Tin Bằng Cấp"**
-4. Bấm **"Thêm Bằng Cấp"**:
-   - Chọn loại bằng (Bằng cấp, Chứng chỉ, Giấy phép, v.v.)
-   - Điền tên bằng (VD: "Bằng Lái xe hạng B")
-   - Ngày cấp
-   - Ngày hết hạn
-   - Số hiệu bằng (tùy chọn)
-   - Upload ảnh bằng (tùy chọn)
-   - Bấm **"Lưu"**
-
-5. **Cảnh báo Hết Hạn**:
-   - Khi bằng còn **30 ngày** → Hiển thị cảnh báo vàng
-   - Khi bằng **hết hạn** → Hiển thị cảnh báo đỏ
-   - Dashboard sẽ show số lượng bằng cấp sắp hết hạn
-
-#### Quản Lý Quyền Hạn (Roles & Permissions)
-1. Vào **Cấu Hình Hệ Thống** → **Phân Quyền**
-2. **Tạo Vai Trò Mới**:
-   - Bấm **"Thêm Vai Trò"**
-   - Điền tên vai trò (VD: "Nhân Viên Tài Chính")
-   - Chọn quyền hạn (checkboxes)
-   - Quyền chính:
-     - `loans.read` - Xem & quản lý cầm đồ
-     - `loans.print` - In hợp đồng cầm đồ
-     - `loans.delete` - Xóa cầm đồ
-     - `loans.final_settlement` - Tất toán cầm đồ
-     - `repayment.*` - Các quyền trả góp
-     - `pledge.*` - Các quyền tín chấp
-   - Bấm **"Lưu"**
-
-3. **Gán Vai Trò Cho Nhân Viên**:
-   - Vào **Quản Lý Nhân Viên** → Chọn nhân viên
-   - Phần **"Vai Trò"** → Chọn từ dropdown
-   - Bấm **"Cập Nhật"**
-
-### 5. Gặp Lỗi?
-
-#### Backend không khởi động
-- **Hiện tượng**: Không thể kết nối API (Network Error)
-- **Giải pháp**:
-  1. Đóng app hoàn toàn
-  2. Chờ 5 giây
-  3. Khởi động lại app
-  4. Nếu vẫn lỗi, xóa folder `backend/data/` và khởi động lại
-
-#### Cập nhật không hiển thị
-- **Hiện tượng**: App không hiển thị thông báo cập nhật
-- **Giải pháp**:
-  1. Kiểm tra có bản mới trên [GitHub Releases](https://github.com/Nguyen-Hai-Ha/PawnManager/releases)
-  2. Kiểm tra kết nối Internet
-  3. Tải bản mới từ GitHub và cài đặt thủ công
-
-#### In tài liệu bị lỗi
-- **Hiện tượng**: Không in được hoặc template hiển thị `undefined`
-- **Giải pháp**:
-  1. Kiểm tra template đã được upload tại **Cấu Hình Hệ Thống**
-  2. Chọn lại template khác hoặc tạo mới
-  3. Kiểm tra quyền người dùng (Cấu Hình → Phân Quyền)
-
-#### Database bị lỗi hoặc corrupt
-- **Hiện tượng**: App khởi động rồi đóng ngay, hoặc lỗi SQL
-- **Giải pháp**:
-  1. Khôi Phục từ backup (xem mục "Khôi Phục Từ Backup")
-  2. Nếu backup cũng lỗi → Reset database (xem mục "Reset Database")
-
-### 6. Kiểm Toán & Xem Nhật Ký Hoạt Động (Audit Logs)
-#### Xem Lịch Sử Hoạt Động
-1. Vào **Báo Cáo** → **Nhật Ký Kiểm Toán** (hoặc **Audit Logs**)
-2. Bạn sẽ thấy danh sách:
-   - **Người dùng** - Ai thực hiện hành động
-   - **Hành động** - Tạo, sửa, xóa, tất toán
-   - **Chi tiết** - Thông tin cụ thể (VD: "Tất toán hợp đồng HD001")
-   - **Thời gian** - Ngày & giờ chính xác
-
-3. **Tìm Kiếm**:
-   - Lọc theo người dùng
-   - Lọc theo loại hành động
-   - Lọc theo khoảng thời gian
-   - Search theo từ khóa
-
-4. **Export Logs**:
-   - Bấm **"Export Excel"** để lưu file
-   - Hữu ích cho kiểm toán nội bộ
-
-### 7. Quản Lý Người Dùng & Quyền
-- **Tài khoản**: Quản lý tại **Quản Lý Nhân Viên**
-- **Phân Quyền**: Tạo vai trò tại **Cấu Hình Hệ Thống → Phân Quyền**
-- **Các Quyền Chính**:
-  - `loans.read` - Xem danh sách cầm đồ
-  - `loans.print` - In hợp đồng cầm đồ
-  - `loans.final_settlement` - Tất toán cầm đồ
-  - `repayment.read` - Xem danh sách trả góp
-  - `pledge.read` - Xem danh sách tín chấp
-  - `collateral.liquidation` - Thanh lý tài sản
-
-### 8. Yêu Cầu Hệ Thống
+### Yêu Cầu Hệ Thống
 - **OS**: Windows 7 trở lên (khuyến nghị Windows 10+)
 - **RAM**: Tối thiểu 2GB (khuyến nghị 4GB+)
 - **Ổ cứng**: 400MB cho app + 100MB cho dữ liệu ban đầu
 - **Internet**: Cần kết nối để kiểm tra cập nhật (không bắt buộc)
 - **Màn hình**: Độ phân giải tối thiểu 1366x768
-
----
-
-## 💡 Tips & Best Practices
-
-### Sử Dụng Hiệu Quả
-1. **Backup Thường Xuyên**:
-   - Kiểm tra backup folder mỗi tháng
-   - Có thể transfer backup để lưu trữ ngoài
-
-2. **Cấu Hình Bằng Cấp**:
-   - Nên set ngày hết hạn 30 ngày trước để nhận cảnh báo sớm
-   - Tải ảnh bằng gốc lên để có chứng cứ
-
-3. **Sắp Xếp Quyền Hạn**:
-   - Nhân viên mới: 2-3 quyền cơ bản (read)
-   - Nhân viên cấp cao: thêm quyền tất toán & xóa
-   - Quản lý: toàn bộ quyền
-
-4. **In Tài Liệu**:
-   - Test in với template mới trước khi dùng chính thức
-   - Giữ 1-2 mẫu backup trong cấu hình
-   - Cập nhật template khi logo/info công ty thay đổi
-
-5. **Quản Lý Hợp Đồng**:
-   - Tạo hợp đồng một lần → dữ liệu sẽ lưu tự động
-   - Kiểm tra lịch thanh toán sau khi tạo
-   - Test "Trả bớt gốc" trước khi dùng thực tế
 
 ---
 

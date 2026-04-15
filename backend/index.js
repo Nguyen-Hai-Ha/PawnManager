@@ -28,6 +28,7 @@ const corsOptions = {
 };
 
 const path = require('path');
+const pathHelper = require('./config/pathHelper');
 
 app.use(cors(corsOptions));
 
@@ -36,7 +37,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Serve static images
-app.use('/uploads', express.static(path.join(__dirname, 'images')));
+app.use('/uploads', express.static(pathHelper.getPath('images')));
 
 app.use('/api', router);
 

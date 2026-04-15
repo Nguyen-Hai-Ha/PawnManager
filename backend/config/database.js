@@ -2,11 +2,9 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-const dbDir = path.join(__dirname, '../data');
+const pathHelper = require('./pathHelper');
 
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
+const dbDir = pathHelper.getPath('data');
 
 const dbPath = path.join(dbDir, 'pawn.db');
 const sqlPath = path.join(__dirname, '../models/init.sql');

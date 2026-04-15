@@ -3,14 +3,23 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const { autoUpdater } = require('electron-updater');
-const { backupDatabase } = require('./backend/services/backup/BackupService');
+
+// Resolve đường dẫn backend đúng cho cả dev và production
+function getBackendPath(relativePath) {
+    if (app.isPackaged) {
+        return path.join(process.resourcesPath, 'app.asar.unpacked', relativePath);
+    }
+    return path.join(__dirname, relativePath);
+}
 
 // Khởi động Express Backend
+let backupDatabase;
 try {
-    // Import backend script
-    // Note: Backend sử dụng require, nên chạy trong CommonJS là ổn.
-    // Nếu backend tự gọi app.listen, nó sẽ chạy ngay khi require.
-    require('./backend/index.js');
+    // Backend được unpack ra ngoài app.asar trong production
+    const backendPath = getBackendPath('backend/index.js');
+    require(backendPath);
+    // Load BackupService sau khi backend đã khởi động
+    ({ backupDatabase } = require(getBackendPath('backend/services/backup/BackupService')));
 } catch (error) {
     console.error('Lỗi khi khởi động backend:', error);
 }
@@ -119,6 +128,6 @@ app.whenReady().then(() => {
 
 
 app.on('window-all-closed', function () {
-    backupDatabase(); // Backup trước khi đóng ứng dụng
+    if (backupDatabase) backupDatabase(); // Backup trước khi đóng ứng dụng
     if (process.platform !== 'darwin') app.quit();
 });

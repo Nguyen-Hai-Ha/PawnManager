@@ -190,7 +190,7 @@ const ContractController = {
                 for (let i = 1; i <= totalPeriods; i++) {
                     let expectedDate = new Date(startDate);
                     expectedDate.setDate(expectedDate.getDate() + (i * paymentTerm));
-                    const formattedDate = expectedDate.toISOString().split('T')[0];
+                    const formattedDate = dayjs(expectedDate).format('YYYY-MM-DD');
 
                     PaymentSchedules.create({
                         id_contract: contract.id,
@@ -255,7 +255,7 @@ const ContractController = {
                         expectedDate.setDate(0);
                     }
                     // format lại cho chuẩn sqlite
-                    const formattedDate = expectedDate.toISOString().split('T')[0];
+                    const formattedDate = dayjs(expectedDate).format('YYYY-MM-DD');
 
                     let daysInThisMonth = countDaysBetween(currentFromDate, expectedDate);
 
@@ -633,7 +633,7 @@ const ContractController = {
                     if (expectedDate.getDate() != startDate.getDate()) {
                         expectedDate.setDate(0);
                     }
-                    const formattedDate = expectedDate.toISOString().split('T')[0];
+                    const formattedDate = dayjs(expectedDate).format('YYYY-MM-DD');
 
                     // Tính Lãi chia đều (percent/term)
                     let interestAmount = Math.round((loan_amount * (interest_rate / 100)) / total_periods);

@@ -33,7 +33,7 @@ const startScheduler = () => {
             
             for (const contract of newContracts) {
                 if (s.emailEnabled) await sendNewContractToAdminEmail(contract);
-                db.prepare(`UPDATE contracts SET notified_new_at = CURRENT_TIMESTAMP WHERE id = ?`).run(contract.id);
+                db.prepare(`UPDATE contracts SET notified_new_at = (datetime('now', 'localtime')) WHERE id = ?`).run(contract.id);
             }
         }
 
@@ -65,7 +65,7 @@ const startScheduler = () => {
                 // if (s.zaloEnabled) await sendOverDueZaloZNS(schedule);
                 if (s.emailEnabled) await sendOverDueEmail(schedule);
                 // Đánh dấu đã gửi
-                db.prepare(`UPDATE payment_schedules SET notified_overdue_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
+                db.prepare(`UPDATE payment_schedules SET notified_overdue_at = (datetime('now', 'localtime')) WHERE id = ?`).run(schedule.id);
                 db.prepare(`UPDATE contracts SET status = 'Quá Hạn' WHERE id = ?`).run(schedule.id_contract);
                 db.prepare(`UPDATE collaterals SET status = 'Quá Hạn' WHERE id = ?`).run(schedule.id_collateral);
             }
@@ -94,7 +94,7 @@ const startScheduler = () => {
             for (const schedule of dueSchedules) {
                 // if (s.zaloEnabled) await sendDueTodayZaloZNS(schedule);
                 if (s.emailEnabled) await sendDueTodayEmail(schedule);
-                db.prepare(`UPDATE payment_schedules SET notified_due_today_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
+                db.prepare(`UPDATE payment_schedules SET notified_due_today_at = (datetime('now', 'localtime')) WHERE id = ?`).run(schedule.id);
                 db.prepare(`UPDATE contracts SET status = 'Đến Hạn' WHERE id = ?`).run(schedule.id_contract);
             }
         }
@@ -126,7 +126,7 @@ const startScheduler = () => {
             for (const item of liquidation) {
                 if (s.emailEnabled) await sendLiquidationEmail(item);
                 if (s.emailEnabled) await sendLiquidationForAdminEmail(item);
-                db.prepare(`UPDATE collaterals SET notified_liquidation_at = CURRENT_TIMESTAMP, status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id);
+                db.prepare(`UPDATE collaterals SET notified_liquidation_at = (datetime('now', 'localtime')), status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id);
                 db.prepare(`UPDATE contracts SET status = 'Chờ Thanh Lý' WHERE id = ?`).run(item.id_contract);
             }
         }
@@ -157,7 +157,7 @@ const startScheduler = () => {
             
             for (const item of reminderEarly) {
                 if (s.emailEnabled) await sendReminderEarlyEmail(item);
-                db.prepare(`UPDATE payment_schedules SET notified_reminder_early_at = CURRENT_TIMESTAMP WHERE id = ?`).run(item.id);
+                db.prepare(`UPDATE payment_schedules SET notified_reminder_early_at = (datetime('now', 'localtime')) WHERE id = ?`).run(item.id);
                 db.prepare(`UPDATE contracts SET status = 'Sắp Đến Hạn' WHERE id = ?`).run(item.id_contract);
             }
         }

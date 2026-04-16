@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS contracts (
     id_staff INTEGER NOT NULL,
     id_customer INTEGER NOT NULL,
     id_contract_type INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_staff) REFERENCES staff(id),
     FOREIGN KEY (id_customer) REFERENCES customers(id),
     FOREIGN KEY (id_contract_type) REFERENCES contracts_types(id)
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS customers (
     cccd TEXT,
     birth_date TEXT,
     images_cccd TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT (datetime('now', 'localtime'))
 );
 
 CREATE TABLE IF NOT EXISTS relatives (
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS relatives (
     job TEXT,
     workplace TEXT,
     id_customer INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_customer) REFERENCES customers(id)
 );
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS collaterals(
     notified_liquidation_at DATETIME NULL,
     id_contract INTEGER NOT NULL,
     id_collateral_type INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_contract) REFERENCES contracts(id),
     FOREIGN KEY (id_collateral_type) REFERENCES collaterals_type(id)
 );
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS images(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     url TEXT NOT NULL,
     id_collateral INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_collateral) REFERENCES collaterals(id)
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS payment_schedules(
     notified_due_today_at DATETIME NULL,
     notified_reminder_early_at DATETIME NULL,
     id_contract INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_contract) REFERENCES contracts(id)
 );
 
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS transactions(
     id_schedule INTEGER NULL,
     id_transaction_type INTEGER NOT NULL,
     id_staff INTEGER NOT NULL,
-    created_at DATETIME DEFAULT (date('now')),
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_contract) REFERENCES contracts(id),
     FOREIGN KEY (id_schedule) REFERENCES payment_schedules(id),
     FOREIGN KEY (id_transaction_type) REFERENCES transactions_types(id),
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS audit_logs(
     action TEXT NOT NULL,
     details TEXT NOT NULL,
     id_staff INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_staff) REFERENCES staff(id)
 );
 
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS contract_history(
     id_contract INTEGER NOT NULL,
     id_staff INTEGER NOT NULL,
     id_transaction INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (id_contract) REFERENCES contracts(id),
     FOREIGN KEY (id_staff) REFERENCES staff(id),
     FOREIGN KEY (id_transaction) REFERENCES transactions(id)
@@ -172,8 +172,8 @@ CREATE TABLE IF NOT EXISTS settings(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT UNIQUE NOT NULL,
     value TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+    updated_at DATETIME DEFAULT (datetime('now', 'localtime'))
 );
 
 CREATE TABLE IF NOT EXISTS templates(
@@ -182,8 +182,8 @@ CREATE TABLE IF NOT EXISTS templates(
     file_path TEXT NOT NULL,
     type TEXT NOT NULL,
     active TEXT DEFAULT 'true',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+    updated_at DATETIME DEFAULT (datetime('now', 'localtime'))
 );
 
 INSERT OR IGNORE INTO settings (key, value) VALUES

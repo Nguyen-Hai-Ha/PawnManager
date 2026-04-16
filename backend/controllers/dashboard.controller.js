@@ -3,13 +3,13 @@ const db = require('../config/database');
 const DashboardController = {
     getSummary: (req, res) => {
         try {
-            const today = new Date().toISOString().split('T')[0];
+            const today = new Date().toLocaleDateString('sv-SE');
             
             // 1. Transactions Today vs Yesterday
             const todayCount = db.prepare("SELECT COUNT(*) as count FROM transactions WHERE created_at = ?").get(today).count;
             const yesterdayDate = new Date();
             yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-            const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
+            const yesterdayStr = yesterdayDate.toLocaleDateString('sv-SE');
             const yesterdayCount = db.prepare("SELECT COUNT(*) as count FROM transactions WHERE created_at = ?").get(yesterdayStr).count;
             
             let transactionCompare = 0;

@@ -73,7 +73,7 @@ const Transactions = {
         return stmt.all(id);
     },
     create: (data) => {
-        const sql = `INSERT INTO transactions (id_contract, id_transaction_type, id_schedule, id_staff, amount, other_fees, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, date('now'))`
+        const sql = `INSERT INTO transactions (id_contract, id_transaction_type, id_schedule, id_staff, amount, other_fees, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, (datetime('now', 'localtime')))`
         const stmt = db.prepare(sql);
         const result = stmt.run(data.id_contract, data.id_transaction_type, data.id_schedule, data.id_staff, data.amount, data.other_fees, data.description);
         return { id: result.lastInsertRowid };

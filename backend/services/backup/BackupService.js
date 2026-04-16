@@ -35,7 +35,7 @@ const backupDatabase = () => {
             return;
         }
 
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const timestamp = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().replace(/[:.]/g, '-').replace('T', '_').split('Z')[0];
         const backupPath = path.join(backupDir, `pawn_${timestamp}.db`);
         
         fs.copyFileSync(dbPath, backupPath);

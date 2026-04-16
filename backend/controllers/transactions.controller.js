@@ -141,7 +141,7 @@ const TransactionsController = {
         const reduce = db.transaction((data) => {
             const id_contract = data.id_contract;
             const amount = data.amount;
-            const payment_date = data.payment_date || new Date().toISOString().split('T')[0];
+            const payment_date = data.payment_date || new Date().toLocaleDateString('sv-SE');
             const other_fees = data.other_fees || 0;
             const newInterestRate = data.interest_rate;
             const note = data.note;

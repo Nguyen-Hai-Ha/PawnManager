@@ -1,4 +1,4 @@
-const { app, BrowserWindow, protocol, ipcMain } = require('electron');
+const { app, BrowserWindow, protocol, ipcMain, dialog } = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
@@ -10,18 +10,28 @@ function getBackendPath(relativePath) {
     return path.join(__dirname, relativePath);
 }
 
-// Khởi động Express Backend
+// Khởi động Express Backend (Chỉ chạy bên trong Electron khi đã đóng gói)
 let backupDatabase;
-try {
-    const backendPath = getBackendPath('backend/index.js');
-    require(backendPath);
-    // Load BackupService sau khi backend đã khởi động
-    ({ backupDatabase } = require(getBackendPath('backend/services/backup/BackupService')));
-} catch (error) {
-    console.error('❌ Lỗi khi khởi động backend:');
-    console.error('Message:', error.message);
-    console.error('Stack:', error.stack);
-    console.error('Details:', error);
+if (app.isPackaged) {
+    try {
+        const backendPath = getBackendPath('backend/index.js');
+        require(backendPath);
+        // Load BackupService sau khi backend đã khởi động
+        ({ backupDatabase } = require(getBackendPath('backend/services/backup/BackupService')));
+    } catch (error) {
+        console.error('❌ Lỗi khi khởi động backend:');
+        console.error('Message:', error.message);
+        console.error('Stack:', error.stack);
+        console.error('Details:', error);
+        
+        // Hiện thông báo lỗi ra màn hình khi đã đóng gói (Production)
+        if (app.isPackaged) {
+            dialog.showErrorBox(
+                'Lỗi khởi động Backend',
+                `Ứng dụng không thể khởi động phần máy chủ nội bộ.\n\nLỗi: ${error.message}\n\nLưu ý: Đảm bảo bạn đã tắt các phiên bản ứng dụng khác hoặc cửa sổ Terminal đang chạy dev trước khi mở.`
+            );
+        }
+    }
 }
 
 let mainWindow;
@@ -105,12 +115,8 @@ autoUpdater.on('update-downloaded', (info) => {
 });
 
 autoUpdater.on('error', (err) => {
-    if (mainWindow) {
-        mainWindow.webContents.send('update-status', {
-            status: 'error',
-            message: err.message || 'Không thể kiểm tra cập nhật'
-        });
-    }
+    // Chỉ ghi log lỗi thay vì hiện thông báo cho người dùng
+    console.error('Auto-update error:', err.message || err);
 });
 
 app.whenReady().then(() => {

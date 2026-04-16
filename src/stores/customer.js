@@ -38,8 +38,8 @@ export const useCustomerStore = defineStore('customer', () => {
     const search = ref('');
 
     const sortConfig = ref({
-        key: 'name',
-        direction: 'asc'
+        key: 'id',
+        direction: 'desc'
     });
 
     const handleSort = (key) => {

@@ -1,6 +1,6 @@
 {
   "name": "pawnmanagers",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Pawn Manager Application",
   "private": true,
   "type": "module",
@@ -27,6 +27,7 @@
       "dist/**/*",
       "backend/**/*",
       "!backend/data/**",
+      "!backend/images/**",
       "electron-main.cjs",
       "preload.cjs",
       "package.json"

@@ -89,7 +89,11 @@ const TransactionsController = {
 
             // thay đổi trạng thái của tài sản, hợp đồng chuyển từ Quá Hạn -> Đang Cầm
             if (contract.status === 'Quá Hạn') {
-                Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
+                if (contract.id_contract_type === 1) {
+                    Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
+                } else {
+                    Contract.updateStatus({ status: 'Đang Vay' }, data.id_contract);
+                }
                 // tài sản quá hạn -> đang cầm
                 if (contract.id_contract_type === 1 && collateral.status === 'Quá Hạn') {
                     Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
@@ -105,11 +109,18 @@ const TransactionsController = {
             } 
             // thay đổi trạng thái hợp đồng khi đang cầm, đến lãi, sắp đến hạn
             else {
-                Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
+                const status = (contract.id_contract_type === 1) ? 'Đang Cầm' : 'Đang Vay';
+                Contract.updateStatus({ status: status }, data.id_contract);
             }
 
             // nếu là kỳ cuối cùng thì cập nhật trạng thái hợp đồng và tài sản => hoàn tất
-            if (contract.total_periods <= paymentSchedule.period_number) {
+            const isPawnOrCreditFinished = (contract.id_contract_type === 1 || contract.id_contract_type === 2) 
+                && contract.total_periods < paymentSchedule.period_number;
+
+            const isInstallmentFinished = (contract.id_contract_type === 3) 
+                && contract.total_periods === paymentSchedule.period_number;
+
+            if (isPawnOrCreditFinished || isInstallmentFinished) {
                 Contract.updateStatus({ status: 'Đã Hoàn Tất' }, data.id_contract);
                 if (contract.id_contract_type === 1) {
                     Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);

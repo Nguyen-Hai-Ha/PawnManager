@@ -154,15 +154,20 @@ onMounted(async() => {
                                 <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Đang vay' || loan.status === 'Đang Vay'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất'">
+                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Tất Toán'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-danger text-danger-emphasis fw-bold" v-if="
-                                    loan.status === 'Quá hạn'">
+                                <span class="badge rounded-pill bg-danger fw-bold" v-if="loan.status === 'Quá Hạn'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg fw-bold" style="background-color: #ff7221;" v-if="loan.status === 'Đến Hạn'">
+                                    {{ loan.status }}
+                                </span>
+                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="loan.status === 'Sắp Đến Hạn'">
                                     {{ loan.status }}
                                 </span>
                             </td>
-                            <td>
+                            <td>.
                                 <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
                                     <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)" v-permission="'repayment.detail'">
                                         <font-awesome-icon icon="fa-solid fa-eye" />

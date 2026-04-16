@@ -94,10 +94,18 @@ const TransactionsController = {
                 if (contract.id_contract_type === 1 && collateral.status === 'Quá Hạn') {
                     Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
                 } 
-                // tài sản đang chờ thanh lý có thể thay đổi -> đang cầm nếu khách hàng kịp đóng lãi trong 24h
-                else if (contract.id_contract_type === 1 && collateral.status === 'Chờ Thanh Lý') {
+            }
+            // thay đổi trạng thái của tài sản, hợp đồng chuyển từ Chờ Thanh Lý -> Đang Cầm
+            else if (contract.status === 'Chờ Thanh Lý') {
+                Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
+                // tài sản chờ thanh lý có thể thay đổi -> đang cầm nếu khách hàng kịp đóng lãi trong 24h
+                if (contract.id_contract_type === 1 && collateral.status === 'Chờ Thanh Lý') {
                     Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
                 }
+            } 
+            // thay đổi trạng thái hợp đồng khi đang cầm, đến lãi, sắp đến hạn
+            else {
+                Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
             }
 
             // nếu là kỳ cuối cùng thì cập nhật trạng thái hợp đồng và tài sản => hoàn tất

@@ -460,7 +460,7 @@ const sendLiquidationForAdminEmail = async (contract) => {
         const mailOptions = {
             from: s.email_sender,
             to: s.email_sender,
-            subject: 'THÔNG BÁO TÀI SẢN CẦN THANH LÝ - CỬA HÀNG CẦM ĐỒ',
+            subject: 'THÔNG BÁO TÀI SẢN CẦN ĐƯỢC THANH LÝ - CỬA HÀNG CẦM ĐỒ',
             html: getLiquidationTemplateForAdmin(contract)
         };
         await transporter.sendMail(mailOptions);

@@ -81,7 +81,7 @@ onMounted(async() => {
                         <option value="Đang Cầm">Đang Cầm</option>
                         <option value="Đã Hoàn Tất">Đã Hoàn Tất</option>
                         <option value="Đã Tất Toán">Đã Tất Toán</option>
-                        <option value="Cần Thanh Lý">Cần Thanh Lý</option>
+                        <option value="Chờ Thanh Lý">Chờ Thanh Lý</option>
                         <option value="Đã Thanh Lý">Đã Thanh Lý</option>
                         <option value="Quá Hạn">Quá Hạn</option>
                         <option value="Đến Hạn">Đến Hạn</option>
@@ -166,16 +166,10 @@ onMounted(async() => {
                                 <span class="badge rounded-pill bg text-warning-emphasis fw-bold" style="background-color: #CCFBF1;" v-if="loan.status === 'Đang cầm' || loan.status === 'Đang Cầm'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất'">
+                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Tất Toán' || loan.status === 'Đã Thanh Lý'">
                                     {{ loan.status }}
                                 </span>
-                                <span class="badge rounded-pill bg-danger fw-bold" v-if="loan.status === 'Cần thanh lý' || loan.status === 'Quá Hạn'">
-                                    {{ loan.status }}
-                                </span>
-                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Thanh Lý'">
-                                    {{ loan.status }}
-                                </span>
-                                <span class="badge rounded-pill bg-success fw-bold" v-if="loan.status === 'Đã Tất Toán'">
+                                <span class="badge rounded-pill bg-danger fw-bold" v-if="loan.status === 'Chờ Thanh Lý' || loan.status === 'Quá Hạn'">
                                     {{ loan.status }}
                                 </span>
                                 <span class="badge rounded-pill bg fw-bold" style="background-color: #ff7221;" v-if="loan.status === 'Đến Hạn'">

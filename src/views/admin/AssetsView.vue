@@ -75,6 +75,7 @@ onMounted( async() => {
                     <select id="filter" v-model="filterStatus">
                         <option value="">Tất cả</option>
                         <option value="Đang Cầm">Đang Cầm</option>
+                        <option value="Quá Hạn">Quá Hạn</option>
                         <option value="Chờ Thanh Lý">Chờ Thanh Lý</option>
                         <option value="Đã Chuộc">Đã Chuộc</option>
                         <option value="Đã Thanh Lý">Đã Thanh Lý</option>

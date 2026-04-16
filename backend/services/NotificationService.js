@@ -52,7 +52,7 @@ const getReminderOverdueTemplate = (data) => {
                     </tr>
                     <tr>
                         <td class="label">Tài sản:</td>
-                        <td class="value">${data.asset_name}</td>
+                        <td class="value">${data.asset_name || 'Không có'}</td>
                     </tr>
                     <tr>
                         <td class="label">Ngày đến hạn:</td>
@@ -233,7 +233,7 @@ const getLiquidationTemplate = (data) => {
                         </tr>
                         <tr>
                             <td class="label">Tài sản:</td>
-                            <td class="value">${data.asset_name}</td>
+                            <td class="value">${data.asset_name || 'Không có'}</td>
                         </tr>
                         <tr>
                             <td class="label">Ngày quá hạn:</td>
@@ -296,7 +296,7 @@ const getLiquidationTemplateForAdmin = (data) => {
                     </div>
                     <div class="data-row">
                         <span class="label">Tên tài sản:</span>
-                        <span class="value">${data.asset_name}</span>
+                        <span class="value">${data.asset_name || 'Không có'}</span>
                     </div>
                     <div class="data-row">
                         <span class="label">Khách hàng:</span>

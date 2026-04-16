@@ -10,10 +10,34 @@ const startScheduler = () => {
         
         const now = new Date();
         const currentTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        
-        if (currentTime !== s.reminderTime) return;
-
         const today = now.toISOString().split('T')[0];
+
+        // ── Thông báo Hợp đồng mới  ──
+        if (s.newContract) {
+            const newContracts = db.prepare(`
+                SELECT 
+                c.code as contract_code,
+                c.loan_amount,
+                c.start_date,
+                c.end_date,
+                c.created_at,
+                cu.name as customer_name,
+                col.name as asset_name
+                FROM contracts c
+                LEFT JOIN customers cu ON c.id_customer = cu.id
+                LEFT JOIN collaterals col ON c.id = col.id_contract
+                WHERE DATE(c.created_at) = ?
+                AND c.notified_new_at IS NULL
+            `).all(today);
+            
+            for (const contract of newContracts) {
+                if (s.emailEnabled) await sendNewContractToAdminEmail(contract);
+                db.prepare(`UPDATE contracts SET notified_new_at = CURRENT_TIMESTAMP WHERE id = ?`).run(contract.id);
+            }
+        }
+
+        // kiểm tra cấu hình giờ gửi mail trừ mail hợp đồng mới
+        if (currentTime !== s.reminderTime) return;
 
         // ── Thông báo quá hạn ──
         if (s.overdue) {
@@ -26,7 +50,8 @@ const startScheduler = () => {
                 c.code as contract_code,
                 cu.name as customer_name,
                 cu.email as customer_email,
-                col.name as asset_name
+                col.name as asset_name,
+                col.id as id_collateral
                 FROM payment_schedules ps
                 LEFT JOIN contracts c ON ps.id_contract = c.id
                 LEFT JOIN customers cu ON c.id_customer = cu.id
@@ -41,6 +66,7 @@ const startScheduler = () => {
                 // Đánh dấu đã gửi
                 db.prepare(`UPDATE payment_schedules SET notified_overdue_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
                 db.prepare(`UPDATE contracts SET status = 'Quá Hạn' WHERE id = ?`).run(schedule.id_contract);
+                db.prepare(`UPDATE collaterals SET status = 'Quá Hạn' WHERE id = ?`).run(schedule.id_collateral);
             }
         }
 
@@ -69,30 +95,6 @@ const startScheduler = () => {
                 if (s.emailEnabled) await sendDueTodayEmail(schedule);
                 db.prepare(`UPDATE payment_schedules SET notified_due_today_at = CURRENT_TIMESTAMP WHERE id = ?`).run(schedule.id);
                 db.prepare(`UPDATE contracts SET status = 'Đến Hạn' WHERE id = ?`).run(schedule.id_contract);
-            }
-        }
-
-        // ── Thông báo Hợp đồng mới ──
-        if (s.newContract) {
-            const newContracts = db.prepare(`
-                SELECT 
-                c.code as contract_code,
-                c.loan_amount,
-                c.start_date,
-                c.end_date,
-                c.created_at,
-                cu.name as customer_name,
-                col.name as asset_name
-                FROM contracts c
-                LEFT JOIN customers cu ON c.id_customer = cu.id
-                LEFT JOIN collaterals col ON c.id = col.id_contract
-                WHERE DATE(c.created_at) = ?
-                AND c.notified_new_at IS NULL
-            `).all(today);
-            
-            for (const contract of newContracts) {
-                if (s.emailEnabled) await sendNewContractToAdminEmail(contract);
-                db.prepare(`UPDATE contracts SET notified_new_at = CURRENT_TIMESTAMP WHERE id = ?`).run(contract.id);
             }
         }
 

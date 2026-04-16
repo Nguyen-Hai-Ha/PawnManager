@@ -1,9 +1,11 @@
 const multer = require('multer');
 const path = require('path');
 
+const { imagesDir } = require('../config/paths');
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../images'));
+        cb(null, imagesDir);
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

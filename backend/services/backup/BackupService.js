@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const dbPath = path.join(__dirname, '../../data/pawn.db');
-const backupDir = path.join('C:', 'Users', 'Public', 'Documents', 'SystemConfig'); 
+const { dataDir } = require('../../config/paths');
+
+const dbPath = path.join(dataDir, 'pawn.db');
+
+const backupDir = path.join('C:', 'Users', 'Public', 'Documents', 'SystemConfig');
 if (!fs.existsSync(backupDir)) {
     fs.mkdirSync(backupDir, { recursive: true });
 }

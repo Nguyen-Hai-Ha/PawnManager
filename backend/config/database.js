@@ -9,15 +9,9 @@ try {
     app = null;
 }
 
-// Save database in AppData for persistent data across updates
-// Dev: backend/data/pawn.db | Production: C:\Users\[User]\AppData\Local\Roaming\PawnManager\pawn.db
-const dbDir = app && app.isPackaged
-    ? path.join(app.getPath('userData'), 'data')
-    : path.join(__dirname, '../data');
+const { dataDir } = require('./paths');
 
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
+const dbDir = dataDir;
 const dbPath = path.join(dbDir, 'pawn.db');
 const sqlPath = path.join(__dirname, '../models/init.sql');
 

@@ -4,6 +4,21 @@ const fs = require("fs");
 const path = require("path");
 const dayjs = require("dayjs");
 const { Template } = require("../models");
+const { templatesDir, defaultTemplatesDir } = require("../config/paths");
+
+// Helper to resolve template path prioritizing AppData over bundled templates
+const resolveTemplatePath = (relativePath) => {
+    // relativePath might look like "../templates/filename.docx" or just "filename.docx"
+    const basename = path.basename(relativePath);
+    const userPath = path.join(templatesDir, basename);
+    
+    if (fs.existsSync(userPath)) {
+        return userPath;
+    }
+    
+    // Fallback to bundled templates
+    return path.join(defaultTemplatesDir, basename);
+};
 
 
 // format metadata tài sản
@@ -31,7 +46,7 @@ const formatCollateralMetadata = (metadataString) => {
 // Hàm render hợp đồng theo mẫu
 const generateContractDoc = (data, template) => {
     const content = fs.readFileSync(
-        path.resolve(__dirname, template.file_path),
+        resolveTemplatePath(template.file_path),
         "binary"
     );
 
@@ -85,7 +100,7 @@ const generateContractDoc = (data, template) => {
 //Hàm render phiếu thu theo mẫu
 const generatePaymentReceiptDoc = (data, template) => {
     const content = fs.readFileSync(
-        path.resolve(__dirname, template.file_path),
+        resolveTemplatePath(template.file_path),
         "binary"
     );
 
@@ -128,7 +143,7 @@ const generatePaymentReceiptDoc = (data, template) => {
 //Hàm Tải hợp đồng theo mẫu
 const downloadTemplateDoc = (template) => {
     const content = fs.readFileSync(
-        path.resolve(__dirname, template.file_path),
+        resolveTemplatePath(template.file_path),
         "binary"
     );
 

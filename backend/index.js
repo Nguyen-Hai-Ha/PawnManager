@@ -9,6 +9,10 @@ const models = require('./models/index');
 const cookieParser = require('cookie-parser');
 const { startScheduler } = require('./services/mail/SchedulerService');
 const { backupDatabase } = require('./services/backup/BackupService');
+const { imagesDir, ensureDirectories } = require('./config/paths');
+
+// Khởi tạo các thư mục cần thiết
+ensureDirectories();
 
 // CORS configuration
 const corsOptions = {
@@ -36,7 +40,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Serve static images
-app.use('/uploads', express.static(path.join(__dirname, 'images')));
+app.use('/uploads', express.static(imagesDir));
 
 app.use('/api', router);
 

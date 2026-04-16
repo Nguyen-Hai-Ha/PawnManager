@@ -39,6 +39,7 @@ const Contract = {
         c.interest_type, 
         c.id_customer,
         c.created_at,
+        c.id_contract_type,
         ct.name as contract_name,
         s.name as staff_name
         FROM contracts c

@@ -85,9 +85,10 @@ const TransactionsController = {
             }
 
             const contract = Contract.getById(data.id_contract);
-            if (contract.id_contract_type === 1 || contract.id_contract_type === 2) {
-                if (contract.total_periods < paymentSchedule.period_number) {
-                    Contract.updateStatus({ status: 'Đã Hoàn Tất' }, data.id_contract);
+            // kỳ cuối cùng thì cập nhật trạng thái hợp đồng và tài sản => hoàn tất
+            if (contract.total_periods <= paymentSchedule.period_number) {
+                Contract.updateStatus({ status: 'Đã Hoàn Tất' }, data.id_contract);
+                if (contract.id_contract_type === 1) {
                     Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);
                 }
             }

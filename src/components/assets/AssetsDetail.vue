@@ -11,7 +11,10 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
         <div class="modal-header">
             <div class="title-section">
                 <h2>Tài sản {{ assetDetail.code }}</h2>
-                <span class="status-badge">{{ assetDetail.status }}</span>
+                <span class="status-badge" v-if="assetDetail.status === 'Đã Chuộc' || assetDetail.status === 'Đã Thanh Lý'">{{ assetDetail.status }}</span>
+                <span class="status-badge-warning" v-else-if="assetDetail.status === 'Đang Cầm'">{{ assetDetail.status }}</span>
+                <span class="status-badge-danger" v-else-if="assetDetail.status === 'Quá Hạn'">{{ assetDetail.status }}</span>
+                <span class="status-badge-danger" v-else-if="assetDetail.status === 'Chờ Thanh Lý'">{{ assetDetail.status }}</span>
             </div>
             <button class="close-icon" @click="closeAssetsDetailModal">&times;</button>
         </div>
@@ -44,7 +47,9 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
                 <p class="section-title">Hình ảnh:</p>
                 <div class="image-list">
                     <div v-for="(img, index) in parseImages" :key="index" class="image-wrapper">
-                        <img :src="`http://localhost:3000${img.url}`" :alt="'Ảnh ' + (index + 1)">
+                        <viewer :images="`http://localhost:3000${img.url}`">
+                            <img :src="`http://localhost:3000${img.url}`" :alt="'Ảnh ' + (index + 1)">
+                        </viewer>
                     </div>
                 </div>
             </div>
@@ -87,6 +92,24 @@ const { closeAssetsDetailModal, triggerFileInput, handleFileChange, submitUpdate
 .status-badge {
     background-color: #c9ece8;
     color: #1a7a6e;
+    padding: 2px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-badge-warning{
+    background-color: #ece5c9;
+    color: #7a701a;
+    padding: 2px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-badge-danger{
+    background-color: #ecc9c9;
+    color: #7a1a1a;
     padding: 2px 15px;
     border-radius: 20px;
     font-size: 14px;

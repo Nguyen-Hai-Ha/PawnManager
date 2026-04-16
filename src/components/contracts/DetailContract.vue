@@ -266,7 +266,9 @@ const detail = computed(() => {
                         </div>
                         <div class="assets-gallery">
                             <div class="gallery-item" v-for="(img, idx) in collateralImages" :key="idx">
-                                <img :src="`http://localhost:3000${img.url}`" alt="Hình ảnh tài sản">
+                                <viewer :images="`http://localhost:3000${img.url}`">
+                                    <img :src="`http://localhost:3000${img.url}`" alt="Hình ảnh tài sản">
+                                </viewer>
                             </div>
                         </div>
                     </div>

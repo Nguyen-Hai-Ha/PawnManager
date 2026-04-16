@@ -626,6 +626,7 @@ nav a {
 }
 
 .cccd-img {
+  cursor: pointer;
   width: 85px;
   object-fit: cover;
   border-radius: 2px;

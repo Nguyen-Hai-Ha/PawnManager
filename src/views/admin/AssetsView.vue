@@ -138,10 +138,11 @@ onMounted( async() => {
                             </td>
                             <td><span class="text-danger fw-bold">{{ formatCurrency(asset.loan_amount) }}</span></td>
                             <td>
-                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="asset.status === 'Đang cầm'">{{ asset.status }}</span>
+                                <span class="badge rounded-pill bg-warning text-warning-emphasis fw-bold" v-if="asset.status === 'Đang cầm' || asset.status === 'Đang Cầm'">{{ asset.status }}</span>
                                 <span class="badge rounded-pill bg-success fw-bold" v-if="asset.status === 'Đã Thanh Lý'">{{ asset.status }}</span>
                                 <span class="badge rounded-pill bg-success fw-bold" v-if="asset.status === 'Đã Chuộc'">{{ asset.status }}</span>
                                 <span class="badge rounded-pill bg-danger fw-bold" v-if="asset.status === 'Chờ Thanh Lý'">{{ asset.status }}</span>
+                                <span class="badge rounded-pill bg-danger fw-bold" v-if="asset.status === 'Quá Hạn'">{{ asset.status }}</span>
                             </td>
                             <td>
                                 <div class="action-cell" v-if="asset.status === 'Đã Thanh Lý'">

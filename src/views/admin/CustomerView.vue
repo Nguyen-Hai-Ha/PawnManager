@@ -68,7 +68,11 @@ onMounted(async () => {
                             <td>{{ customer.phone }}</td>
                             <td>{{ customer.cccd }}</td>
                             <td>{{ customer.address }}</td>
-                            <td><img :src="`http://localhost:3000/uploads/` + customer.images_cccd" alt="" class="cccd-img"></td>
+                            <td> 
+                                <viewer :images="[`http://localhost:3000/uploads/` + customer.images_cccd]">
+                                    <img :src="`http://localhost:3000/uploads/` + customer.images_cccd" alt="" class="cccd-img">
+                                </viewer>
+                            </td>
                             <td>
                                 <div class="action-cell">
                                     <button class="btn-action text-warning" data-tooltip="Chỉnh sửa" v-permission="'customer.detail'" @click="openEditModal(customer)"><font-awesome-icon

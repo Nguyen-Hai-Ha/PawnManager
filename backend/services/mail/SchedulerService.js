@@ -16,6 +16,7 @@ const startScheduler = () => {
         if (s.newContract) {
             const newContracts = db.prepare(`
                 SELECT 
+                c.id,
                 c.code as contract_code,
                 c.loan_amount,
                 c.start_date,

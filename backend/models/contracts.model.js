@@ -53,15 +53,20 @@ const Contract = {
         const sql = `
             SELECT 
                 ps.*,
+                t.other_fees,
+                (ps.interest_amount + ps.principal_amount) as total_expected,
                 IFNULL(SUM(t.amount), 0) as paid_amount,
-                ((ps.interest_amount + ps.principal_amount) - IFNULL(SUM(t.amount), 0)) as remaining_amount,
+                CASE 
+                    WHEN (ps.interest_amount + ps.principal_amount) > IFNULL(SUM(t.amount), 0) 
+                    THEN (ps.interest_amount + ps.principal_amount) - IFNULL(SUM(t.amount), 0)
+                    ELSE 0 
+                END as remaining_amount,
                 JSON_GROUP_ARRAY(
                     JSON_OBJECT(
                         'amount', CAST(t.amount AS INTEGER),
                         'created_at', DATE(t.created_at)
                     )
-                ) as payment_history,
-                t.id as transaction_id
+                ) as payment_history
             FROM payment_schedules ps
             LEFT JOIN transactions t ON ps.id = t.id_schedule
             WHERE ps.id_contract = ?

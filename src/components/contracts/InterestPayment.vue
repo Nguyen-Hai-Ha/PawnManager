@@ -75,8 +75,8 @@ const moneyConfig = {
                                 <td>{{ item.expected_date }}</td>
                                 <td>{{ formatCurrency(item.interest_amount) }}</td>
                                 <td>{{ formatCurrency(item.principal_amount) }}</td>
-                                <td>0</td>
-                                <td class="text-danger fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
+                                <td>{{ formatCurrency(item.other_fees) }}</td>
+                                <td>{{ formatCurrency(item.total_expected) }}</td>
                                 <td class="text-success fw-bold">{{ formatCurrency(item.paid_amount) }}</td>
                                 <td class="text-warning fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
                                 <td><span class="text-blue" @click="openSelectTemplate('phieu_thu')" v-permission="['loans.print', 'pledge.print', 'repayment.print']" style="cursor: pointer;">{{ item.display_history }}</span></td>

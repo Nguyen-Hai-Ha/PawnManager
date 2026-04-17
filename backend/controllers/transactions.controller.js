@@ -161,15 +161,20 @@ const TransactionsController = {
             const contract = Contract.getById(id_contract);
             if (!contract) return res.status(404).json({ error: "Hợp đồng không tồn tại" });
 
+            const allCSchedule = PaymentSchedules.getByContractId(id_contract);
+
             // Lấy tất cả kỳ chưa đóng của hợp đồng này (được sắp xếp theo period_number tăng dần)
-            const schedules = PaymentSchedules.getByContractId(id_contract).filter(s => s.is_paid === 0).sort((a, b) => a.period_number - b.period_number);
+            const schedules = allCSchedule.filter(s => s.is_paid === 0).sort((a, b) => a.period_number - b.period_number);
+            
+            // Lấy kỳ đã đóng của hợp đồng này trong trường hợp ngày đóng nằm trong kỳ đã đóng đó
+            const paidSchedules = allCSchedule.filter(s => s.is_paid === 1 && s.from_date <= payment_date && payment_date <= s.expected_date)
 
             if (schedules.length === 0) {
                 return res.status(400).json({ error: "Hợp đồng đã hoàn tất" });
             }
 
             // Kỳ thanh toán hiện tại
-            const current_schedule = schedules[0];
+            const current_schedule = paidSchedules.length > 0 ? paidSchedules[0] : schedules[0];
 
             // Tạo giao dịch loại 4 (trả bớt gốc)
             const transaction = Transactions.create({
@@ -212,7 +217,7 @@ const TransactionsController = {
                 return res.json({ transaction, message: "Hợp đồng đã được tất toán" });
             }
 
-            // Xử lý chia lãi cho kỳ hiện tại
+            // Xử lý ngày cho kỳ hiện tại
             const periodStartDate = new Date(current_schedule.from_date);
             const periodEndDate = new Date(current_schedule.expected_date);
             const paymentDate = new Date(payment_date);
@@ -224,6 +229,7 @@ const TransactionsController = {
                 return Math.round((e - s) / (1000 * 60 * 60 * 24));
             };
 
+            // hàm tính lãi
             const calculateInterest = (loanAmount, rate, type, days) => {
                 if (type === 'daily_amount') {
                     return Math.round(rate * days);
@@ -241,22 +247,35 @@ const TransactionsController = {
             if (days_old < 0) days_old = 0;
             if (days_old > total_days) days_old = total_days;
 
+            // ngày còn lại
             const days_new = total_days - days_old;
 
             // lãi mỗi ngày gốc cũ 
             const interest_old_full = current_schedule.interest_amount;
-            const interest_per_day_old = (contract.interest_type === 'daily_amount') ? contract.interest_rate : interest_old_full / total_days;
+            const interest_per_day_old = (contract.interest_type === 'daily_amount') ? contract.interest_rate : interest_old_full / total_days; // 11,5
 
             // Lãi mỗi ngày theo gốc MỚI
             const interest_new_full = calculateInterest(newLoanAmount, newInterestRate, contract.interest_type, total_days);
-            const interest_per_day_new = (contract.interest_type === 'daily_amount') ? newInterestRate : interest_new_full / total_days;
+            const interest_per_day_new = (contract.interest_type === 'daily_amount') ? newInterestRate : interest_new_full / total_days; //8,5
 
             // Lãi kỳ này = (Ngày cũ * Lãi cũ/ngày) + (Ngày mới * Lãi mới/ngày)
             const new_current_period_interest = Math.round((days_old * interest_per_day_old) + (days_new * interest_per_day_new));
+            
+            // tạo biến surplusInterest nếu đã đóng trước lãi đó và trả BG thì phải lấy lãi cũ - lãi mới = số dư trừ cho kỳ tiếp theo
+            let surplusInterest = 0;
+            if ( current_schedule.is_paid === 1) {
+                surplusInterest = current_schedule.interest_amount - new_current_period_interest;
+            }
 
             let principalAmount = 0;
+            // tạo biến principalAmountForCurrent để lưu tiền gốc của kỳ hiện tại
+            let principalAmountForCurrent = current_schedule.principal_amount;
             if (current_schedule.principal_amount > 0 && contract.id_contract_type == 3) {
                 principalAmount = Math.floor(newLoanAmount / schedules.length);
+                // nếu kỳ hiện tại chưa đóng thì, cập nhật tiền gốc mới
+                if (current_schedule.is_paid === 0) {
+                    principalAmountForCurrent = principalAmount;
+                }
             }
 
             // Cập nhật lại số tiền của kỳ hiện tại
@@ -267,18 +286,32 @@ const TransactionsController = {
                 expected_date: current_schedule.expected_date,
                 is_paid: current_schedule.is_paid,
                 interest_amount: new_current_period_interest,
-                principal_amount: principalAmount
+                principal_amount: principalAmountForCurrent // nếu đã đóng rồi thì giữ nguyên tiền gốc cũ, nếu chưa thì cập nhật tiền gốc mới principalAmountForCurrent = principalAmount
             });
 
+            // tạo biến runningPrincipalSum nếu là trả góp thì tính tổng tiền gốc đã trả
             let runningPrincipalSum = (contract.id_contract_type == 3) ? principalAmount : 0;
 
+            // tạo biến startIndex để tránh lỗi khi current lấy paidSchedules[0]
+            let startIndex = (current_schedule.is_paid === 1) ? 0 : 1;
+
+            let hasDeductedSurplus = false; // Biến đánh dấu đã trừ tiền dư hay chưa
+
             // Cập nhật số tiền của các kỳ tiếp theo
-            for (let i = 1; i < schedules.length; i++) {
+            for (let i = startIndex; i < schedules.length; i++) {
                 const future_schedule = schedules[i];
                 const islastPeriods = (i === schedules.length - 1);
 
                 const future_days = countDaysBetween(future_schedule.from_date, future_schedule.expected_date);
                 let future_interest = calculateInterest(newLoanAmount, newInterestRate, contract.interest_type, future_days);
+
+                // nếu có tiền dư và đánh dấu chưa trừ = false thì trừ vào kỳ tiếp theo
+                if (surplusInterest > 0 && !hasDeductedSurplus) {
+                    future_interest = future_interest - surplusInterest;
+                    if (future_interest < 0) future_interest = 0;
+                    // set đánh dấu = true tránh trừ các kỳ tiếp theo
+                    hasDeductedSurplus = true;
+                }
 
                 let p_amount = 0;
                 if (contract.id_contract_type == 3) {

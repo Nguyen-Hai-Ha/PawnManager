@@ -173,7 +173,7 @@ const moneyConfig = {
     gap: 24px;
     padding: 0 10px;
     flex: 1;
-    max-height: 190px;
+    max-height: 40%;
     border: 1px solid #ccc;
     border-radius: 8px;
 }

@@ -167,7 +167,7 @@ onMounted(async() => {
                                 </span>
                             </td>
                             <td>
-                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Thanh Lý'">
+                                <div class="action-cell" v-if="loan.status === 'Đã Hoàn Tất' || loan.status === 'Đã Tất Toán'">
                                     <button class="btn-action text-primary" data-tooltip="Xem chi tiết" @click="openDetailContract(loan.id)" v-permission="'pledges.detail'">
                                         <font-awesome-icon icon="fa-solid fa-eye" />
                                     </button>

@@ -25,11 +25,14 @@ export const useDetailContractStore = defineStore('detailContract', () => {
     };
 
     const openSelectTemplate = (type, id = null) => {
-        loading.value = true;
         typeTemplate.value = type
         selectedTransactionId.value = id;
-        showSelectTemplate.value = true;openSelectTemplate = (type, id = null)
-        loading.value = false;
+        showSelectTemplate.value = true;
+        
+        // Nếu chưa có templates thì mới gọi load
+        if (!templates.value || templates.value.length === 0) {
+            getAllTemplates();
+        }
     };
 
     const closeSelectTemplate = () => {
@@ -65,8 +68,15 @@ export const useDetailContractStore = defineStore('detailContract', () => {
     })
 
     const getAllTemplates = async () => {
-        const response = await apiClient.get('/settings/templates');
-        templates.value = response.data;
+        loading.value = true;
+        try {
+            const response = await apiClient.get('/settings/templates');
+            templates.value = response.data;
+        } catch (error) {
+            console.error('Error fetching templates:', error);
+        } finally {
+            loading.value = false;
+        }
     }
 
     const getDetailContract = async (id) => {

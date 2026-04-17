@@ -55,6 +55,7 @@ const Contract = {
                 ps.*,
                 t.other_fees,
                 (ps.interest_amount + ps.principal_amount) as total_expected,
+                MAX(t.id) as transaction_id,
                 IFNULL(SUM(t.amount), 0) as paid_amount,
                 CASE 
                     WHEN (ps.interest_amount + ps.principal_amount) > IFNULL(SUM(t.amount), 0) 

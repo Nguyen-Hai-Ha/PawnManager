@@ -90,7 +90,7 @@ const Transactions = {
         const result = stmt.run(id);
         return result.changes;
     },
-    getReceipToPrint: (id) => {
+    getReceiptToPrint: (id) => {
         const sql = `SELECT 
         t.amount as amount,
         t.other_fees as other_fees,

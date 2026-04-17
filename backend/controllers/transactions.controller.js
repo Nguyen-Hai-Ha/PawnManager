@@ -482,7 +482,11 @@ const TransactionsController = {
             const { id } = req.params;
             const { id_template } = req.query;
             const template = Template.getById(id_template);
-            const transaction = Transactions.getReceipToPrint(id);
+            const transaction = Transactions.getReceiptToPrint(id);
+
+            if (!transaction) {
+                return res.status(404).json({ error: "Không tìm thấy dữ liệu giao dịch để in phiếu." });
+            }
 
             const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
             transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);

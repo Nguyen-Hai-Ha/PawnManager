@@ -155,7 +155,7 @@ export const useDetailContractStore = defineStore('detailContract', () => {
     const getTransactionPrint = async (id, id_template) => {
         try {
             // Thêm responseType: 'blob' để Axios hiểu đây là file nhị phân
-            const response = await apiClient.get(`/transactions/receipt/${id}`, { responseType: 'blob', params: { id_template } });
+            const response = await apiClient.get(`/transaction/receipt/${id}`, { responseType: 'blob', params: { id_template } });
             
             // Xử lý file blob và buộc trình duyệt tải xuống
             const url = window.URL.createObjectURL(new Blob([response.data]));

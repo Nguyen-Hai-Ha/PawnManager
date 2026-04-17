@@ -42,8 +42,15 @@ const Transactions = {
         return stmt.all(id);
     },
     getHistoryPayment: (id) => {
-        const sql = `SELECT * FROM transactions 
-        INNER JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
+        const sql = `SELECT 
+        t.id,
+        t.amount,
+        t.other_fees,
+        t.created_at,
+        t.id_transaction_type,
+        tt.name as transaction_type_name
+        FROM transactions t
+        LEFT JOIN transactions_types tt ON t.id_transaction_type = tt.id
         WHERE id_contract = ? AND id_transaction_type = 2`;
         const stmt = db.prepare(sql);
         return stmt.all(id);

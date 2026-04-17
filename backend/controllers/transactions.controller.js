@@ -270,8 +270,10 @@ const TransactionsController = {
             let principalAmount = 0;
             // tạo biến principalAmountForCurrent để lưu tiền gốc của kỳ hiện tại
             let principalAmountForCurrent = current_schedule.principal_amount;
+            // tổng kỳ hiện tại chưa đóng, nếu hợp đồng trả góp thì bằng với schedules.length, nếu không phải trả góp thì bằng schedules.length -1
+            const totalPeriods =  contract.id_contract_type === 3 ? schedules.length : schedules.length -1;
             if (current_schedule.principal_amount > 0 && contract.id_contract_type == 3) {
-                principalAmount = Math.floor(newLoanAmount / schedules.length);
+                principalAmount = Math.floor(newLoanAmount / totalPeriods);
                 // nếu kỳ hiện tại chưa đóng thì, cập nhật tiền gốc mới
                 if (current_schedule.is_paid === 0) {
                     principalAmountForCurrent = principalAmount;
@@ -290,7 +292,7 @@ const TransactionsController = {
             });
 
             // tạo biến runningPrincipalSum nếu là trả góp thì tính tổng tiền gốc đã trả
-            let runningPrincipalSum = (contract.id_contract_type == 3) ? principalAmount : 0;
+            let runningPrincipalSum = (contract.id_contract_type == 3 && current_schedule.is_paid === 0) ? principalAmountForCurrent : 0;
 
             // tạo biến startIndex để tránh lỗi khi current lấy paidSchedules[0]
             let startIndex = (current_schedule.is_paid === 1) ? 0 : 1;

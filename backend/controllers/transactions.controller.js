@@ -348,8 +348,11 @@ const TransactionsController = {
                 id_staff: staff.id,
             });
 
+            // tiền lãi mới dành cho hợp đồng
+            const newLoanForContract = contract.loan_amount - amount;
+
             // Cập nhật lại số tiền gốc của hợp đồng
-            Contract.updateLoanAmount({ loan_amount: newLoanAmount, interest_rate: newInterestRate }, id_contract);
+            Contract.updateLoanAmount({ loan_amount: newLoanForContract, interest_rate: newInterestRate }, id_contract);
 
             res.json({ transaction, current_schedule, contractHistory, msg: "Cập nhật gốc và lãi thành công" });
         });

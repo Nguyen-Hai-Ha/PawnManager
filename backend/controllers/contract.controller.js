@@ -1,5 +1,5 @@
 const { json } = require('express');
-const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer, Template } = require('../models');
+const { Contract, Collaterals, Relative, Image, PaymentSchedules, Transactions, AuditLogs, Customer, Template, ContractHistory } = require('../models');
 const { generateContractDoc } = require('../services/DocumentService');
 const dayjs = require('dayjs');
 const  { doReadNumber }  = require('read-vietnamese-number');
@@ -315,13 +315,14 @@ const ContractController = {
                 details: `Hợp đồng ${req.params.id} đã được xóa bởi nhân viên ${staff.staff_name}`,
                 id_staff: staff.id_staff,
             });
+            const contractHistory = ContractHistory.deleteByContractId(req.params.id);
             const transaction = Transactions.deleteByContractId(req.params.id);
             const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
             const collateral = Collaterals.deleteByContractId(req.params.id);
             const images = Image.deleteByCollateralId(req.params.id);
             const contract = Contract.delete(req.params.id);
             
-            res.json({ contract, paymentSchedules, collateral, transaction, images });
+            res.json({ contract, paymentSchedules, collateral, transaction, images, contractHistory });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

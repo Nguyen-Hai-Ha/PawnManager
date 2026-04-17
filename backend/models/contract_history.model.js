@@ -11,6 +11,11 @@ const ContractHistory = {
         const sql = `SELECT * FROM contract_history WHERE id_contract = ?`;
         const stmt = db.prepare(sql);
         return stmt.all(id);
+    },
+    deleteByContractId: (id) => {
+        const sql = `DELETE FROM contract_history WHERE id_contract = ?`;
+        const stmt = db.prepare(sql);
+        return stmt.run(id);
     }
 }
 

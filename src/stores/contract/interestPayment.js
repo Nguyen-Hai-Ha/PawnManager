@@ -5,6 +5,7 @@ import { useLoanStore } from './loan';
 import { useFinalSettlementStore } from './finalSettlement';
 import { useReducePrincipalStore } from './reducePrincipal';
 import { ref, nextTick, computed } from "vue";
+import dayjs from "dayjs";
 
 export const useInterestPayment = defineStore('interestPayment', () => {
     const loanStore = useLoanStore();
@@ -25,7 +26,7 @@ export const useInterestPayment = defineStore('interestPayment', () => {
     }
 
     const StartDate = computed(() => {
-        return new Date().toISOString().split('T')[0];
+        return dayjs().format('YYYY-MM-DD');
     })
 
     const schedule = computed(() => {

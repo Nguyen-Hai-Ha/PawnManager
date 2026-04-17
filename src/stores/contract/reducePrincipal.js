@@ -57,6 +57,15 @@ export const useReducePrincipalStore = defineStore('reducePrincipal', () => {
     const closeReducePrincipalModal = () => {
         showReducePrincipalModal.value = false;
         id_contract.value = null;
+        formReducePrincipal.value = {
+            id_contract: '',
+            amount: 0,
+            other_fees: 0,
+            id_staff: user.value.id,
+            payment_date: StartDate.value,
+            interest_rate: 0,
+            note: '',
+        }
     }
 
     const submitReducePrincipal = async () => {

@@ -318,8 +318,8 @@ const ContractController = {
             const contractHistory = ContractHistory.deleteByContractId(req.params.id);
             const transaction = Transactions.deleteByContractId(req.params.id);
             const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
-            const collateral = Collaterals.deleteByContractId(req.params.id);
             const images = Image.deleteByCollateralId(req.params.id);
+            const collateral = Collaterals.deleteByContractId(req.params.id);
             const contract = Contract.delete(req.params.id);
             
             res.json({ contract, paymentSchedules, collateral, transaction, images, contractHistory });

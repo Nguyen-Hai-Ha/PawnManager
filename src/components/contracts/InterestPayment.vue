@@ -155,9 +155,9 @@ const moneyConfig = {
                         </div>
                         <div class="info-item">
                             <span class="fw-bold">Lãi suất:</span>
-                            <span class="fw-bold" v-if="loanDetails.contract.interest_type === 'percent*term'">Lãi {{ loanDetails.contract.term_unit }}: {{ loanDetails.contract.interest_rate }}%/{{ loanDetails.contract.payment_term }} {{ loanDetails.contract.term_unit }}</span>
-                            <span class="fw-bold" v-if="loanDetails.contract.interest_type === 'percent/term'">Lãi {{ loanDetails.contract.term_unit }}: {{ loanDetails.contract.interest_rate }}%/ {{ (loanDetails.contract.payment_term * loanDetails.contract.total_periods) }} {{ loanDetails.contract.term_unit }}</span>
-                            <span class="fw-bold" v-if="loanDetails.contract.interest_type === 'daily_amount'">Lãi {{ loanDetails.contract.term_unit }}: {{ formatCurrency(loanDetails.contract.interest_rate) }}/{{ loanDetails.contract.term_unit }}</span>
+                            <span class="fw-bold" v-if="loanDetails.contract.interest_type === 'percent*term'">Lãi: {{ loanDetails.contract.interest_rate }}%/{{ loanDetails.contract.payment_term }} {{ loanDetails.contract.term_unit }}</span>
+                            <span class="fw-bold" v-if="loanDetails.contract.interest_type === 'percent/term'">Lãi: {{ loanDetails.contract.interest_rate }}%/ {{ (loanDetails.contract.payment_term * loanDetails.contract.total_periods) }} {{ loanDetails.contract.term_unit }}</span>
+                            <span class="fw-bold" v-if="loanDetails.contract.interest_type === 'daily_amount'">Lãi Ngày: {{ formatCurrency(loanDetails.contract.interest_rate) }}/Ngày</span>
                         </div>
                         <div class="info-item">
                             <span class="fw-bold">Kiểu hợp đồng:</span>

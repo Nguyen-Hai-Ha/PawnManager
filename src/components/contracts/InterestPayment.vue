@@ -79,7 +79,7 @@ const moneyConfig = {
                                 <td>{{ formatCurrency(item.total_expected) }}</td>
                                 <td class="text-success fw-bold">{{ formatCurrency(item.paid_amount) }}</td>
                                 <td class="text-warning fw-bold">{{ formatCurrency(item.remaining_amount) }}</td>
-                                <td><span class="text-blue" @click="openSelectTemplate('phieu_thu')" v-permission="['loans.print', 'pledge.print', 'repayment.print']" style="cursor: pointer;">{{ item.display_history }}</span></td>
+                                <td><span class="text-blue" @click="openSelectTemplate('phieu_thu', item.id)" v-permission="['loans.print', 'pledge.print', 'repayment.print']" style="cursor: pointer;">{{ item.display_history }}</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -190,6 +190,7 @@ const moneyConfig = {
                                 <th>Ngày Thanh Toán</th>
                                 <th>Tiền Thanh Toán</th>
                                 <th>Phí Khác</th>
+                                <th class="text-center">In Phiếu</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -198,6 +199,11 @@ const moneyConfig = {
                                 <td>{{ item.created_at }}</td>
                                 <td>{{ formatCurrency(item.amount) }}</td>
                                 <td>{{ formatCurrency(item.other_fees) }}</td>
+                                <td class="text-center">
+                                    <span class="text-blue" @click="openSelectTemplate('phieu_thu', item.id)" style="cursor: pointer;">
+                                        <font-awesome-icon icon="print" /> In phiếu
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

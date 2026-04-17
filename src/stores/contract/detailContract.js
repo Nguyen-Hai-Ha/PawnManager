@@ -6,12 +6,13 @@ import { useInterestPayment } from './interestPayment';
 
 export const useDetailContractStore = defineStore('detailContract', () => {
     const useInterestPaymentStore = useInterestPayment();
-    const { paymentDetail } = storeToRefs(useInterestPaymentStore);
+    const { paymentDetails } = storeToRefs(useInterestPaymentStore);
     const detailContract = ref(null)
     const showDetailContract = ref(false);
     const showSelectTemplate = ref(false);
     const templates = ref({});
     const typeTemplate = ref('');
+    const selectedTransactionId = ref(null);
     const loading = ref(false);
 
     const openDetailContract = (id) => {
@@ -23,10 +24,11 @@ export const useDetailContractStore = defineStore('detailContract', () => {
         showDetailContract.value = false;
     };
 
-    const openSelectTemplate = (type) => {
+    const openSelectTemplate = (type, id = null) => {
         loading.value = true;
         typeTemplate.value = type
-        showSelectTemplate.value = true;
+        selectedTransactionId.value = id;
+        showSelectTemplate.value = true;openSelectTemplate = (type, id = null)
         loading.value = false;
     };
 
@@ -101,10 +103,10 @@ export const useDetailContractStore = defineStore('detailContract', () => {
 
     const SelectTemplate = async (id_template) => {
         closeSelectTemplate();
-        if(typeTemplate.value === 'phieu_thu' && paymentDetail.value?.paymentDetail?.id) {
-            await getTransactionPrint(paymentDetail.value?.paymentDetail?.id, id_template);
+        if(typeTemplate.value === 'phieu_thu' && selectedTransactionId.value) {
+            await getTransactionPrint(selectedTransactionId.value, id_template);
         } else {
-            await getContractPrint(detailContract.value.contract.id, id_template);
+            await getContractPrint(detailContract.value?.contract?.id, id_template);
         }
     }
 

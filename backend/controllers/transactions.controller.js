@@ -167,7 +167,7 @@ const TransactionsController = {
             const schedules = allCSchedule.filter(s => s.is_paid === 0).sort((a, b) => a.period_number - b.period_number);
             
             // Lấy kỳ đã đóng của hợp đồng này trong trường hợp ngày đóng nằm trong kỳ đã đóng đó
-            const paidSchedules = allCSchedule.filter(s => s.is_paid === 1 && s.from_date <= payment_date && payment_date <= s.expected_date)
+            const paidSchedules = allCSchedule.filter(s => s.is_paid === 1 && s.from_date <= payment_date && payment_date <= s.expected_date).sort((a, b) => a.period_number - b.period_number)
 
             if (schedules.length === 0) {
                 return res.status(400).json({ error: "Hợp đồng đã hoàn tất" });
@@ -206,8 +206,11 @@ const TransactionsController = {
                 type: 'reduce_principal',
             });
 
-            // Tính Tỷ lệ giảm gốc
-            const oldLoanAmount = contract.loan_amount;
+            // Tính tiền gốc còn lại, tránh trường hợp đã trả bớt gốc trước đó hoặc đóng lãi của HĐ trả góp
+            let oldLoanAmount = 0;
+            schedules.forEach(schedule => {
+                oldLoanAmount += schedule.principal_amount;
+            });
             const newLoanAmount = oldLoanAmount - amount;
 
             // trường hợp nhân viên bị ngu ko dùng tất toán mà trả bớt gốc để thanh toán hết

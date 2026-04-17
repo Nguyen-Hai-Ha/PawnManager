@@ -68,7 +68,7 @@ export const useInterestPayment = defineStore('interestPayment', () => {
 
     const closeInterestModal = () => {
         formDetails.value = {
-            payment_date: '',
+            payment_date: StartDate.value,
             customer_name: '',
             payment_amount: '',
             other_fees: '',

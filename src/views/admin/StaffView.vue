@@ -8,7 +8,7 @@ import EditStaff from '@/components/staff/EditStaff.vue'
 import AddPermissionFStaff from '@/components/staff/AddPermissionFStaff.vue'
 
 const staffStore = useStaffStore()
-const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal, showEditStaffModal } = storeToRefs(staffStore)
+const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal, showEditStaffModal, currentPage, totalPages, totalItems } = storeToRefs(staffStore)
 const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole,
         handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, 
         closeEditStaffModal, deleteStaff } = staffStore
@@ -92,18 +92,26 @@ onMounted( async () => {
                     </tbody>
                 </table>
             </div>
-            <!-- <div class="pagination">
+            <div class="pagination" v-if="totalPages > 1">
                 <div class="pagination-info">
-                    <span class="page-info">Trang 1/1 (2)</span>
+                    <span class="page-info">Trang {{ currentPage }}/{{ totalPages }} (Tổng {{ totalItems }} nhân viên)</span>
                 </div>
                 <div class="pagination-controls">
-                    <button class="page-btn"><font-awesome-icon icon="angles-left" /></button>
-                    <button class="page-btn"><font-awesome-icon icon="angle-left" /></button>
-                    <button class="page-btn">1</button>
-                    <button class="page-btn"><font-awesome-icon icon="angle-right" /></button>
-                    <button class="page-btn"><font-awesome-icon icon="angles-right" /></button>
+                    <button class="page-btn" :disabled="currentPage === 1" @click="fetchStaff(1)">
+                        <font-awesome-icon icon="angles-left" />
+                    </button>
+                    <button class="page-btn" :disabled="currentPage === 1" @click="fetchStaff(currentPage - 1)">
+                        <font-awesome-icon icon="angle-left" />
+                    </button>
+                    <button class="page-btn active">{{ currentPage }}</button>
+                    <button class="page-btn" :disabled="currentPage === totalPages" @click="fetchStaff(currentPage + 1)">
+                        <font-awesome-icon icon="angle-right" />
+                    </button>
+                    <button class="page-btn" :disabled="currentPage === totalPages" @click="fetchStaff(totalPages)">
+                        <font-awesome-icon icon="angles-right" />
+                    </button>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
     <div class="modal-overlay" v-if="showAddStaffModal">

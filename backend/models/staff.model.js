@@ -14,6 +14,24 @@ const Staff = {
         const stmt = db.prepare(sql);
         return stmt.all();
     },
+    getPagination: (limit, offset) => {
+        const sql = `SELECT 
+                            s.id,
+                            s.name, 
+                            s.email, 
+                            s.phone,
+                            r.name as role_name 
+                    FROM staff s 
+                    LEFT JOIN role r ON s.id_role = r.id
+                    LIMIT ? OFFSET ?`;
+        const stmt = db.prepare(sql);
+        return stmt.all(limit, offset);
+    },
+    countAll: () => {
+        const sql = `SELECT COUNT(*) as total FROM staff`;
+        const stmt = db.prepare(sql);
+        return stmt.get();
+    },
     getById: (id) => {
         const sql = `SELECT * FROM staff WHERE id = ?`;
         const stmt = db.prepare(sql);

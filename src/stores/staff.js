@@ -6,6 +6,10 @@ import { PERMISSION } from '@/constants/permission';
 export const useStaffStore = defineStore('staff', () => {
 
     const staff = ref([])
+    const currentPage = ref(1)
+    const totalPages = ref(1)
+    const totalItems = ref(0)
+    const itemsPerPage = ref(10)
     const newStaff = ref({
         name: '',
         email: '',
@@ -219,10 +223,18 @@ export const useStaffStore = defineStore('staff', () => {
         }
     }
 
-    const fetchStaff = async () => {
+    const fetchStaff = async (page = 1) => {
         try {
-            const response = await apiClient.get('/staff')
-            staff.value = response.data
+            currentPage.value = page
+            const response = await apiClient.get('/staff', {
+                params: {
+                    page: page,
+                    limit: itemsPerPage.value
+                }
+            })
+            staff.value = response.data.data
+            totalItems.value = response.data.total
+            totalPages.value = response.data.totalPages
         } catch (error) {
             console.error('Error fetching staff:', error)
         }
@@ -284,6 +296,6 @@ export const useStaffStore = defineStore('staff', () => {
         fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,
         openPermissionModal, closePermissionModal, toggleSelectAll, fetchPermissionRole,
         submitUpdatePermissionRole, openEditStaffModal, closeEditStaffModal, fetchEditStaff,
-        submitEditStaff, deleteStaff
+        submitEditStaff, deleteStaff, currentPage, totalPages, totalItems, itemsPerPage
     }
 })

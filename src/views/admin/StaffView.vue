@@ -9,7 +9,9 @@ import AddPermissionFStaff from '@/components/staff/AddPermissionFStaff.vue'
 
 const staffStore = useStaffStore()
 const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal, showEditStaffModal } = storeToRefs(staffStore)
-const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole, handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, closeEditStaffModal } = staffStore
+const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole,
+        handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, 
+        closeEditStaffModal, deleteStaff } = staffStore
 
 onMounted( async () => {
     const promise = []
@@ -78,10 +80,12 @@ onMounted( async () => {
                             <td>{{ item.role_name }}</td>
                             <td>
                                 <div class="action-cell">
-                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa" v-permission="'staff.detail'" @click="openEditStaffModal(item.id)"><font-awesome-icon
-                                            icon="pen-to-square" /></button>
-                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'staff.delete'"><font-awesome-icon
-                                            icon="circle-xmark" /></button>
+                                    <button class="btn-action text-warning yellow-600" data-tooltip="Chỉnh sửa" v-permission="'staff.detail'" @click="openEditStaffModal(item.id)">
+                                        <font-awesome-icon icon="pen-to-square" />
+                                    </button>
+                                    <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'staff.delete'" @click="deleteStaff(item.id)">
+                                        <font-awesome-icon icon="circle-xmark" />
+                                    </button>
                                 </div>
                             </td>
                         </tr>

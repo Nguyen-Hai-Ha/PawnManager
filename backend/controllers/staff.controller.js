@@ -42,7 +42,7 @@ const StaffController = {
                 Staff.updatePassword(req.params.id, password);
             }
             const result = Staff.update(req.params.id, data);
-            const log = AuditLogs.create({
+            AuditLogs.create({
                 action: 'Cập nhật nhân viên',
                 details: `Cập nhật nhân viên ${result.name} bởi admin`,
                 id_staff: data.id_staff,
@@ -54,10 +54,11 @@ const StaffController = {
     },
     delete: (req, res) => {
         try {
+            const staffInfo = Staff.getById(req.params.id);
             const staff = Staff.delete(req.params.id);
-            const log = AuditLogs.create({
+            AuditLogs.create({
                 action: 'Xóa nhân viên',
-                details: `Xóa nhân viên ${staff.name} bởi admin`,
+                details: `Xóa nhân viên ${staffInfo.name} bởi admin`,
                 id_staff: req.body.id_staff,
             });
             res.json(staff);

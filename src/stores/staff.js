@@ -256,6 +256,15 @@ export const useStaffStore = defineStore('staff', () => {
         }
     }
 
+    const deleteStaff = async (id) => {
+        try {
+            const response = await apiClient.delete(`/staff/${id}`)
+            fetchStaff()
+        } catch (error) {
+            console.error('Error deleting staff:', error)
+        }
+    }
+
     watch(() => selectedRole.value, async (newId) => {
         if (newId) {
             await fetchPermissionRole(newId)
@@ -275,6 +284,6 @@ export const useStaffStore = defineStore('staff', () => {
         fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,
         openPermissionModal, closePermissionModal, toggleSelectAll, fetchPermissionRole,
         submitUpdatePermissionRole, openEditStaffModal, closeEditStaffModal, fetchEditStaff,
-        submitEditStaff
+        submitEditStaff, deleteStaff
     }
 })

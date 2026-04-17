@@ -37,10 +37,10 @@ const StaffController = {
         try {
             const data = req.body;
             const staff = await Staff.create(data);
-            const log = AuditLogs.create({
+            AuditLogs.create({
                 action: 'Thêm mới nhân viên',
-                details: `Thêm mới nhân viên ${staff.name} bởi admin`,
-                id_staff: data.id_staff,
+                details: `Thêm mới nhân viên ${data.name} bởi admin`,
+                id_staff: req.userId,
             });
             res.json(staff);
         } catch (error) {
@@ -54,13 +54,13 @@ const StaffController = {
             if (password && password.length > 0) {
                 Staff.updatePassword(req.params.id, password);
             }
-            const result = Staff.update(req.params.id, data);
+            Staff.update(req.params.id, data);
             AuditLogs.create({
                 action: 'Cập nhật nhân viên',
-                details: `Cập nhật nhân viên ${result.name} bởi admin`,
-                id_staff: data.id_staff,
+                details: `Cập nhật nhân viên ${data.name} bởi admin`,
+                id_staff: req.userId,
             });
-            res.json(result);
+            res.json({ message: "Cập nhật thành công" });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -68,11 +68,13 @@ const StaffController = {
     delete: (req, res) => {
         try {
             const staffInfo = Staff.getById(req.params.id);
+            if (!staffInfo) return res.status(404).json({ error: "Không tìm thấy nhân viên cần xóa." });
+
             const staff = Staff.delete(req.params.id);
             AuditLogs.create({
                 action: 'Xóa nhân viên',
                 details: `Xóa nhân viên ${staffInfo.name} bởi admin`,
-                id_staff: req.body.id_staff,
+                id_staff: req.userId,
             });
             res.json(staff);
         } catch (error) {

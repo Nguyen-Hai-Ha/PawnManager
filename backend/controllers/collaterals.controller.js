@@ -37,14 +37,26 @@ const CollateralsController = {
     update: (req, res) => {
         try {
             const data = req.body;
-            const collateral = Collaterals.update(req.params.id, data);
-            const contract = Contract.getStaffByIdContract(collateral.id_contract);
-            const log = AuditLogs.create({
-                action: 'Thay đổi thông tin tài sản',
-                details: `Thay đổi thông tin tài sản ${collateral.name} bởi nhân viên ${contract.staff_name}`,
-                id_staff: contract.id_staff,
-            });
-            res.json(collateral);
+            const { id } = req.params;
+
+            // Cập nhật thông tin tài sản
+            Collaterals.update(id, data);
+
+            // Lấy lại thông tin tài sản để lấy id_contract và name
+            const collateralData = Collaterals.getById(id);
+
+            if (collateralData) {
+                const staff = Contract.getStaffByIdContract(collateralData.id_contract);
+                if (staff) {
+                    AuditLogs.create({
+                        action: 'Thay đổi thông tin tài sản',
+                        details: `Thay đổi thông tin tài sản ${collateralData.name} bởi nhân viên ${staff.staff_name}`,
+                        id_staff: staff.id_staff,
+                    });
+                }
+            }
+
+            res.json({ message: "Cập nhật tài sản thành công" });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

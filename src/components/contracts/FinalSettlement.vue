@@ -108,7 +108,9 @@ const moneyConfig = {
                             </div>
                             <div class="info-item">
                                 <span class="fw-bold">Kiểu lãi:</span>
-                                <span>{{ settlementData?.contract?.interest_type }}</span>
+                                <span v-if="settlementData?.contract?.interest_type === 'daily_amount'">Lãi suất theo ngày</span>
+                                <span v-if="settlementData?.contract?.interest_type === 'percent*term'">Lãi suất % định kỳ</span>
+                                <span v-if="settlementData?.contract?.interest_type === 'percent/term'">Lãi suất % chia đều</span>
                             </div>
                             <div class="info-item">
                                 <span class="fw-bold">Lãi đã trả:</span>

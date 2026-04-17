@@ -217,7 +217,7 @@ table th {
 }
 
 .btn-primary {
-    background-color: #1a7a6e;
+    background-color: #ff7221;
     color: #fff;
     border: none;
     padding: 12px 20px;
@@ -232,7 +232,7 @@ table th {
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: #ce6d32;
 }
 
 .btn-secondary {

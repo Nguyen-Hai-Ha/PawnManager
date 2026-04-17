@@ -52,7 +52,7 @@ const moneyConfig = {
                             </div>
                             <div class="form-group">
                                 <label>Tiền trả bớt gốc</label>
-                                <money3 id="payment_amount" v-model="formReducePrincipal.amount" v-bind="moneyConfig"></money3>
+                                <money3 id="payment_amount" v-model="formReducePrincipal.amount" v-bind="moneyConfig" :max="paymentDetails.contract.loan_amount"></money3>
                             </div>
                             <div class="form-group">
                                 <div class="row-group">

@@ -298,7 +298,7 @@ const TransactionsController = {
             let runningPrincipalSum = (contract.id_contract_type == 3 && current_schedule.is_paid === 0) ? principalAmountForCurrent : 0;
 
             // tạo biến startIndex để tránh lỗi khi current lấy paidSchedules[0]
-            let startIndex = (current_schedule.is_paid === 1) ? 0 : 1;
+            let startIndex = (current_schedule.is_paid === 1 || current_schedule.is_paid === 2) ? 0 : 1;
 
             let hasDeductedSurplus = false; // Biến đánh dấu đã trừ tiền dư hay chưa
 

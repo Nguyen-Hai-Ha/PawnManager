@@ -115,6 +115,33 @@ export const useAssetsStore = defineStore("assets", () => {
         return sortedAssets.value.slice(start, end);
     })
 
+    const pageNumbers = computed(() => {
+        const total = totalPage.value;
+        const current = currentPage.value;
+        const maxVisible = 5;
+        if (!total) return []
+        if (total <= maxVisible) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        
+        const half = Math.floor(maxVisible / 2);
+        let start = current - half;
+        let end = current + half;
+
+        if (start < 1) {
+            start = 1;
+            end = maxVisible;
+        }
+
+        if (end > total) {
+            end = total;
+            start = total - maxVisible + 1;
+        }
+
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    })
+
     const totalPage = computed(() => {
         return Math.ceil(filteredAssets.value.length / itemPage);
     })
@@ -290,7 +317,7 @@ export const useAssetsStore = defineStore("assets", () => {
         liquidation, user, showAssetsDetailModal, assetDetail, selectedImage, fileInputRef, editingImageId, filterStatus,
         showAssetsEditModal,
         //computed
-        filteredAssets, sortedAssets, parseMetadata, parseImages,
+        filteredAssets, sortedAssets, parseMetadata, parseImages, pageNumbers,
         //action
         fetchAssets, formatCurrency, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         openAssetsLiquidationModal, closeAssetsLiquidationModal, fetchLiquidationById, submitLiquidation,

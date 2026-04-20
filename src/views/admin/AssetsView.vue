@@ -15,7 +15,8 @@ const detailContractStore = useDetailContractStore();
 const route = useRoute();
 
 const { assets, search, paginatedAssets, totalPage, currentPage, sortConfig, 
-        showAssetsLiquidationModal, showAssetsDetailModal, showAssetsEditModal, filterStatus } = storeToRefs(assetsStore)
+        showAssetsLiquidationModal, showAssetsDetailModal, showAssetsEditModal, 
+        filterStatus, pageNumbers } = storeToRefs(assetsStore)
 const { 
         fetchAssets, formatCurrency, handleSort, changePage, 
         goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
@@ -172,7 +173,7 @@ onMounted( async() => {
                 <div class="pagination-controls">
                     <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
                     <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
-                    <button class="page-btn" v-for="page in totalPage" :key="page" @click="changePage(page)">{{ page }}</button>
+                    <button class="page-btn" v-for="page in pageNumbers" :key="page" @click="changePage(page)">{{ page }}</button>
                     <button class="page-btn" @click="goToNextPage"><font-awesome-icon icon="angle-right" /></button>
                     <button class="page-btn" @click="goToLastPage"><font-awesome-icon icon="angles-right" /></button>
                 </div>

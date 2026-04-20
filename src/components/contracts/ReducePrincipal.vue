@@ -52,7 +52,7 @@ const moneyConfig = {
                             </div>
                             <div class="form-group">
                                 <label>Tiền trả bớt gốc</label>
-                                <money3 id="payment_amount" v-model="formReducePrincipal.amount" v-bind="moneyConfig" :max="paymentDetails.contract.loan_amount"></money3>
+                                <money3 id="payment_amount" v-model="formReducePrincipal.amount" v-bind="moneyConfig" :max="paymentDetails.contract.remaining_amount"></money3>
                             </div>
                             <div class="form-group">
                                 <div class="row-group">
@@ -140,6 +140,7 @@ const moneyConfig = {
                                 </div>
                             </div>
                     </div>
+                    <span style="color: red; font-weight: bold; font-size: 14px;">Lưu ý: KHÔNG TRẢ HẾT GỐC, TIỀN LÃI SẼ KHÔNG CÒN TÍNH, HỢP ĐỒNG SẼ CHUYỂN SANG ĐÃ HOÀN TẤT</span>
                     <div class="table">
                         <table>
                             <thead>

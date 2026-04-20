@@ -8,10 +8,13 @@ import EditStaff from '@/components/staff/EditStaff.vue'
 import AddPermissionFStaff from '@/components/staff/AddPermissionFStaff.vue'
 
 const staffStore = useStaffStore()
-const { staff, showAddStaffModal, role, search, sortedStaff, sortConfig, showPermissionModal, showEditStaffModal, currentPage, totalPages, totalItems } = storeToRefs(staffStore)
+const { staff, showAddStaffModal, role, search, sortConfig, totalPages, 
+        showPermissionModal, showEditStaffModal, currentPage, 
+        totalItems, paginatedStaff, pageNumbers } = storeToRefs(staffStore)
 const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole,
         handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, 
-        closeEditStaffModal, deleteStaff } = staffStore
+        closeEditStaffModal, deleteStaff, changePage, goToFirstPage, goToNextPage, 
+        goToPrevPage, goToLastPage } = staffStore
 
 onMounted( async () => {
     const promise = []
@@ -72,7 +75,7 @@ onMounted( async () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item, index) in sortedStaff" :key="item.id">
+                        <tr v-for="(item, index) in paginatedStaff" :key="item.id">
                             <td>{{ index + 1 }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.email }}</td>
@@ -97,17 +100,20 @@ onMounted( async () => {
                     <span class="page-info">Trang {{ currentPage }}/{{ totalPages }} (Tổng {{ totalItems }} nhân viên)</span>
                 </div>
                 <div class="pagination-controls">
-                    <button class="page-btn" :disabled="currentPage === 1" @click="fetchStaff(1)">
+                    <button class="page-btn" @click="goToFirstPage">
                         <font-awesome-icon icon="angles-left" />
                     </button>
-                    <button class="page-btn" :disabled="currentPage === 1" @click="fetchStaff(currentPage - 1)">
+                    <button class="page-btn" @click="goToPrevPage">
                         <font-awesome-icon icon="angle-left" />
                     </button>
-                    <button class="page-btn active">{{ currentPage }}</button>
-                    <button class="page-btn" :disabled="currentPage === totalPages" @click="fetchStaff(currentPage + 1)">
+                    <button class="page-btn" v-for="page in pageNumbers" :key="page" 
+                        :class="{ 'active': page === currentPage ? 'btn-primary' : ''}" @click="changePage(page)">
+                        {{ page }}
+                    </button>
+                    <button class="page-btn" @click="goToNextPage">
                         <font-awesome-icon icon="angle-right" />
                     </button>
-                    <button class="page-btn" :disabled="currentPage === totalPages" @click="fetchStaff(totalPages)">
+                    <button class="page-btn" @click="goToLastPage">
                         <font-awesome-icon icon="angles-right" />
                     </button>
                 </div>

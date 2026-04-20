@@ -87,6 +87,65 @@ export const useStaffStore = defineStore('staff', () => {
         return list;
     })
 
+    const paginatedStaff = computed(() => {
+        const start = (currentPage.value - 1) * itemsPerPage.value;
+        const end = start + itemsPerPage.value;
+        return sortedStaff.value.slice(start, end);
+    })
+
+    const changePage = ( page) => {
+        if (page >= 1 && page <= totalPages.value){
+            currentPage.value = page;
+        }
+    };
+
+    const goToFirstPage = () => {
+        currentPage.value = 1;
+    };
+
+    const goToNextPage = () => {
+        if (currentPage.value < totalPages.value) {
+            currentPage.value++;
+        }
+    };
+
+    const goToPrevPage = () => {
+        if (currentPage.value > 1) {
+            currentPage.value--;
+        }
+    };
+
+    const goToLastPage = () => {
+        currentPage.value = totalPages.value;
+    };
+
+    const pageNumbers = computed(() => {
+        const total = totalPages.value;
+        const current = currentPage.value;
+        const maxVisible = 5;
+        if (!total) return []
+        if (total <= maxVisible) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        
+        const half = Math.floor(maxVisible / 2);
+        let start = current - half;
+        let end = current + half;
+
+        if (start < 1) {
+            start = 1;
+            end = maxVisible;
+        }
+
+        if (end > total) {
+            end = total;
+            start = total - maxVisible + 1;
+        }
+
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    })
+
     const openAddStaffModal = () => {
         showAddStaffModal.value = true;
         nextTick(() => {
@@ -225,7 +284,6 @@ export const useStaffStore = defineStore('staff', () => {
 
     const fetchStaff = async (page = 1) => {
         try {
-            currentPage.value = page
             const response = await apiClient.get('/staff', {
                 params: {
                     page: page,
@@ -290,12 +348,13 @@ export const useStaffStore = defineStore('staff', () => {
         editPassword,
 
         //computed
-        searchStaff, sortedStaff, currentPermissions, isAllSelected, 
+        searchStaff, sortedStaff, currentPermissions, isAllSelected, paginatedStaff, pageNumbers,
+        currentPage, totalPages, totalItems, itemsPerPage,
         
         //actions
         fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,
         openPermissionModal, closePermissionModal, toggleSelectAll, fetchPermissionRole,
         submitUpdatePermissionRole, openEditStaffModal, closeEditStaffModal, fetchEditStaff,
-        submitEditStaff, deleteStaff, currentPage, totalPages, totalItems, itemsPerPage
+        submitEditStaff, deleteStaff,  changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage
     }
 })

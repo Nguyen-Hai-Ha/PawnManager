@@ -214,6 +214,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const openModal = async () => {
         await getAllLoansType();
         await fetchAssets();
+        await fetchCustomer();
         showModal.value = true;
         nextTick(() => {
             const firstInput = document.getElementById('id_customer');
@@ -329,7 +330,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
     const fetchCustomer = async () => {
         try {
             const response = await apiClient.get('/customer');
-            customers.value = response.data;
+            customers.value = response.data.sort((a, b) => b.id - a.id);
         } catch (error) {
             console.error('Error fetching customers:', error);
         }

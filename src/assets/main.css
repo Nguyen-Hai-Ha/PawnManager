@@ -719,6 +719,11 @@ nav a {
   background-color: #c4c4c4;
 }
 
+.page-btn.active {
+  background-color: #1a7a6e !important;
+  color: #fff !important;
+}
+
 /* ─── LOAN PAWN ─── */
 .loan-pawn {
   padding: 10px 20px;

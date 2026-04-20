@@ -174,7 +174,7 @@ onMounted( async () => {
                 <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
                 <button class="page-btn" v-for="page in pageNumbers" 
                     :key="page" @click="changePage(page)"
-                    :class="{ 'active': page === currentPage ? 'btn-primary' : ''}">
+                    :class="{ 'active': page === currentPage }">
                     {{ page }}
                 </button>
                 <button class="page-btn" @click="goToNextPage"><font-awesome-icon icon="angle-right" /></button>

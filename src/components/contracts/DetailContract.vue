@@ -125,7 +125,7 @@ const detail = computed(() => {
                                 {{ formatCurrency(detail.contract?.interest_rate) }} / ngày
                             </span>
                             <span class="value text-success" v-else>
-                                {{ detail.contract?.interest_rate }}%
+                                {{ detail.contract?.interest_rate }}% 
                             </span>
                         </div>
 

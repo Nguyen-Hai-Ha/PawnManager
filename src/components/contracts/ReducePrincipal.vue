@@ -117,7 +117,7 @@ const moneyConfig = {
                             </div>
                             <div class="info">
                                 <div class="info-item">
-                                    <span class="fw-bold">Số tiền vay còn lại:</span>
+                                    <span class="fw-bold">Số tiền gốc còn lại:</span>
                                     <span class="text-danger fw-bold">{{ formatCurrency(paymentDetails.contract.remaining_amount) }}</span>
                                 </div>
                                 <div class="info-item">

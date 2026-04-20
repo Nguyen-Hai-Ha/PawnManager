@@ -24,7 +24,7 @@ const finalSettlementStore = useFinalSettlementStore();
 const detailContractStore = useDetailContractStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig, 
-        filterStatus, startDate, endDate } = storeToRefs(loanStore);
+        filterStatus, startDate, endDate, pageNumbers } = storeToRefs(loanStore);
 const { getAllLoansType, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, 
         deleteLoan, handleExportExcel, handleImportExcel } = loanStore;
@@ -211,7 +211,7 @@ onMounted(async() => {
                 <div class="pagination-controls">
                     <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
                     <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
-                    <button class="page-btn" v-for="page in Math.min(5, totalPage)" 
+                    <button class="page-btn" v-for="page in pageNumbers" 
                         :key="page" @click="changePage(page)"
                         :class="{ 'active': page === currentPage ? 'btb-primary' : ''}">
                         {{ page }}

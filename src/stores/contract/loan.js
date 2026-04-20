@@ -23,6 +23,33 @@ export const useLoanStore = defineStore("loan", () => {
         return sortedLoans.value.slice(start, end);
     });
 
+    const pageNumbers = computed(() => {
+        const total = totalPage.value;
+        const current = currentPage.value;
+        const maxVisible = 5;
+        if (!total) return []
+        if (total <= maxVisible) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        
+        const half = Math.floor(maxVisible / 2);
+        let start = current - half;
+        let end = current + half;
+
+        if (start < 1) {
+            start = 1;
+            end = maxVisible;
+        }
+
+        if (end > total) {
+            end = total;
+            start = total - maxVisible + 1;
+        }
+
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    })
+
     const id_contract_type = computed(() => pageTitles[route.name]);
 
     const totalPage = computed(() => {
@@ -234,7 +261,7 @@ export const useLoanStore = defineStore("loan", () => {
         loans, customers, assetTypes, assets, search, filterStatus, startDate, endDate, paginated, totalPage, currentPage, pageTitles,
     
         //computed
-        filteredLoans, sortConfig, id_contract_type,
+        filteredLoans, sortConfig, id_contract_type, pageNumbers,
 
         //actions
         formatCurrency, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage, handleSort,

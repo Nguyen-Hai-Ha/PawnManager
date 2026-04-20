@@ -11,7 +11,8 @@ const transactionStore = useTransactionStore();
 const detailContractStore = useDetailContractStore();
 
 const { transactions, search, paginated, totalPage, currentPage, sortConfig,
-        filterDate, Staff, TransactionType, ContractType, staffs, transactionTypes, contractTypes } = storeToRefs(transactionStore);
+        filterDate, Staff, TransactionType, ContractType, staffs, transactionTypes, 
+        contractTypes, pageNumbers } = storeToRefs(transactionStore);
 const { fetchTransactions, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchStaffs, fetchTransactionTypes, fetchContractTypes } = transactionStore
 
@@ -171,9 +172,9 @@ onMounted( async () => {
             <div class="pagination-controls">
                 <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
                 <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
-                <button class="page-btn" v-for="page in Math.min(5, totalPage)" 
+                <button class="page-btn" v-for="page in pageNumbers" 
                     :key="page" @click="changePage(page)"
-                    :class="{ 'active': page === currentPage ? 'btb-primary' : ''}">
+                    :class="{ 'active': page === currentPage ? 'btn-primary' : ''}">
                     {{ page }}
                 </button>
                 <button class="page-btn" @click="goToNextPage"><font-awesome-icon icon="angle-right" /></button>

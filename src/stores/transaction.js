@@ -51,6 +51,33 @@ export const useTransactionStore = defineStore('transaction', () => {
         return Math.ceil(filtedTransaction.value.length / itemPage);
     });
 
+    const pageNumbers = computed(() => {
+        const total = totalPage.value;
+        const current = currentPage.value;
+        const maxVisible = 5;
+        if (!total) return []
+        if (total <= maxVisible) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        
+        const half = Math.floor(maxVisible / 2);
+        let start = current - half;
+        let end = current + half;
+
+        if (start < 1) {
+            start = 1;
+            end = maxVisible;
+        }
+
+        if (end > total) {
+            end = total;
+            start = total - maxVisible + 1;
+        }
+
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    })
+
     const filtedTransaction = computed(() => {
         let result = transactions.value;
         if (search.value.trim()) {
@@ -160,7 +187,7 @@ export const useTransactionStore = defineStore('transaction', () => {
         transactions, sortConfig, totalPage, currentPage, itemPage, search, filterDate, Staff, TransactionType, ContractType,
         staffs, transactionTypes, contractTypes,
         //computed
-        sortedTransactions, paginated, filtedTransaction,
+        sortedTransactions, paginated, filtedTransaction, pageNumbers,
         //function
         formatCurrency, fetchTransactions, handleSort, changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,
         fetchStaffs, fetchTransactionTypes, fetchContractTypes

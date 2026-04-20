@@ -312,10 +312,18 @@ const TransactionsController = {
 
                 // nếu có tiền dư và đánh dấu chưa trừ = false thì trừ vào kỳ tiếp theo
                 if (surplusInterest > 0 && !hasDeductedSurplus) {
-                    future_interest = future_interest - surplusInterest;
-                    if (future_interest < 0) future_interest = 0;
-                    // set đánh dấu = true tránh trừ các kỳ tiếp theo
-                    hasDeductedSurplus = true;
+                    if (future_interest - surplusInterest > 0) {
+                        future_interest = future_interest - surplusInterest;
+                        // set đánh dấu = true tránh trừ các kỳ tiếp theo
+                        hasDeductedSurplus = true;
+                    }
+                    // nếu tiền dư lớn hơn tiền lãi của kỳ tiếp theo (1) thì trừ hết tiền lãi của kỳ tiếp theo và trừ tiếp vào kỳ tiếp theo (2)
+                    else if (future_interest - surplusInterest <= 0) {
+                        surplusInterest = surplusInterest - future_interest;
+                        future_interest = 0;
+                        // set đánh dấu = true tránh trừ các kỳ tiếp theo
+                        hasDeductedSurplus = true;
+                    }
                 }
 
                 let p_amount = 0;

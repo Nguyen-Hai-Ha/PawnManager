@@ -79,6 +79,33 @@ export const useCustomerStore = defineStore('customer', () => {
     const totalPage = computed(() => {
         return Math.ceil(searchCustomer.value.length / itemPage);
     });
+    
+    const pageNumbers = computed(() => {
+        const total = totalPage.value;
+        const current = currentPage.value;
+        const maxVisible = 5;
+        if (!total) return []
+        if (total <= maxVisible) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        
+        const half = Math.floor(maxVisible / 2);
+        let start = current - half;
+        let end = current + half;
+
+        if (start < 1) {
+            start = 1;
+            end = maxVisible;
+        }
+
+        if (end > total) {
+            end = total;
+            start = total - maxVisible + 1;
+        }
+
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    })
 
     const changePage = ( page) => {
         if (page >= 1 && page <= totalPage.value){
@@ -277,7 +304,7 @@ export const useCustomerStore = defineStore('customer', () => {
         Editform, sortConfig,
 
         // computed
-        paginated, totalPage, searchCustomer, sortedCustomers, staffId,
+        paginated, totalPage, searchCustomer, sortedCustomers, staffId, pageNumbers,
 
         // method
         changePage, goToFirstPage, goToNextPage, goToPrevPage, goToLastPage,

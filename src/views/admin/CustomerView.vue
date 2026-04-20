@@ -7,7 +7,8 @@ import { storeToRefs } from 'pinia';
 
 const store = useCustomerStore();
 
-const { customers, showAddCustomer, paginated, currentPage, totalPage, search, showEditCustomer, sortConfig } = storeToRefs(store);
+const { customers, showAddCustomer, paginated, currentPage, 
+        totalPage, search, showEditCustomer, sortConfig, pageNumbers } = storeToRefs(store);
 
 const { fetchcustomer, closeModal, openModal,
         changePage, goToFirstPage, goToLastPage,
@@ -92,7 +93,7 @@ onMounted(async () => {
                 <div class="pagination-controls">
                     <button class="page-btn" @click="goToFirstPage"><font-awesome-icon icon="angles-left" /></button>
                     <button class="page-btn" @click="goToPrevPage"><font-awesome-icon icon="angle-left" /></button>
-                    <button class="page-btn" v-for="page in Math.min(5, totalPage)" 
+                    <button class="page-btn" v-for="page in pageNumbers" 
                         :key="page" @click="changePage(page)"
                         :class="{ 'active': page === currentPage ? 'btb-primary' : ''}">
                         {{ page }}

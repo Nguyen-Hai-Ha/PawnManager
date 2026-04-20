@@ -41,7 +41,9 @@ const Contract = {
         c.created_at,
         c.id_contract_type,
         ct.name as contract_name,
-        s.name as staff_name
+        s.name as staff_name,
+        COALESCE((SELECT SUM(amount) FROM transactions WHERE id_contract = c.id AND id_transaction_type != 1), 0) as had_paid,
+        COALESCE((SELECT SUM(principal_amount + interest_amount) FROM payment_schedules WHERE id_contract = c.id AND is_paid = 0), 0) as remaining_amount
         FROM contracts c
         LEFT JOIN contracts_types ct ON c.id_contract_type = ct.id
         LEFT JOIN staff s ON c.id_staff = s.id

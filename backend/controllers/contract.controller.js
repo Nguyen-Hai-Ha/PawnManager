@@ -500,12 +500,8 @@ const ContractController = {
             const id_contract_type = req.body.id_contract_type || 1; 
 
             const workbook = new ExcelJS.Workbook();
-            // Đọc file từ đường dẫn lưu tạm trên ổ cứng (req.file.path) thay vì buffer
-            await workbook.xlsx.readFile(req.file.path);
-            
-            // Đọc xong thì xoá file tạm đi cho đỡ nặng máy
-            const fs = require('fs');
-            fs.unlinkSync(req.file.path);
+            // Đọc file từ buffer do sử dụng memoryStorage
+            await workbook.xlsx.load(req.file.buffer);
 
             const worksheet = workbook.getWorksheet(1);
             const contracts = [];

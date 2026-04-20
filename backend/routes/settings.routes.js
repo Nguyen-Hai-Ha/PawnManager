@@ -6,7 +6,7 @@ const { verifyToken, hasPermission } = require('../middlewares/auth.middleware')
 const uploadFile = require('../middlewares/uploadFile.middleware');   
 
 router.get('/', verifyToken, hasPermission('settings.view'), getSettings);
-router.get('/templates', verifyToken, hasPermission('settings.template_view'), SettingController.getAllTemplates);
+router.get('/templates', verifyToken, hasPermission(['loans.print', 'pledge.print', 'repayment.print']), SettingController.getAllTemplates);
 router.get('/templates/:id', verifyToken, hasPermission('settings.template_detail'), SettingController.getTemplateById);
 router.post('/templates', verifyToken, hasPermission('settings.template_create'), uploadFile.single('file_path'), SettingController.createTemplates);
 router.put('/templates/:id', verifyToken, hasPermission('settings.template_update'), uploadFile.single('file_path'), SettingController.updateTemplate);

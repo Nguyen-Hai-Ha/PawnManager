@@ -46,6 +46,7 @@ const Transactions = {
         t.id,
         t.amount,
         t.other_fees,
+        t.description,
         t.created_at,
         t.id_transaction_type,
         tt.name as transaction_type_name
@@ -62,17 +63,12 @@ const Transactions = {
         transactions.other_fees,
         transactions.description,
         transactions.created_at,
-        transactions_types.name as transaction_type_name,
         contract_history.old_principal,
         contract_history.new_principal,
         contract_history.old_interest_rate,
         contract_history.new_interest_rate,
-        contracts.code as contract_code,
-        customers.name as customer_name,
-        customers.phone as customer_phone
+        customers.name as customer_name
         FROM transactions 
-        LEFT JOIN transactions_types ON transactions.id_transaction_type = transactions_types.id
-        LEFT JOIN contracts ON transactions.id_contract = contracts.id
         LEFT JOIN customers ON contracts.id_customer = customers.id
         LEFT JOIN contract_history ON transactions.id = contract_history.id_transaction
         WHERE transactions.id_contract = ? AND transactions.id_transaction_type = 4`;

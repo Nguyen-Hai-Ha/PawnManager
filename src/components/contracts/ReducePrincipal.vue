@@ -168,6 +168,9 @@ const moneyConfig = {
                                     <td v-if="paymentDetails.contract.interest_type === 'daily_amount'">{{ item.old_interest_rate > 0 ? formatCurrency(item.old_interest_rate) : 'Không thay đổi'}}</td>
                                     <td v-else>{{ item.old_interest_rate > 0 ? item.old_interest_rate + '%' : 'Không thay đổi'}}</td>
 
+                                    <td v-if="paymentDetails.contract.interest_type === 'daily_amount'">{{ item.new_interest_rate > 0 ? formatCurrency(item.new_interest_rate) : 'Không thay đổi'}}</td>
+                                    <td v-else>{{ item.new_interest_rate > 0 ? item.new_interest_rate + '%' : 'Không thay đổi'}}</td>
+
                                     <td>{{formatCurrency(item.other_fees)}}</td>
                                     <td>{{ item.description }}</td>
                                 </tr>

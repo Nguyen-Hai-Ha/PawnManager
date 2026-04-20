@@ -25,6 +25,7 @@ const PaymentSchedules = {
                 ps.principal_amount,
                 t.other_fees,
                 t.created_at,
+                t.description,
                 JSON_GROUP_ARRAY(
                     JSON_OBJECT(
                         'amount', CAST(t.amount AS INTEGER),

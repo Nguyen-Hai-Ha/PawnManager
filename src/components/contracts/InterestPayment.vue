@@ -190,6 +190,7 @@ const moneyConfig = {
                                 <th>Ngày Thanh Toán</th>
                                 <th>Tiền Thanh Toán</th>
                                 <th>Phí Khác</th>
+                                <th>Ghi Chú</th>
                                 <th class="text-center">In Phiếu</th>
                             </tr>
                         </thead>
@@ -199,6 +200,7 @@ const moneyConfig = {
                                 <td>{{ item.created_at }}</td>
                                 <td>{{ formatCurrency(item.amount) }}</td>
                                 <td>{{ formatCurrency(item.other_fees) }}</td>
+                                <td>{{ item.description }}</td>
                                 <td class="text-center">
                                     <span class="text-blue" @click="openSelectTemplate('phieu_thu', item.id)" style="cursor: pointer;">
                                         <font-awesome-icon icon="print" /> In phiếu

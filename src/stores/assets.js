@@ -239,7 +239,7 @@ export const useAssetsStore = defineStore("assets", () => {
         try {
             await apiClient.put(`collateral/${assetDetail.value.id}`, payload)
             await fetchAssets()
-            closeAssetsDetailModal()
+            closeAssetsEditModal()
         } catch (error) {
             console.error('Error updating asset:', error)
         }

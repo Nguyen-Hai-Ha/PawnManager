@@ -183,6 +183,7 @@ const detail = computed(() => {
                                     <th>Tiền lãi</th>
                                     <th>Tiền gốc</th>
                                     <th>Phí khác</th>
+                                    <th>Ghi chú</th>
                                     <th>Đã thanh toán</th>
                                 </tr>
                             </thead>
@@ -193,6 +194,7 @@ const detail = computed(() => {
                                     <td class="text-success fw-bold">{{ formatCurrency(schedule.interest_amount) }}</td>
                                     <td class="text-danger fw-bold">{{ formatCurrency(schedule.principal_amount) }}</td>
                                     <td>{{ formatCurrency(schedule.other_fees) || 0 }}</td>
+                                    <td>{{ schedule.description || 'Không có ghi chú' }}</td>
                                     <td>{{ schedule.display_history || 0 }}</td>
                                 </tr>
                             </tbody>
@@ -235,7 +237,7 @@ const detail = computed(() => {
                                         item.new_interest_rate > 0 ? formatCurrency(item.new_interest_rate) : 'Không đổi'}}</td>
                                     <td v-else>{{ item.new_interest_rate > 0 ? item.new_interest_rate + '%' : 'Không đổi'}}</td>
                                     <td>{{ formatCurrency(item.other_fees) || 0 }}</td>
-                                    <td>{{ item.note }}</td>
+                                    <td>{{ item.description || 'Không có ghi chú' }}</td>
                                 </tr>
                             </tbody>
                         </table>

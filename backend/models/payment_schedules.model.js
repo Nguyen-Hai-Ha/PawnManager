@@ -23,7 +23,7 @@ const PaymentSchedules = {
                 ps.period_number,
                 ps.interest_amount,
                 ps.principal_amount,
-                ps.other_fees,
+                t.other_fees,
                 t.created_at,
                 JSON_GROUP_ARRAY(
                     JSON_OBJECT(

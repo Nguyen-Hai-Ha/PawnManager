@@ -311,6 +311,15 @@ export const useSettingsStore = defineStore('settings', () => {
         }
     }
 
+    const deleteTemplate = async (id) => {
+        try {
+            await apiClient.delete(`/settings/templates/${id}`);
+            await getAllTemplates();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return {
         //state
         settings, loading, showAddTemplateModal, newTemplate, fileInput, templates, collateralTypes, newCollateralType,
@@ -345,6 +354,7 @@ export const useSettingsStore = defineStore('settings', () => {
         updateCollateralType,
         getIdTemplate,
         updateTemplate,
-        downloadTemplate
+        downloadTemplate,
+        deleteTemplate
     }
 })

@@ -24,7 +24,7 @@ const { getSettings, updateSettings, openAddTemplateModal,
         closeAddTemplateModal, getAllTemplates, fetchCollateralTypes, 
         openAddCategoryModal, closeAddCategoryModal, deleteCollateralType,
         openEditCategoryModal, closeEditCategoryModal, openEditTemplateModal, 
-        closeEditTemplateModal, downloadTemplate, handleSort } = settingsStore
+        closeEditTemplateModal, downloadTemplate, handleSort, deleteTemplate } = settingsStore
 
 onMounted(() => {
   getSettings()
@@ -268,6 +268,9 @@ onMounted(() => {
             </button>
             <button class="btn-icon-action text-orange" title="Tải xuống" @click="downloadTemplate(t.id)" >
               <font-awesome-icon icon="fa-solid fa-download" />
+            </button>
+            <button class="btn-icon-action text-red" title="Xóa" @click="deleteTemplate(t.id)" >
+              <font-awesome-icon icon="fa-solid fa-trash" />
             </button>
           </div>
         </div>

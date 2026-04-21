@@ -1,11 +1,18 @@
 <script setup>
 import { useCustomerStore } from '@/stores/customer';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 const store = useCustomerStore();
 const { Editform, relative } = storeToRefs(store);
 const { closeEditModal, handleEditImageChange, removeImage, 
         addRelative, removeRelative, updateCustomer } = store;
+
+const maxBirthday = computed(() => {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() - 18);
+    return date.toISOString().split('T')[0];
+});
 
 </script>
 <template>
@@ -45,27 +52,37 @@ const { closeEditModal, handleEditImageChange, removeImage,
                         </div>
                         <div class="pm-form-group">
                             <label for="birthday">Ngày sinh</label>
-                            <input type="date" id="edit-birthday" v-model="Editform.birth_date" required>
+                            <input type="date" id="edit-birthday" v-model="Editform.birth_date" :max="maxBirthday" required>
                         </div>
                         
                     </div>
                     <div class="form-row">
                         <div class="pm-form-group">
-                            <label for="images_cccd">Hình ảnh CCCD</label>
+                            <label for="edit-images_cccd">Hình ảnh CCCD mặt trước</label>
                             <input type="file" id="edit-images_cccd" @change="handleEditImageChange">
                         </div>
                         <div class="pm-form-group">
-                            <div class="image-preview" v-if="Editform.imagePreview">
-                                <img :src="Editform.imagePreview" alt="Preview"
-                                    style="width: 100px; height: 100px; object-fit: cover;">
-                                <button type="button" class="remove-image btn-action text-danger" data-tooltip="Xóa"
-                                    @click="removeImage"><font-awesome-icon icon="circle-xmark" /></button>
-                            </div>
-                            <div class="image-preview" v-else-if="Editform.images_cccd">
-                                <img :src="`http://localhost:3000/uploads/` + Editform.images_cccd" alt="Preview"
-                                    style="width: 100px; height: 100px; object-fit: cover;">
-                                <button type="button" class="remove-image btn-action text-danger" data-tooltip="Xóa"
-                                    @click="removeImage"><font-awesome-icon icon="circle-xmark" /></button>
+                            <label for="edit-images_cccd_back">Hình ảnh CCCD mặt sau</label>
+                            <input type="file" id="edit-images_cccd_back" @change="handleEditImageChange">
+                        </div>
+                        <div class="pm-form-group">
+                            <div class="image-previews" style="display: flex; gap: 10px;">
+                                <!-- Mặt trước -->
+                                <div class="image-preview">
+                                    <p class="small">Mặt trước</p>
+                                    <img v-if="Editform.imagePreview" :src="Editform.imagePreview" alt="Preview Front"
+                                        style="width: 100px; height: 100px; object-fit: cover;">
+                                    <img v-else-if="Editform.images_cccd" :src="`http://localhost:3000/uploads/` + Editform.images_cccd" alt="Current Front"
+                                        style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                                <!-- Mặt sau -->
+                                <div class="image-preview">
+                                    <p class="small">Mặt sau</p>
+                                    <img v-if="Editform.imagePreviewBack" :src="Editform.imagePreviewBack" alt="Preview Back"
+                                        style="width: 100px; height: 100px; object-fit: cover;">
+                                    <img v-else-if="Editform.images_cccd_back" :src="`http://localhost:3000/uploads/` + Editform.images_cccd_back" alt="Current Back"
+                                        style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
                             </div>
                         </div>
                     </div>

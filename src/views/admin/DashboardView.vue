@@ -161,11 +161,11 @@ const goToContract = (id, type) => {
             </thead>
             <tbody>
               <tr v-for="item in summary.dueToday" :key="item.id_contract">
-                <td @click="goToContract(item.id_contract, item.id_contract_type)">
+                <td @click="goToContract(item.id_contract, item.id_contract_type)" style="cursor: pointer;">
                   <div class="fw-bold">{{ item.customer_name }}</div>
                   <div class="small phone">{{ item.customer_phone }} | HĐ: {{ item.contract_code }}</div>
                 </td>
-                <td class="text-right fw-bold red" @click="goToContract(item.id_contract, item.id_contract_type)">
+                <td class="text-right fw-bold red" @click="goToContract(item.id_contract, item.id_contract_type)" style="cursor: pointer;">
                   {{ formatCurrency(item.amount_due) }}
                 </td>
               </tr>
@@ -194,12 +194,12 @@ const goToContract = (id, type) => {
             </thead>
             <tbody>
               <tr v-for="item in summary.dueSoon" :key="item.id_contract">
-                <td @click="goToContract(item.id_contract, item.id_contract_type)">
+                <td @click="goToContract(item.id_contract, item.id_contract_type)" style="cursor: pointer;">
                   <div class="fw-bold">{{ item.customer_name }}</div>
                   <div class="small phone">{{ item.customer_phone }} | HĐ: {{ item.contract_code }}</div>
                 </td>
                 <td class="small">{{ item.expected_date }}</td>
-                <td class="text-right fw-bold orange" @click="goToContract(item.id_contract, item.id_contract_type)">
+                <td class="text-right fw-bold orange" @click="goToContract(item.id_contract, item.id_contract_type)" style="cursor: pointer;">
                   {{ formatCurrency(item.amount_due) }}
                 </td>
               </tr>

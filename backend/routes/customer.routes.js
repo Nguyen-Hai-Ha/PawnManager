@@ -6,8 +6,8 @@ const upload = require('../middlewares/upload.middleware');
 
 router.get('/', [verifyToken, hasPermission('customer.read')], CustomerController.getAll);
 router.get('/:id', [verifyToken, hasPermission('customer.detail')], CustomerController.getById);
-router.post('/', [verifyToken, hasPermission('customer.create'), upload.single('images_cccd')], CustomerController.create);
-router.put('/:id', [verifyToken, hasPermission('customer.update'), upload.single('images_cccd')], CustomerController.update);
+router.post('/', [verifyToken, hasPermission('customer.create'), upload.fields([{ name: 'images_cccd', maxCount: 1 }, { name: 'images_cccd_back', maxCount: 1 }])], CustomerController.create);
+router.put('/:id', [verifyToken, hasPermission('customer.update'), upload.fields([{ name: 'images_cccd', maxCount: 1 }, { name: 'images_cccd_back', maxCount: 1 }])], CustomerController.update);
 router.delete('/:id', [verifyToken, hasPermission('customer.delete')], CustomerController.delete);
 
 module.exports = router;

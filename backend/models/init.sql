@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS customers (
     cccd TEXT,
     birth_date TEXT,
     images_cccd TEXT,
+    images_cccd_back TEXT,
     created_at DATETIME DEFAULT (datetime('now', 'localtime'))
 );
 

@@ -21,8 +21,13 @@ const CustomerController = {
         try {
             const data = { ...req.body };
 
-            if (req.file) {
-                data.images_cccd = req.file.filename;
+            if (req.files) {
+                if (req.files['images_cccd']) {
+                    data.images_cccd = req.files['images_cccd'][0].filename;
+                }
+                if (req.files['images_cccd_back']) {
+                    data.images_cccd_back = req.files['images_cccd_back'][0].filename;
+                }
             }
 
             const customer = Customer.create(data);
@@ -55,8 +60,13 @@ const CustomerController = {
         try {
             const data = { ...req.body };
 
-            if (req.file) {
-                data.images_cccd = req.file.filename;
+            if (req.files) {
+                if (req.files['images_cccd']) {
+                    data.images_cccd = req.files['images_cccd'][0].filename;
+                }
+                if (req.files['images_cccd_back']) {
+                    data.images_cccd_back = req.files['images_cccd_back'][0].filename;
+                }
             }
 
             const customer = Customer.update(req.params.id, data);

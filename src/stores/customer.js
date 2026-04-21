@@ -17,7 +17,9 @@ export const useCustomerStore = defineStore('customer', () => {
         birth_date: '',
         address: '',
         images_cccd: null,
-        imagePreview: null
+        images_cccd_back: null,
+        imagePreview: null,
+        imagePreviewBack: null
     });
     const Editform = ref({
         id: '',
@@ -28,7 +30,9 @@ export const useCustomerStore = defineStore('customer', () => {
         birth_date: '',
         address: '',
         images_cccd: null,
-        imagePreview: null
+        images_cccd_back: null,
+        imagePreview: null,
+        imagePreviewBack: null
     })
     const relative = ref([]);
 
@@ -193,7 +197,9 @@ export const useCustomerStore = defineStore('customer', () => {
             birth_date: '',
             address: '',
             images_cccd: '',
-            imagePreview: ''
+            images_cccd_back: '',
+            imagePreview: '',
+            imagePreviewBack: ''
         }
         relative.value = []
         showAddCustomer.value = false;
@@ -208,7 +214,9 @@ export const useCustomerStore = defineStore('customer', () => {
             birth_date: '',
             address: '',
             images_cccd: null,
-            imagePreview: null
+            images_cccd_back: null,
+            imagePreview: null,
+            imagePreviewBack: null
         }
         relative.value = []
         showEditCustomer.value = false;
@@ -217,18 +225,28 @@ export const useCustomerStore = defineStore('customer', () => {
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            form.value.images_cccd = file;
-            form.value.imagePreview = URL.createObjectURL(file);
-            console.log(form.value.images_cccd);
+            const id = event.target.id;
+            if (id === 'images_cccd') {
+                form.value.images_cccd = file;
+                form.value.imagePreview = URL.createObjectURL(file);
+            } else if (id === 'images_cccd_back') {
+                form.value.images_cccd_back = file;
+                form.value.imagePreviewBack = URL.createObjectURL(file);
+            }
         }
     };
 
     const handleEditImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            Editform.value.images_cccd = file;
-            Editform.value.imagePreview = URL.createObjectURL(file);
-            console.log(Editform.value.images_cccd);
+            const id = event.target.id;
+            if (id === 'edit-images_cccd') {
+                Editform.value.images_cccd = file;
+                Editform.value.imagePreview = URL.createObjectURL(file);
+            } else if (id === 'edit-images_cccd_back') {
+                Editform.value.images_cccd_back = file;
+                Editform.value.imagePreviewBack = URL.createObjectURL(file);
+            }
         }
     };
 
@@ -250,6 +268,7 @@ export const useCustomerStore = defineStore('customer', () => {
         formData.append('birth_date', form.value.birth_date || '');
         formData.append('address', form.value.address);
         formData.append('images_cccd', form.value.images_cccd);
+        formData.append('images_cccd_back', form.value.images_cccd_back);
         formData.append('relatives', JSON.stringify(relative.value));
         formData.append('id_staff', staffId.value);
 
@@ -271,6 +290,7 @@ export const useCustomerStore = defineStore('customer', () => {
         formData.append('birth_date', Editform.value.birth_date || '');
         formData.append('address', Editform.value.address);
         formData.append('images_cccd', Editform.value.images_cccd);
+        formData.append('images_cccd_back', Editform.value.images_cccd_back);
         formData.append('relatives', JSON.stringify(relative.value));
         formData.append('id_staff', staffId.value);
 

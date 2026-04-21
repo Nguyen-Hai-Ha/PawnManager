@@ -70,9 +70,14 @@ onMounted(async () => {
                             <td>{{ customer.cccd }}</td>
                             <td>{{ customer.address }}</td>
                             <td> 
-                                <viewer :images="[`http://localhost:3000/uploads/` + customer.images_cccd]">
-                                    <img :src="`http://localhost:3000/uploads/` + customer.images_cccd" alt="" class="cccd-img">
-                                </viewer>
+                                <div class="cccd-images-cell" style="display: flex; gap: 5px;">
+                                    <viewer :images="[`http://localhost:3000/uploads/` + customer.images_cccd]">
+                                        <img :src="`http://localhost:3000/uploads/` + customer.images_cccd" alt="Mặt trước" class="cccd-img" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;">
+                                    </viewer>
+                                    <viewer v-if="customer.images_cccd_back" :images="[`http://localhost:3000/uploads/` + customer.images_cccd_back]">
+                                        <img :src="`http://localhost:3000/uploads/` + customer.images_cccd_back" alt="Mặt sau" class="cccd-img" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;">
+                                    </viewer>
+                                </div>
                             </td>
                             <td>
                                 <div class="action-cell">

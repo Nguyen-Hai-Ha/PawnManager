@@ -29,13 +29,13 @@ const Customer = {
         return stmt.get(id);
     },
     create: (data) => {
-        const sql = `INSERT INTO customers (name, phone, email, address, cccd, birth_date, images_cccd) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO customers (name, phone, email, address, cccd, birth_date, images_cccd, images_cccd_back) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         const stmt = db.prepare(sql);
-        const result = stmt.run(data.name, data.phone, data.email, data.address, data.cccd, data.birth_date, data.images_cccd);
+        const result = stmt.run(data.name, data.phone, data.email, data.address, data.cccd, data.birth_date, data.images_cccd, data.images_cccd_back);
         return { id: result.lastInsertRowid };
     },
     update: (id, data) => {
-        const sql = `UPDATE customers SET name = @name, phone = @phone, email = @email, address = @address, cccd = @cccd, birth_date = @birth_date, images_cccd= @images_cccd WHERE id = @id`;
+        const sql = `UPDATE customers SET name = @name, phone = @phone, email = @email, address = @address, cccd = @cccd, birth_date = @birth_date, images_cccd= @images_cccd, images_cccd_back = @images_cccd_back WHERE id = @id`;
         const stmt = db.prepare(sql);
         const result = stmt.run({ ...data, id: id });
         return result.changes;

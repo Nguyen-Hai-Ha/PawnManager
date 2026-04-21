@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import { ref, computed } from 'vue';
 
 import SelectTemplate from '@/components/contracts/SelectTemplatePrint.vue';
+import Viewer from 'viewerjs';
 
 const detailContractStore = useDetailContractStore();
 
@@ -46,10 +47,21 @@ const detail = computed(() => {
                 <div class="customer-info-card">
                     <div class="customer-info-grid">
                         <div class="customer-avatar">
-                            <div class="customer-image">
-                                <img v-if="detail.customer?.images_cccd"
-                                    :src="`http://localhost:3000/uploads/` + detail.customer.images_cccd"
-                                    alt="Customer Image" class="customer-image-cccd">
+                            <div class="customer-images" style="display: flex; gap: 10px;">
+                                <div class="customer-image" v-if="detail.customer?.images_cccd">
+                                    <viewer :images="`http://localhost:3000/uploads/` + detail.customer.images_cccd">
+                                        <img :src="`http://localhost:3000/uploads/` + detail.customer.images_cccd"
+                                            alt="Mặt trước" class="customer-image-cccd" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                                    </viewer>
+                                    <p class="small text-center">Mặt trước</p>
+                                </div>
+                                <div class="customer-image" v-if="detail.customer?.images_cccd_back">
+                                    <viewer :images="`http://localhost:3000/uploads/` + detail.customer.images_cccd_back">
+                                        <img :src="`http://localhost:3000/uploads/` + detail.customer.images_cccd_back"
+                                            alt="Mặt sau" class="customer-image-cccd" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                                    </viewer>
+                                    <p class="small text-center">Mặt sau</p>
+                                </div>
                             </div>
                         </div>
                         <div class="customer-details">

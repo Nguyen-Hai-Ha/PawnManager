@@ -69,6 +69,7 @@ const Transactions = {
         contract_history.new_interest_rate,
         customers.name as customer_name
         FROM transactions 
+        LEFT JOIN contracts ON transactions.id_contract = contracts.id
         LEFT JOIN customers ON contracts.id_customer = customers.id
         LEFT JOIN contract_history ON transactions.id = contract_history.id_transaction
         WHERE transactions.id_contract = ? AND transactions.id_transaction_type = 4`;

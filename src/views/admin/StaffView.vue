@@ -10,7 +10,7 @@ import AddPermissionFStaff from '@/components/staff/AddPermissionFStaff.vue'
 const staffStore = useStaffStore()
 const { staff, showAddStaffModal, role, search, sortConfig, totalPages, 
         showPermissionModal, showEditStaffModal, currentPage, 
-        totalItems, paginatedStaff, pageNumbers } = storeToRefs(staffStore)
+        paginatedStaff, pageNumbers } = storeToRefs(staffStore)
 const { fetchStaff, openAddStaffModal, closeAddStaffModal, fetchRole,
         handleSort, openPermissionModal, closePermissionModal, openEditStaffModal, 
         closeEditStaffModal, deleteStaff, changePage, goToFirstPage, goToNextPage, 

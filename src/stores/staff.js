@@ -344,7 +344,7 @@ export const useStaffStore = defineStore('staff', () => {
 
         //computed
         searchStaff, sortedStaff, currentPermissions, isAllSelected, paginatedStaff, pageNumbers,
-        currentPage, totalPages, totalItems, itemsPerPage,
+        currentPage, totalPages, itemsPerPage,
         
         //actions
         fetchStaff, fetchRole, openAddStaffModal, closeAddStaffModal, submitAddStaff, handleSort,

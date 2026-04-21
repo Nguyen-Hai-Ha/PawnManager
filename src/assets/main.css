@@ -1011,6 +1011,16 @@ nav a {
   cursor: pointer;
 }
 
+.btn-add-relative {
+  padding: 10px 24px;
+  background: #ff7221;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .btn-cancel {
   padding: 10px 24px;
   background: #f3f4f6;

@@ -118,7 +118,7 @@ const maxBirthday = computed(() => {
                         </div>
                     </div>
                     <div class="pm-modal-footer">
-                        <button class="btn-submit" @click="addRelative">Thêm người thân </button>
+                        <button class="btn-add-relative" @click="addRelative">Thêm người thân </button>
                         <button type="submit" class="btn-submit" v-permission="'customer.create'">Thêm</button>
                         <button type="button" class="btn-cancel" @click="closeModal">Hủy</button>
                     </div>

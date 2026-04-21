@@ -91,7 +91,7 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
         const maxNumber = Math.max(...relevantNumbers);
         const nextNumber = maxNumber + 1;
         
-        return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
+        return `${prefix}${nextNumber.toString().padStart(4, '0')}`;
     });
 
     const codeAsset = computed(() => {

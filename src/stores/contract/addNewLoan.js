@@ -74,15 +74,23 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
             prefix = "TG";
         }
 
-        if (loans.value.length === 0) {
+        if (!loans.value || loans.value.length === 0) {
             return `${prefix}00001`
         }
 
-        const lastCode = loans.value[loans.value.length - 1].code;
+        // Lọc các mã bắt đầu bằng prefix hiện tại và trích xuất phần số
+        const relevantNumbers = loans.value
+            .filter(l => l.code && l.code.startsWith(prefix))
+            .map(l => parseInt(l.code.replace(prefix, "")) || 0);
 
-        const lastNumber = parseInt(lastCode.replace(/\D/g, "")) || 0;
+        if (relevantNumbers.length === 0) {
+            return `${prefix}00001`
+        }
 
-        const nextNumber = lastNumber + 1;
+        // Tìm số lớn nhất và cộng thêm 1
+        const maxNumber = Math.max(...relevantNumbers);
+        const nextNumber = maxNumber + 1;
+        
         return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
     });
 
@@ -92,15 +100,19 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
             return `${prefix}00001`
         }
 
-        // Tìm tài sản có code hợp lệ gần nhất
-        const validAssets = assets.value.filter(a => a.code && a.code.startsWith(prefix));
-        if (validAssets.length === 0) {
+        // Lọc các mã bắt đầu bằng "TS" và trích xuất phần số
+        const relevantNumbers = assets.value
+            .filter(a => a.code && a.code.startsWith(prefix))
+            .map(a => parseInt(a.code.replace(prefix, "")) || 0);
+        
+        if (relevantNumbers.length === 0) {
             return `${prefix}00001`
         }
 
-        const lastCode = validAssets[validAssets.length - 1].code;
-        const lastNumber = parseInt(lastCode.replace(/\D/g, "")) || 0;
-        const nextNumber = lastNumber + 1;
+        // Tìm số lớn nhất và cộng thêm 1
+        const maxNumber = Math.max(...relevantNumbers);
+        const nextNumber = maxNumber + 1;
+
         return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
     });
 
@@ -324,8 +336,6 @@ export const useAddNewLoanStore = defineStore('addNewLoan', () => {
             console.error('Error submitting loan:', error);
         }
     }
-
-
 
     const fetchCustomer = async () => {
         try {

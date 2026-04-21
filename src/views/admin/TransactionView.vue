@@ -156,9 +156,9 @@ onMounted( async () => {
                                 <button class="btn-action text-primary" data-tooltip="Xem chi tiết" v-permission="['loans.detail', 'pledge.detail', 'repayment.detail']" @click="openDetailContract(transaction.contract_id)">
                                     <font-awesome-icon icon="fa-solid fa-eye" />
                                 </button>
-                                <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'transaction.delete'">
+                                <!-- <button class="btn-action text-danger" data-tooltip="Xóa" v-permission="'transaction.delete'">
                                     <font-awesome-icon icon="fa-solid fa-trash-can" />
-                                </button>
+                                </button> -->
                             </td>
                         </tr>
                     </tbody>

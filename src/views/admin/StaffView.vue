@@ -97,7 +97,7 @@ onMounted( async () => {
             </div>
             <div class="pagination" v-if="totalPages >= 1">
                 <div class="pagination-info">
-                    <span class="page-info">Trang {{ currentPage }}/{{ totalPages }} (Tổng {{ totalItems }} nhân viên)</span>
+                    <span class="page-info">Trang {{ currentPage }}/{{ totalPages }} (Tổng {{ staff.length }} nhân viên)</span>
                 </div>
                 <div class="pagination-controls">
                     <button class="page-btn" @click="goToFirstPage">

@@ -7,8 +7,6 @@ export const useStaffStore = defineStore('staff', () => {
 
     const staff = ref([])
     const currentPage = ref(1)
-    const totalPages = ref(1)
-    const totalItems = ref(0)
     const itemsPerPage = ref(10)
     const newStaff = ref({
         name: '',
@@ -86,6 +84,10 @@ export const useStaffStore = defineStore('staff', () => {
         });
         return list;
     })
+
+    const totalPages = computed(() => {
+        return Math.ceil(searchStaff.value.length / itemsPerPage.value);
+    });
 
     const paginatedStaff = computed(() => {
         const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -282,17 +284,10 @@ export const useStaffStore = defineStore('staff', () => {
         }
     }
 
-    const fetchStaff = async (page = 1) => {
+    const fetchStaff = async () => {
         try {
-            const response = await apiClient.get('/staff', {
-                params: {
-                    page: page,
-                    limit: itemsPerPage.value
-                }
-            })
-            staff.value = response.data.data
-            totalItems.value = response.data.total
-            totalPages.value = response.data.totalPages
+            const response = await apiClient.get('/staff')
+            staff.value = response.data
         } catch (error) {
             console.error('Error fetching staff:', error)
         }

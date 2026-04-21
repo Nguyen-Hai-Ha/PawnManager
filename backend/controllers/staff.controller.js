@@ -6,21 +6,8 @@ const config = require('../config/auth.config');
 const StaffController = {
     getAll: (req, res) => {
         try {
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-            const offset = (page - 1) * limit;
-
-            const staffs = Staff.getPagination(limit, offset);
-            const totalResult = Staff.countAll();
-            const total = totalResult ? totalResult.total : 0;
-            const totalPages = Math.ceil(total / limit);
-
-            res.json({
-                data: staffs,
-                total: total,
-                page: page,
-                totalPages: totalPages
-            });
+            const staffs = Staff.getAll();
+            res.json(staffs);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

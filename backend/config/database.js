@@ -9,7 +9,10 @@ try {
     app = null;
 }
 
-const { dataDir } = require('./paths');
+const { dataDir, ensureDirectories } = require('./paths');
+
+// Đảm bảo thư mục tồn tại trước khi mở database
+ensureDirectories();
 
 const dbDir = dataDir;
 const dbPath = path.join(dbDir, 'pawn.db');

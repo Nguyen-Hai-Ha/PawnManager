@@ -23,7 +23,7 @@ const DashboardController = {
             const activeLoans = db.prepare(`
                 SELECT COUNT(*) as count, SUM(loan_amount) as total_amount 
                 FROM contracts 
-                WHERE status IN ('active', 'Đang cầm', 'Đang vay', 'Đang Cầm')
+                WHERE status NOT IN ('Đã Hoàn Tất', 'Đã Tất Toán', 'Đã Thanh Lý')
             `).get();
 
             // 3. Collected Today (Interest Payment - Transaction Type 2)
@@ -49,7 +49,7 @@ const DashboardController = {
                     SUM(c.loan_amount) as total_loan,
                     (SELECT SUM(t.amount) FROM transactions t JOIN contracts c2 ON t.id_contract = c2.id WHERE c2.id_contract_type = ct.id AND t.id_transaction_type = 2) as total_interest
                 FROM contracts_types ct
-                LEFT JOIN contracts c ON c.id_contract_type = ct.id AND c.status IN ('active', 'Đang cầm', 'Đang vay', 'Đang Cầm')
+                LEFT JOIN contracts c ON c.id_contract_type = ct.id AND c.status NOT IN ('Đã Hoàn Tất', 'Đã Tất Toán', 'Đã Thanh Lý')
                 GROUP BY ct.id
             `).all();
 

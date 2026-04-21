@@ -1,6 +1,7 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 import AddNewLoan from '@/components/contracts/AddNewLoan.vue';
 import InterestPayment from '@/components/contracts/InterestPayment.vue';
@@ -22,7 +23,9 @@ const reducePrincipalStore = useReducePrincipalStore();
 const finalSettlementStore = useFinalSettlementStore();
 const detailContractStore = useDetailContractStore();
 
-const {loans, paginated, totalPage, currentPage, search, 
+const route = useRoute();
+
+const {loans, paginated, totalPage, currentPage, search, filterId,
         sortConfig, filterStatus, startDate, endDate, pageNumbers} = storeToRefs(loanStore);
 const { getAllLoansType, deleteLoan, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, 
@@ -55,6 +58,10 @@ const onFileSelected = async (event) => {
 onMounted(async() => {
     await getAllLoansType();
     await fetchCustomer()
+
+    if (route.query.filterId) {
+        filterId.value = route.query.filterId;
+    }
 })
 </script>
 

@@ -24,7 +24,7 @@ const finalSettlementStore = useFinalSettlementStore();
 const detailContractStore = useDetailContractStore();
 
 const { loans, paginated, totalPage, currentPage, search, sortConfig, 
-        filterStatus, startDate, endDate, pageNumbers } = storeToRefs(loanStore);
+        filterStatus, startDate, endDate, pageNumbers, filterId } = storeToRefs(loanStore);
 const { getAllLoansType, formatCurrency, changePage, goToFirstPage, 
         goToNextPage, goToPrevPage, goToLastPage, handleSort, fetchCustomer, 
         deleteLoan, handleExportExcel, handleImportExcel } = loanStore;
@@ -62,6 +62,10 @@ onMounted(async() => {
 
     if (route.query.filter) {
         filterStatus.value = route.query.filter;
+    }
+
+    if (route.query.filterId) {
+        filterId.value = route.query.filterId;
     }
 })
 </script>

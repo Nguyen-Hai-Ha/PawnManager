@@ -8,6 +8,7 @@ export const useLoanStore = defineStore("loan", () => {
     const currentPage = ref(1);
     const search = ref('');
     const filterStatus = ref('');
+    const filterId = ref();
     const startDate = ref('');
     const endDate = ref('');
     const route = useRoute();
@@ -99,6 +100,10 @@ export const useLoanStore = defineStore("loan", () => {
 
         if (filterStatus.value) {
             result = result.filter(loan => String(loan.status).toLowerCase() === String(filterStatus.value).toLowerCase());
+        }
+
+        if (filterId.value) {
+            result = result.filter(loan => loan.id === Number(filterId.value));
         }
 
         if (startDate.value) {
@@ -258,7 +263,7 @@ export const useLoanStore = defineStore("loan", () => {
 
     return {
         //state
-        loans, customers, assetTypes, assets, search, filterStatus, startDate, endDate, paginated, totalPage, currentPage, pageTitles,
+        loans, customers, assetTypes, assets, search, filterStatus, startDate, endDate, paginated, totalPage, currentPage, pageTitles, filterId,
     
         //computed
         filteredLoans, sortConfig, id_contract_type, pageNumbers,

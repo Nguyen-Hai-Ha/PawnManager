@@ -104,6 +104,7 @@ const DashboardController = {
                     SELECT 
                         c.id as id_contract,
                         c.code as contract_code,
+                        c.id_contract_type,
                         cu.name as customer_name,
                         cu.phone as customer_phone,
                         ps.expected_date,
@@ -118,6 +119,7 @@ const DashboardController = {
                     SELECT 
                         c.id as id_contract,
                         c.code as contract_code,
+                        c.id_contract_type,
                         cu.name as customer_name,
                         cu.phone as customer_phone,
                         ps.expected_date,

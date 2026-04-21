@@ -2,6 +2,9 @@
 import { onMounted, computed } from 'vue';
 import { useDashboardStore } from '@/stores/dashboard';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const dashboardStore = useDashboardStore();
 const { summary, loading, todayDateStr, currentMonthYearStr, hasFetched } = storeToRefs(dashboardStore);
@@ -54,6 +57,13 @@ const getProfitRatioByTypeName = (name) => {
   return r ? r.percent + '%' : '0%';
 };
 
+const goToContract = (id, type) => {
+  const namePage = type === 1 ? 'AdminLoanPawn' : type === 2 ? 'AdminPledges' : 'AdminRepayments';
+  router.push({
+    name: namePage,
+    query: { filterId: id }
+  });
+};
 </script>
 
 <template>
@@ -151,11 +161,11 @@ const getProfitRatioByTypeName = (name) => {
             </thead>
             <tbody>
               <tr v-for="item in summary.dueToday" :key="item.id_contract">
-                <td>
+                <td @click="goToContract(item.id_contract, item.id_contract_type)">
                   <div class="fw-bold">{{ item.customer_name }}</div>
                   <div class="small phone">{{ item.customer_phone }} | HĐ: {{ item.contract_code }}</div>
                 </td>
-                <td class="text-right fw-bold red">
+                <td class="text-right fw-bold red" @click="goToContract(item.id_contract, item.id_contract_type)">
                   {{ formatCurrency(item.amount_due) }}
                 </td>
               </tr>
@@ -184,12 +194,12 @@ const getProfitRatioByTypeName = (name) => {
             </thead>
             <tbody>
               <tr v-for="item in summary.dueSoon" :key="item.id_contract">
-                <td>
+                <td @click="goToContract(item.id_contract, item.id_contract_type)">
                   <div class="fw-bold">{{ item.customer_name }}</div>
                   <div class="small phone">{{ item.customer_phone }} | HĐ: {{ item.contract_code }}</div>
                 </td>
                 <td class="small">{{ item.expected_date }}</td>
-                <td class="text-right fw-bold orange">
+                <td class="text-right fw-bold orange" @click="goToContract(item.id_contract, item.id_contract_type)">
                   {{ formatCurrency(item.amount_due) }}
                 </td>
               </tr>

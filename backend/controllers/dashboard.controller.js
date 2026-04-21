@@ -6,11 +6,11 @@ const DashboardController = {
             const today = new Date().toLocaleDateString('sv-SE');
             
             // 1. Transactions Today vs Yesterday
-            const todayCount = db.prepare("SELECT COUNT(*) as count FROM transactions WHERE created_at = ?").get(today).count;
+            const todayCount = db.prepare("SELECT COUNT(*) as count FROM transactions WHERE DATE(created_at) = ?").get(today).count;
             const yesterdayDate = new Date();
             yesterdayDate.setDate(yesterdayDate.getDate() - 1);
             const yesterdayStr = yesterdayDate.toLocaleDateString('sv-SE');
-            const yesterdayCount = db.prepare("SELECT COUNT(*) as count FROM transactions WHERE created_at = ?").get(yesterdayStr).count;
+            const yesterdayCount = db.prepare("SELECT COUNT(*) as count FROM transactions WHERE DATE(created_at) = ?").get(yesterdayStr).count;
             
             let transactionCompare = 0;
             if (yesterdayCount > 0) {
@@ -30,7 +30,7 @@ const DashboardController = {
             const collectedToday = db.prepare(`
                 SELECT COUNT(*) as count, SUM(amount) as total_amount 
                 FROM transactions 
-                WHERE id_transaction_type = 2 AND created_at = ?
+                WHERE id_transaction_type IN (2, 3, 4, 5) AND DATE(created_at) = ?
             `).get(today);
 
             // 4. Fund Balance (Piggy Bank)

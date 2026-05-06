@@ -28,7 +28,7 @@
       "dist/**/*",
       "backend/**/*",
       "!backend/data/**",
-      "!backend/images/*",
+
       "!backend/output/*",
       "electron-main.cjs",
       "preload.cjs",

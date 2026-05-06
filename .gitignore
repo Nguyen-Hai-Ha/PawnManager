@@ -15,9 +15,13 @@ coverage
 *.local
 
 backend/images/*
+!backend/images/.gitkeep
 backend/data/*
 backend/templates/*
 backend/output/*
+
+src/assets/images/*
+!src/assets/images/.gitkeep
 
 .env
 backend/.env

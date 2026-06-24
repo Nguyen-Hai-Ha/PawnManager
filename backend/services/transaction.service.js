@@ -402,4 +402,21 @@ const TransactionsService = {
         });
         return exp(data);
     },
+    receiptToPrint: (id, id_template) => {
+        const template = Template.getById(id_template);
+        const transaction = Transactions.getReceiptToPrint(id);
+
+        if (!transaction) {
+            return { error: "Không tìm thấy dữ liệu giao dịch để in phiếu." };
+        }
+
+        const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
+        transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
+
+        const other_fees_text = doReadNumber(String(transaction.other_fees)) + " đồng";
+        transaction.other_fees_text = other_fees_text.charAt(0).toUpperCase() + other_fees_text.slice(1);
+
+        const { buf, fileName } = generatePaymentReceiptDoc(transaction, template);
+        return { buf, fileName };
+    }
 }

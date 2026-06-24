@@ -261,6 +261,53 @@ const ContractService = {
         }
 
         return { contract, paymentSchedule, transaction, auditLog };
+    },
+    printReceiptService: (id, id_template) => {
+        const template = Template.getById(id_template);
+        const contract = Contract.getDetailForPrint(id);
+        const countDaysBetween = (startDate, endDate) => {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            // Tính khoảng cách
+            const diffInMs = end - start;
+
+            // Đổi sang ngày (1 ngày = 24h * 60p * 60s * 1000ms)
+            return Math.round(diffInMs / (1000 * 60 * 60 * 24));
+        };
+
+        // số ngày
+        const total_days = countDaysBetween(contract.Start_date, contract.End_date);
+        contract.total_days = total_days;
+
+        // tổng lãi
+        const paymentSchedules = PaymentSchedules.getByContractId(id);
+        contract.interest = paymentSchedules.reduce((acc, item) => acc + item.interest_amount, 0);
+
+        const LoanText = doReadNumber(String(contract.Loan_amount)) + " đồng";
+        contract.Loan_amount_text = LoanText.charAt(0).toUpperCase() + LoanText.slice(1);
+
+        // số tiền lãi bằng chữ
+        const interestText = doReadNumber(String(contract.interest)) + " đồng";
+        contract.interest_text = interestText.charAt(0).toUpperCase() + interestText.slice(1);
+
+        // kiểu lãi
+        const Interest_type = contract.Interest_type === "percent*term" ? "Lãi suất định kỳ" : contract.Interest_type === "percent/term" ? "Lãi suất chia đều" : "Lãi suất hàng ngày";
+        contract.Interest_type = Interest_type;
+
+        // lãi suất
+        const Interest_rate = contract.Interest_type === "daily_amount" ? contract.Interest_rate.toLocaleString('vi-VN') + " đồng/ngày" : contract.Interest_rate + "%";
+
+        contract.Interest_rate = Interest_rate;
+
+        const { buf, fileName } = generateContractDoc(contract, template);
+        AuditLogs.create({
+            action: 'In hợp đồng',
+            details: `In hợp đồng ${contract.Code} bởi nhân viên ${contract.staff_name}`,
+            id_staff: contract.id_staff,
+        });
+
+        return {buf, fileName};
     }
 }
 

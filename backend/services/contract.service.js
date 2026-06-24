@@ -59,7 +59,9 @@ const ContractService = {
         const dataStaff = JSON.parse(staffData);
 
         if (!dataContract) {
-            return res.status(400).json({ error: 'Data is required' });
+            const error = new Error('Data is required');
+            error.status = 400;
+            throw error;
         }
 
         dataContract.id_staff = dataStaff.id;

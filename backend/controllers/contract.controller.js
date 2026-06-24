@@ -119,14 +119,14 @@ const ContractController = {
         try {
             const { id_contract_type } = req.query;
 
-            const result = await ContractService.exportExcelService(id_contract_type);
+            const buffer = await ContractService.exportExcelService(id_contract_type);
             res.set({
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Content-Disposition': `attachment; filename="DanhSachHopDong.xlsx"`,
-                'Content-Length': result.length
+                'Content-Length': buffer.length
             });
 
-            res.send(result);
+            res.send(buffer);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -141,7 +141,7 @@ const ContractController = {
 
             const file = req.file;
 
-            const result = ContractService.importExcelService(file, id_contract_type);
+            const result = await ContractService.importExcelService(file, id_contract_type);
 
             res.status(200).json(result);
         } catch (error) {

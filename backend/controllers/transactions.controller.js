@@ -5,148 +5,116 @@ const { generatePaymentReceiptDoc } = require('../services/DocumentService');
 
 const TransactionsController = {
     getAll: (req, res) => {
-        try {
-            const transactions = Transactions.getAll();
-            res.json(transactions);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transactions = Transactions.getAll();
+        res.json(transactions);
     },
     getById: (req, res) => {
-        try {
-            const transaction = Transactions.getById(req.params.id);
-            res.json(transaction);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transaction = Transactions.getById(req.params.id);
+        res.json(transaction);
     },
     getByContractId: (req, res) => {
-        try {
-            const transactions = Transactions.getByContractId(req.params.id);
-            res.json(transactions);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transactions = Transactions.getByContractId(req.params.id);
+        res.json(transactions);
     },
     getByScheduleId: (req, res) => {
-        try {
-            const transactions = Transactions.getByScheduleId(req.params.id);
-            res.json(transactions);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transactions = Transactions.getByScheduleId(req.params.id);
+        res.json(transactions);
     },
     getHistoryPayment: (req, res) => {
-        try {
-            const transactions = Transactions.getHistoryPayment(req.params.id);
-            res.json(transactions);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transactions = Transactions.getHistoryPayment(req.params.id);
+        res.json(transactions);
     },
     getHistoryReducePrincipal: (req, res) => {
-        try {
-            const transactions = Transactions.getHistoryReducePrincipal(req.params.id);
-            res.json(transactions);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transactions = Transactions.getHistoryReducePrincipal(req.params.id);
+        res.json(transactions);
     },
     create: (req, res) => {
-        try {
-            const data = req.body;
-            const transaction = Transactions.create(data);
+        const data = req.body;
+        const transaction = Transactions.create(data);
 
-            const paymentSchedule = PaymentSchedules.getById(data.id_schedule);
+        const paymentSchedule = PaymentSchedules.getById(data.id_schedule);
 
-            // lấy kỳ lãi tiếp theo
-            const nextPaymentSchedule = PaymentSchedules.getById(data.id_schedule + 1);
-            const nextInterest = nextPaymentSchedule.interest_amount;
-            const nextPrincipal = nextPaymentSchedule.principal_amount;
+        // lấy kỳ lãi tiếp theo
+        const nextPaymentSchedule = PaymentSchedules.getById(data.id_schedule + 1);
+        const nextInterest = nextPaymentSchedule.interest_amount;
+        const nextPrincipal = nextPaymentSchedule.principal_amount;
 
-            if (paymentSchedule.interest_amount + paymentSchedule.principal_amount === data.amount) {
-                PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
-            }
-            // nếu đóng dư lãi kỳ hiện tại
-            else if (paymentSchedule.interest_amount + paymentSchedule.principal_amount < data.amount) {
-                // lấy tiền dư - tiền lãi kỳ tiếp theo
-                const id_next_schedule = data.id_schedule + 1;
-                let remainingAmount = 0
-                if (nextInterest > 0) {
-                    // nếu còn kỳ lãi tiếp theo thì trừ tiền lãi kỳ tiếp theo
-                    remainingAmount = nextInterest - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
-                    PaymentSchedules.updatePrincipalAmount(id_next_schedule, remainingAmount);
-                } else {
-                    // nếu không còn kỳ tiếp theo không còn lãi thì trừ tiền gốc kỳ tiếp theo
-                    remainingAmount = nextPrincipal - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
-                    PaymentSchedules.updatePrincipalAmount(id_next_schedule, remainingAmount);
-                }
-                PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
-            }
-
-            const contract = Contract.getById(data.id_contract);
-            const collateral = Collaterals.getById(contract.id_collateral);
-
-            // thay đổi trạng thái của tài sản, hợp đồng chuyển từ Quá Hạn -> Đang Cầm
-            if (contract.status === 'Quá Hạn') {
-                if (contract.id_contract_type === 1) {
-                    Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
-                } else {
-                    Contract.updateStatus({ status: 'Đang Vay' }, data.id_contract);
-                }
-                // tài sản quá hạn -> đang cầm
-                if (contract.id_contract_type === 1 && collateral.status === 'Quá Hạn') {
-                    Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
-                } 
-            }
-            // thay đổi trạng thái của tài sản, hợp đồng chuyển từ Chờ Thanh Lý -> Đang Cầm
-            else if (contract.status === 'Chờ Thanh Lý') {
-                Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
-                // tài sản chờ thanh lý có thể thay đổi -> đang cầm nếu khách hàng kịp đóng lãi trong 24h
-                if (contract.id_contract_type === 1 && collateral.status === 'Chờ Thanh Lý') {
-                    Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
-                }
-            } 
-            // thay đổi trạng thái hợp đồng khi đang cầm, đến lãi, sắp đến hạn
-            else {
-                const status = (contract.id_contract_type === 1) ? 'Đang Cầm' : 'Đang Vay';
-                Contract.updateStatus({ status: status }, data.id_contract);
-            }
-
-            // nếu là kỳ cuối cùng thì cập nhật trạng thái hợp đồng và tài sản => hoàn tất
-            const isPawnOrCreditFinished = (contract.id_contract_type === 1 || contract.id_contract_type === 2) 
-                && contract.total_periods < paymentSchedule.period_number;
-
-            const isInstallmentFinished = (contract.id_contract_type === 3) 
-                && contract.total_periods === paymentSchedule.period_number;
-
-            if (isPawnOrCreditFinished || isInstallmentFinished) {
-                Contract.updateStatus({ status: 'Đã Hoàn Tất' }, data.id_contract);
-                if (contract.id_contract_type === 1) {
-                    Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);
-                }
-            }
-
-            const staff = Staff.getById(data.id_staff);
-
-            const log = AuditLogs.create({
-                action: 'Đóng lãi cho Hợp đồng',
-                details: `Đóng lãi cho Hợp đồng ${contract.code} kỳ ${paymentSchedule.period_number} với số tiền ${data.amount} bởi nhân viên ${staff.name}`,
-                id_staff: data.id_staff,
-            });
-
-            res.json({ transaction, paymentSchedule });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        if (paymentSchedule.interest_amount + paymentSchedule.principal_amount === data.amount) {
+            PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
         }
+        // nếu đóng dư lãi kỳ hiện tại
+        else if (paymentSchedule.interest_amount + paymentSchedule.principal_amount < data.amount) {
+            // lấy tiền dư - tiền lãi kỳ tiếp theo
+            const id_next_schedule = data.id_schedule + 1;
+            let remainingAmount = 0
+            if (nextInterest > 0) {
+                // nếu còn kỳ lãi tiếp theo thì trừ tiền lãi kỳ tiếp theo
+                remainingAmount = nextInterest - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
+                PaymentSchedules.updatePrincipalAmount(id_next_schedule, remainingAmount);
+            } else {
+                // nếu không còn kỳ tiếp theo không còn lãi thì trừ tiền gốc kỳ tiếp theo
+                remainingAmount = nextPrincipal - (data.amount - (paymentSchedule.interest_amount + paymentSchedule.principal_amount));
+                PaymentSchedules.updatePrincipalAmount(id_next_schedule, remainingAmount);
+            }
+            PaymentSchedules.updateStatus({ is_paid: 1 }, data.id_schedule);
+        }
+
+        const contract = Contract.getById(data.id_contract);
+        const collateral = Collaterals.getById(contract.id_collateral);
+
+        // thay đổi trạng thái của tài sản, hợp đồng chuyển từ Quá Hạn -> Đang Cầm
+        if (contract.status === 'Quá Hạn') {
+            if (contract.id_contract_type === 1) {
+                Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
+            } else {
+                Contract.updateStatus({ status: 'Đang Vay' }, data.id_contract);
+            }
+            // tài sản quá hạn -> đang cầm
+            if (contract.id_contract_type === 1 && collateral.status === 'Quá Hạn') {
+                Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
+            } 
+        }
+        // thay đổi trạng thái của tài sản, hợp đồng chuyển từ Chờ Thanh Lý -> Đang Cầm
+        else if (contract.status === 'Chờ Thanh Lý') {
+            Contract.updateStatus({ status: 'Đang Cầm' }, data.id_contract);
+            // tài sản chờ thanh lý có thể thay đổi -> đang cầm nếu khách hàng kịp đóng lãi trong 24h
+            if (contract.id_contract_type === 1 && collateral.status === 'Chờ Thanh Lý') {
+                Collaterals.updateStatus({ status: 'Đang Cầm' }, contract.id_collateral);
+            }
+        } 
+        // thay đổi trạng thái hợp đồng khi đang cầm, đến lãi, sắp đến hạn
+        else {
+            const status = (contract.id_contract_type === 1) ? 'Đang Cầm' : 'Đang Vay';
+            Contract.updateStatus({ status: status }, data.id_contract);
+        }
+
+        // nếu là kỳ cuối cùng thì cập nhật trạng thái hợp đồng và tài sản => hoàn tất
+        const isPawnOrCreditFinished = (contract.id_contract_type === 1 || contract.id_contract_type === 2) 
+            && contract.total_periods < paymentSchedule.period_number;
+
+        const isInstallmentFinished = (contract.id_contract_type === 3) 
+            && contract.total_periods === paymentSchedule.period_number;
+
+        if (isPawnOrCreditFinished || isInstallmentFinished) {
+            Contract.updateStatus({ status: 'Đã Hoàn Tất' }, data.id_contract);
+            if (contract.id_contract_type === 1) {
+                Collaterals.updateStatus({ status: 'Đã Chuộc' }, contract.id_collateral);
+            }
+        }
+
+        const staff = Staff.getById(data.id_staff);
+
+        const log = AuditLogs.create({
+            action: 'Đóng lãi cho Hợp đồng',
+            details: `Đóng lãi cho Hợp đồng ${contract.code} kỳ ${paymentSchedule.period_number} với số tiền ${data.amount} bởi nhân viên ${staff.name}`,
+            id_staff: data.id_staff,
+        });
+
+        res.json({ transaction, paymentSchedule });
     },
     delete: (req, res) => {
-        try {
-            const transaction = Transactions.delete(req.params.id);
-            res.json(transaction);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const transaction = Transactions.delete(req.params.id);
+        res.json(transaction);
     },
     reducePrincipal: (req, res) => {
         const reduce = db.transaction((data) => {
@@ -365,12 +333,8 @@ const TransactionsController = {
             res.json({ transaction, current_schedule, contractHistory, msg: "Cập nhật gốc và lãi thành công" });
         });
 
-        try {
-            const result = reduce(req.body);
-            res.json(result);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        const result = reduce(req.body);
+        res.json(result);
     },
     finalsettlement: (req, res) => {
         const final = db.transaction((data) => {
@@ -425,15 +389,11 @@ const TransactionsController = {
 
             return { transaction, msg: "Hợp đồng đã được tất toán" };
         });
-        try {
-            const result = final(req.body);
-            if (result.error) {
-                return res.status(400).json(result);
-            }
-            res.json(result);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        const result = final(req.body);
+        if (result.error) {
+            return res.status(400).json(result);
         }
+        res.json(result);
     },
     liquidation: (req, res) => {
         const liquidation = db.transaction((data) => {
@@ -475,43 +435,35 @@ const TransactionsController = {
 
             return { transaction, msg: "Tài sản đã được thanh lý" };
         });
-        try {
-            const result = liquidation(req.body);
-            if (result.error) {
-                return res.status(400).json(result);
-            }
-            res.json(result);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        const result = liquidation(req.body);
+        if (result.error) {
+            return res.status(400).json(result);
         }
+        res.json(result);
     },
     getReceiptToPrint: (req, res) => {
-        try {
-            const { id } = req.params;
-            const { id_template } = req.query;
-            const template = Template.getById(id_template);
-            const transaction = Transactions.getReceiptToPrint(id);
+        const { id } = req.params;
+        const { id_template } = req.query;
+        const template = Template.getById(id_template);
+        const transaction = Transactions.getReceiptToPrint(id);
 
-            if (!transaction) {
-                return res.status(404).json({ error: "Không tìm thấy dữ liệu giao dịch để in phiếu." });
-            }
-
-            const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
-            transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
-
-            const other_fees_text = doReadNumber(String(transaction.other_fees)) + " đồng";
-            transaction.other_fees_text = other_fees_text.charAt(0).toUpperCase() + other_fees_text.slice(1);
-
-            const { buf, fileName } = generatePaymentReceiptDoc(transaction, template);
-            res.set({
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
-                'Content-Length': buf.length
-            });
-            res.send(buf);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        if (!transaction) {
+            return res.status(404).json({ error: "Không tìm thấy dữ liệu giao dịch để in phiếu." });
         }
+
+        const amount_text = doReadNumber(String(transaction.amount)) + " đồng";
+        transaction.amount_text = amount_text.charAt(0).toUpperCase() + amount_text.slice(1);
+
+        const other_fees_text = doReadNumber(String(transaction.other_fees)) + " đồng";
+        transaction.other_fees_text = other_fees_text.charAt(0).toUpperCase() + other_fees_text.slice(1);
+
+        const { buf, fileName } = generatePaymentReceiptDoc(transaction, template);
+        res.set({
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+            'Content-Length': buf.length
+        });
+        res.send(buf);
     }
 }
 

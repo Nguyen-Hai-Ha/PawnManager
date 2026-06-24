@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const { startScheduler } = require('./services/mail/SchedulerService');
 const { backupDatabase } = require('./services/backup/BackupService');
 const { imagesDir, ensureDirectories } = require('./config/paths');
+const errorHandler = require('./middlewares/errorHandler');
 
 // Khởi tạo các thư mục cần thiết
 ensureDirectories();
@@ -64,6 +65,8 @@ app.use((err, req, res, next) => {
         message: err.message
     });
 });
+
+app.use(errorHandler);
 
 function startServer() {
     try {

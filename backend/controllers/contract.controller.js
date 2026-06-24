@@ -115,108 +115,18 @@ const ContractController = {
             res.status(500).json({ error: error.message });
         }
     },
-    exportExcel: async (req, res) => {
+    exportExcel: async(req, res) => {
         try {
             const { id_contract_type } = req.query;
-            const contracts = Contract.getByIdContractType(id_contract_type);
-            
-            // Hàm tiện ích format tiền
-            const formatMoney = (amount) => {
-                if (!amount) return '0 ₫';
-                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-            };
 
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Danh sách hợp đồng');
-
-            // Định nghĩa cột (ExcelJS dùng header, key và width)
-            worksheet.columns = [
-                { header: 'Mã HĐ', key: 'code', width: 15 },
-                { header: 'Tên KH', key: 'customer_name', width: 25 },
-                { header: 'Số điện thoại', key: 'customer_phone', width: 15 },
-                { header: 'Số CCCD', key: 'customer_cccd', width: 18 },
-                { header: 'Địa chỉ', key: 'customer_address', width: 30 },
-                { header: 'Ngày sinh', key: 'customer_birth_date', width: 15 },
-                { header: 'Số tiền vay', key: 'loan_amount', width: 18 },
-                { header: 'Lãi suất', key: 'interest_rate_display', width: 18 },
-                { header: 'Ngày bắt đầu', key: 'start_date', width: 15 },
-                { header: 'Ngày kết thúc', key: 'end_date', width: 15 },
-                { header: 'Số kỳ', key: 'total_periods', width: 10 },
-                { header: 'Trạng thái', key: 'status', width: 18 },
-                { header: 'Loại HĐ', key: 'contract_type_name', width: 15 },
-                { header: 'Tên tài sản', key: 'collateral_name', width: 25 },
-                { header: 'Số tiền đã trả', key: 'had_paid', width: 18 },
-                { header: 'Số tiền còn lại', key: 'remaining_amount', width: 18 }
-            ];
-
-            // Thêm dữ liệu vào worksheet
-            contracts.forEach(contract => {
-                worksheet.addRow({
-                    code: contract.code,
-                    customer_name: contract.customer_name,
-                    customer_phone: contract.customer_phone,
-                    customer_cccd: contract.customer_cccd,
-                    customer_address: contract.customer_address,
-                    customer_birth_date: contract.customer_birth_date,
-                    loan_amount: formatMoney(contract.loan_amount),
-                    interest_rate_display: contract.interest_type === 'daily_amount' ? formatMoney(contract.interest_rate) + '/ngày' : contract.interest_rate + '%',
-                    start_date: contract.start_date,
-                    end_date: contract.end_date,
-                    total_periods: contract.total_periods,
-                    status: contract.status,
-                    contract_type_name: contract.contract_type_name,
-                    collateral_name: contract.collateral_name || 'Không có',
-                    had_paid: formatMoney(contract.had_paid),
-                    remaining_amount: formatMoney(contract.remaining_amount)
-                });
-            });
-
-            // Định dạng header (Dòng 1)
-            const headerRow = worksheet.getRow(1);
-            headerRow.eachCell((cell) => {
-                cell.font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
-                cell.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: { argb: '1A7A6E' } // Màu xanh đậm
-                };
-                cell.alignment = { vertical: 'middle', horizontal: 'center' };
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' }
-                };
-            });
-
-            // Kẻ viền và căn lề cho tất cả các ô dữ liệu
-            worksheet.eachRow((row, rowNumber) => {
-                if (rowNumber > 1) { // Bỏ qua dòng header đã style ở trên
-                    row.eachCell((cell) => {
-                        cell.border = {
-                            top: { style: 'thin' },
-                            left: { style: 'thin' },
-                            bottom: { style: 'thin' },
-                            right: { style: 'thin' }
-                        };
-                        cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-                    });
-                }
-            });
-
-            const buffer = await workbook.xlsx.writeBuffer();
+            const result = await ContractService.exportExcelService(id_contract_type);
             res.set({
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Content-Disposition': `attachment; filename="DanhSachHopDong.xlsx"`,
-                'Content-Length': buffer.length
+                'Content-Length': result.length
             });
 
-            AuditLogs.create({
-                action: 'Export hợp đồng',
-                details: `Export ${contracts.length} hợp đồng loại ${id_contract_type} bởi admin`,
-                id_staff: 1,
-            });
-            res.send(buffer);
+            res.send(result);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

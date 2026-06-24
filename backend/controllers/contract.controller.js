@@ -4,6 +4,7 @@ const { generateContractDoc } = require('../services/DocumentService');
 const dayjs = require('dayjs');
 const  { doReadNumber }  = require('read-vietnamese-number');
 const ExcelJS = require('exceljs');
+const ContractService = require('../services/contract.service');
 
 const ContractController = {
     getAll: (req, res) => {
@@ -47,51 +48,12 @@ const ContractController = {
     },
     getSettlementDetail: (req, res) => {
         try {
-            const contract = Contract.getById(req.params.id);
-            if (!contract) {
-                return res.status(404).json({ error: 'Hợp đồng không tồn tại' });
-            }
-            const customer = Customer.getById(contract.id_customer);
-            const startDate = dayjs(contract.start_date).startOf('day');
-            const today = dayjs().startOf('day');
-            
-            let dayCount = today.diff(startDate, 'day');
-            if (dayCount <= 0) dayCount = 1;
+            const result = ContractService.getSettlementService(req.params.id)
 
-            let interestPerDay = 0;
-            const loan = contract.loan_amount;
-            const rate = contract.interest_rate / 100;
-
-            if (contract.interest_type === "daily_amount") {
-                interestPerDay = contract.interest_rate;
-            } 
-            else if (contract.interest_type === "percent/term") {
-                // Lãi % mỗi kỳ (thường 1 kỳ = 30 ngày)
-                interestPerDay = (loan * rate) / 30;
-            } 
-            else if (contract.interest_type === "percent*term") {
-                // Lãi % nhân tổng số kỳ (Ví dụ trả góp)
-                interestPerDay = ((loan * rate) * contract.total_periods) / (contract.total_periods * 30);
-            }
-
-            const interestTotalToday = Math.round(interestPerDay * dayCount);
-
-            const history = Transactions.getHistoryPayment(req.params.id);
-            const totalPaidSoFar = history.reduce((acc, item) => acc + item.amount, 0);
-
-            const totalBill = interestTotalToday + contract.loan_amount;
-            const totalRemaining = totalBill - totalPaidSoFar;
-
-            res.json({ 
-                contract,
-                customer,
-                total_pay: totalBill,               
-                total_remaining: totalRemaining,    
-                total_interest_paid: totalPaidSoFar, 
-                day_count: dayCount,                
-            });
+            res.json(result);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            const statusCode = error.status || 500;
+            res.status(statusCode).json({ error: error.message });
         }
     },
     create: (req, res) => {

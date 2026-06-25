@@ -38,7 +38,7 @@ const StaffService = {
         });
         return staff;
     },
-    login: (data) => {
+    loginStaff: (data) => {
         const staff = Staff.getByEmail(data.email);
         if (!staff) return { error: "Nhân viên không tồn tại" };
 

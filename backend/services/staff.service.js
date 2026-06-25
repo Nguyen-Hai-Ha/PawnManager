@@ -13,6 +13,19 @@ const StaffService = {
         });
         return staff;
     },
+    updateStaff: (data) => {
+        const password = data.password;
+        if (password && password.length > 0) {
+            Staff.updatePassword(req.params.id, password);
+        }
+        Staff.update(req.params.id, data);
+        AuditLogs.create({
+            action: 'Cập nhật nhân viên',
+            details: `Cập nhật nhân viên ${data.name} bởi admin`,
+            id_staff: req.userId,
+        });
+        return { message: "Cập nhật thành công" };
+    },
 }
 
 module.exports = StaffService;

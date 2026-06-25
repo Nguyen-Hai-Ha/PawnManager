@@ -590,6 +590,30 @@ const ContractService = {
         });
 
         return { message: `Đã import thành công ${contracts.length} hợp đồng.` };
+    },
+    deleteContract: (id) => {
+        const staff = Contract.getStaffByIdContract(id);
+        AuditLogs.create({
+            action: 'Xóa hợp đồng',
+            details: `Hợp đồng ${id} đã được xóa bởi nhân viên ${staff.staff_name}`,
+            id_staff: staff.id_staff,
+        });
+        const contractHistory = ContractHistory.deleteByContractId(id);
+        const transaction = Transactions.deleteByContractId(id);
+        const paymentSchedules = PaymentSchedules.deleteByContractId(id);
+        const images = Image.deleteByCollateralId(id);
+        const collateral = Collaterals.deleteByContractId(id);
+        const contract = Contract.delete(id);
+
+        return {
+            message: `Đã xóa thành công hợp đồng ${id}.`,
+            contractHistory,
+            transaction,
+            paymentSchedules,
+            images,
+            collateral,
+            contract
+        }
     }
 }
 

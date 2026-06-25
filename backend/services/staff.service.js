@@ -38,6 +38,34 @@ const StaffService = {
         });
         return staff;
     },
+    login: (data) => {
+        const staff = Staff.getByEmail(data.email);
+        if (!staff) return { error: "Nhân viên không tồn tại" };
+
+        const isPasswordValid = bcrypt.compareSync(data.password, staff.password);
+        if (!isPasswordValid) return { error: "Sai mật khẩu" };
+
+        const permissions = RolePermission.getPermissionByRoleId(staff.id_role);
+        const permissionNames = permissions.map(p => p.permission);
+
+        // Fetch role name
+        const role = Role.getById(staff.id_role);
+        staff.role = role ? role.name : 'staff';
+
+        const token = jwt.sign(
+            { id: staff.id, role: staff.role, permissions: permissionNames },
+            config.secret,
+            { expiresIn: '1d' }
+        );
+
+        const log = AuditLogs.create({
+            action: 'Đăng nhập',
+            details: `Nhân viên ${staff.name} đăng nhập`,
+            id_staff: staff.id,
+        });
+
+        return { staff, token, permissions: permissionNames };
+    }
 }
 
 module.exports = StaffService;

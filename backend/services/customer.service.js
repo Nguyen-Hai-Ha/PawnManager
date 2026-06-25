@@ -36,7 +36,7 @@ const CustomerService = {
         return customer;
     },
     updateCustomer: (data, file, id) => {
-        if (req.files) {
+        if (file) {
             if (file['images_cccd']) {
                 data.images_cccd = file['images_cccd'][0].filename;
             }
@@ -75,7 +75,7 @@ const CustomerService = {
             }
         }
 
-        const staff = Staff.getById(req.userId || data.id_staff);
+        const staff = Staff.getById(id || data.id_staff);
         if (staff && data.name) {
             AuditLogs.create({
                 action: 'Cập nhật thông tin khách hàng',

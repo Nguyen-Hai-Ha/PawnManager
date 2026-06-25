@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config');
 
 const StaffService = {
-    createStaff: (data) => {
-        const staff = Staff.create(data);
+    createStaff: async (data) => {
+        const staff = await Staff.create(data);
         AuditLogs.create({
             action: 'Thêm mới nhân viên',
             details: `Thêm mới nhân viên ${data.name} bởi admin`,
@@ -13,10 +13,10 @@ const StaffService = {
         });
         return staff;
     },
-    updateStaff: (data, id) => {
+    updateStaff: async (data, id) => {
         const password = data.password;
         if (password && password.length > 0) {
-            Staff.updatePassword(id, password);
+            await Staff.updatePassword(id, password);
         }
         Staff.update(id, data);
         AuditLogs.create({

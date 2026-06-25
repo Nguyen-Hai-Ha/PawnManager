@@ -84,7 +84,29 @@ const CustomerService = {
             });
         }
 
-        return customer;
+        return {customer, relatives};
+    },
+    deleteCustomer: (id, id_staff) => {
+        const customer = Customer.getById(id);
+        if (!customer) {
+            return { error: 'Customer not found' };
+        }
+        const contract = Contract.getByIdCustomer(id);
+        if (contract && contract.length > 0) {
+            return { error: 'Customer has contract' };
+        }
+
+        const staff = Staff.getById(id_staff);
+        if (staff && customer && customer.name) {
+            AuditLogs.create({
+                action: 'Xóa khách hàng',
+                details: `Xóa khách hàng ${customer.name} bởi nhân viên ${staff.name}`,
+                id_staff: staff.id,
+            });
+        }
+
+        Customer.delete(id);
+        const relative = Relative.deleteByIdCustomer(id);
+        return {customer, relative};
     }
-    
 }

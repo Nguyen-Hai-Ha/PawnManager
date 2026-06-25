@@ -26,6 +26,18 @@ const StaffService = {
         });
         return { message: "Cập nhật thành công" };
     },
+    deleteStaff: (id) => {
+        const staffInfo = Staff.getById(id);
+        if (!staffInfo) return { error: "Không tìm thấy nhân viên cần xóa." };
+
+        const staff = Staff.delete(id);
+        AuditLogs.create({
+            action: 'Xóa nhân viên',
+            details: `Xóa nhân viên ${staffInfo.name} bởi admin`,
+            id_staff: req.userId,
+        });
+        return staff;
+    },
 }
 
 module.exports = StaffService;

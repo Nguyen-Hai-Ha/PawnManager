@@ -13,12 +13,12 @@ const StaffService = {
         });
         return staff;
     },
-    updateStaff: (data) => {
+    updateStaff: (data, id) => {
         const password = data.password;
         if (password && password.length > 0) {
-            Staff.updatePassword(req.params.id, password);
+            Staff.updatePassword(id, password);
         }
-        Staff.update(req.params.id, data);
+        Staff.update(id, data);
         AuditLogs.create({
             action: 'Cập nhật nhân viên',
             details: `Cập nhật nhân viên ${data.name} bởi admin`,

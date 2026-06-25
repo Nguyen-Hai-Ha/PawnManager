@@ -17,19 +17,9 @@ const StaffController = {
         const result = await StaffService.createStaff(req.body);
         res.json(result);
     },
-    update: (req, res) => {
-        const data = req.body;
-        const password = data.password;
-        if (password && password.length > 0) {
-            Staff.updatePassword(req.params.id, password);
-        }
-        Staff.update(req.params.id, data);
-        AuditLogs.create({
-            action: 'Cập nhật nhân viên',
-            details: `Cập nhật nhân viên ${data.name} bởi admin`,
-            id_staff: req.userId,
-        });
-        res.json({ message: "Cập nhật thành công" });
+    update: async (req, res) => {
+        const result = await StaffService.updateStaff(req.body, req.params.id);
+        res.json(result);
     },
     delete: (req, res) => {
         const staffInfo = Staff.getById(req.params.id);

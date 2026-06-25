@@ -55,20 +55,8 @@ const ContractController = {
         res.json(result);
     },
     delete: (req, res) => {
-        const staff = Contract.getStaffByIdContract(req.params.id);
-        AuditLogs.create({
-            action: 'Xóa hợp đồng',
-            details: `Hợp đồng ${req.params.id} đã được xóa bởi nhân viên ${staff.staff_name}`,
-            id_staff: staff.id_staff,
-        });
-        const contractHistory = ContractHistory.deleteByContractId(req.params.id);
-        const transaction = Transactions.deleteByContractId(req.params.id);
-        const paymentSchedules = PaymentSchedules.deleteByContractId(req.params.id);
-        const images = Image.deleteByCollateralId(req.params.id);
-        const collateral = Collaterals.deleteByContractId(req.params.id);
-        const contract = Contract.delete(req.params.id);
-        
-        res.json({ contract, paymentSchedules, collateral, transaction, images, contractHistory });
+        const result = ContractService.deleteContract(req.params.id);
+        res.json(result);
     },
     printReceipt: (req, res) => {
         const { id } = req.params;

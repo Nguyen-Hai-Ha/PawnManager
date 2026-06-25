@@ -1,4 +1,5 @@
 const { Customer, Relative, Contract, Staff, AuditLogs } = require('../models');
+const CustomerService = require('../services/customer.service');
 
 const CustomerController = {
     getAll: (req, res) => {
@@ -11,37 +12,7 @@ const CustomerController = {
     },
     create: (req, res) => {
         const data = { ...req.body };
-
-        if (req.files) {
-            if (req.files['images_cccd']) {
-                data.images_cccd = req.files['images_cccd'][0].filename;
-            }
-            if (req.files['images_cccd_back']) {
-                data.images_cccd_back = req.files['images_cccd_back'][0].filename;
-            }
-        }
-
-        const customer = Customer.create(data);
-        const staff = Staff.getById(req.userId || data.id_staff);
-        if (staff && data.name) {
-            AuditLogs.create({
-                action: 'Thêm mới khách hàng',
-                details: `Thêm mới khách hàng ${data.name} bởi nhân viên ${staff.name}`,
-                id_staff: staff.id,
-            });
-        }
-        if (data.relatives && typeof data.relatives === 'string' && data.relatives.length > 0) {
-            try {
-                const relativesArray = JSON.parse(data.relatives);
-                if (Array.isArray(relativesArray)) {
-                    relativesArray.forEach(item => {
-                        if (item) Relative.create({ ...item, id_customer: customer.id });
-                    });
-                }
-            } catch (e) {
-                console.error('Error parsing relatives:', e);
-            }
-        }
+        const customer = CustomerService.createCustomer(data, req.files, req.userId);
         res.json(customer);
     },
     update: (req, res) => {

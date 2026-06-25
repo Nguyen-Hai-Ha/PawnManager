@@ -21,17 +21,9 @@ const StaffController = {
         const result = await StaffService.updateStaff(req.body, req.params.id);
         res.json(result);
     },
-    delete: (req, res) => {
-        const staffInfo = Staff.getById(req.params.id);
-        if (!staffInfo) return res.status(404).json({ error: "Không tìm thấy nhân viên cần xóa." });
-
-        const staff = Staff.delete(req.params.id);
-        AuditLogs.create({
-            action: 'Xóa nhân viên',
-            details: `Xóa nhân viên ${staffInfo.name} bởi admin`,
-            id_staff: req.userId,
-        });
-        res.json(staff);
+    delete: async (req, res) => {
+        const result = await StaffService.deleteStaff(req.params.id);
+        res.json(result);
     },
     login: (req, res) => {
         const data = req.body;

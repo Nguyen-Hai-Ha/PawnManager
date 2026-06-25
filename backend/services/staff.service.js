@@ -9,7 +9,7 @@ const StaffService = {
         AuditLogs.create({
             action: 'Thêm mới nhân viên',
             details: `Thêm mới nhân viên ${data.name} bởi admin`,
-            id_staff: id,
+            id_staff: 1,
         });
         return staff;
     },
@@ -22,7 +22,7 @@ const StaffService = {
         AuditLogs.create({
             action: 'Cập nhật nhân viên',
             details: `Cập nhật nhân viên ${data.name} bởi admin`,
-            id_staff: id,
+            id_staff: 1,
         });
         return { message: "Cập nhật thành công" };
     },
@@ -34,7 +34,7 @@ const StaffService = {
         AuditLogs.create({
             action: 'Xóa nhân viên',
             details: `Xóa nhân viên ${staffInfo.name} bởi admin`,
-            id_staff: id,
+            id_staff: 1,
         });
         return staff;
     },

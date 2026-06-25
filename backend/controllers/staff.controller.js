@@ -2,6 +2,7 @@ const { Staff, RolePermission, Role, AuditLogs } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config');
+const StaffService = require('../services/staff.service');
 
 const StaffController = {
     getAll: (req, res) => {
@@ -13,14 +14,8 @@ const StaffController = {
         res.json(staff);
     },
     create: async (req, res) => {
-        const data = req.body;
-        const staff = await Staff.create(data);
-        AuditLogs.create({
-            action: 'Thêm mới nhân viên',
-            details: `Thêm mới nhân viên ${data.name} bởi admin`,
-            id_staff: req.userId,
-        });
-        res.json(staff);
+        const result = await StaffService.createStaff(req.body);
+        res.json(result);
     },
     update: (req, res) => {
         const data = req.body;

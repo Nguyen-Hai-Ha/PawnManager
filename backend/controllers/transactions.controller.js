@@ -62,10 +62,10 @@ const TransactionsController = {
         const { buf, fileName } = TransactionsService.receiptToPrint(id, id_template);
         res.set({
             'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'Content-Disposition': `attachment; filename="${encodeURIComponent(result.fileName)}"`,
-            'Content-Length': result.buf.length
+            'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
+            'Content-Length': buf.length
         });
-        res.send(result.buf);
+        res.send(buf);
     }
 }
 

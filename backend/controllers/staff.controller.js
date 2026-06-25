@@ -21,8 +21,8 @@ const StaffController = {
         const result = await StaffService.updateStaff(req.body, req.params.id);
         res.json(result);
     },
-    delete: async (req, res) => {
-        const result = await StaffService.deleteStaff(req.params.id);
+    delete: (req, res) => {
+        const result = StaffService.deleteStaff(req.params.id);
         res.json(result);
     },
     login: (req, res) => {
